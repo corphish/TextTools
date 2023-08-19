@@ -14,6 +14,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,7 +48,8 @@ fun Greeting() {
     ) {
         Text(
             text = stringResource(id = R.string.app_name),
-            style = Typography.titleLarge
+            style = Typography.titleLarge,
+            color = MaterialTheme.colorScheme.primary
         )
         Text(
             text = stringResource(id = R.string.app_desc),
@@ -56,7 +58,8 @@ fun Greeting() {
         Text(
             text = stringResource(id = R.string.features),
             style = Typography.labelSmall,
-            modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
+            modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
+            color = MaterialTheme.colorScheme.primary
         )
         
         for (feature in Feature.LIST) {
@@ -73,7 +76,8 @@ fun FeatureItem(feature: Feature) {
         Image(
             painterResource(id = feature.icon),
             contentDescription = "",
-            modifier = Modifier.size(48.dp)
+            modifier = Modifier.size(48.dp),
+            colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.primary)
         )
 
         Column(
