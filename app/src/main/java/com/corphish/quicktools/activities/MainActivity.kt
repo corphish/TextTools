@@ -81,6 +81,10 @@ fun FeatureItem(feature: Feature) {
         ) {
             Text(text = stringResource(id = feature.featureTitle), style = Typography.labelMedium)
             Text(text = stringResource(id = feature.featureDesc), style = Typography.bodySmall)
+            Row {
+                Text(text = stringResource(id = R.string.context_menu_option), style = Typography.labelSmall)
+                Text(text = stringResource(id = feature.contextMenuText), style = Typography.bodySmall)
+            }
         }
     }
 }

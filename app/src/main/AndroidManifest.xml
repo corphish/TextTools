@@ -14,7 +14,7 @@
         <activity
             android:name=".activities.EvalActivity"
             android:exported="true"
-            android:label="@string/quick_tools_eval"
+            android:label="@string/context_menu_eval"
             android:theme="@android:style/Theme.NoDisplay">
             <intent-filter>
                 <action android:name="android.intent.action.PROCESS_TEXT" />
@@ -25,7 +25,7 @@
         <activity
             android:name=".activities.WUPActivity"
             android:exported="true"
-            android:label="@string/quick_tools_whatsapp"
+            android:label="@string/context_menu_whatsapp"
             android:theme="@android:style/Theme.NoDisplay">
             <intent-filter>
                 <action android:name="android.intent.action.PROCESS_TEXT" />
