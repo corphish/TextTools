@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">Quick Tools</string>
     <string name="quick_tools_whatsapp">[QT] WhatsApp</string>
+    <string name="app_desc">Collection of useful functions which can be accessed within the Android System. The list of supported functions will keep on growing.</string>
+
+    <string name="features">Features</string>
+
+    <string name="wup_title">Text unsaved numbers in WhatsApp</string>
+    <string name="wup_desc">Easily text any unsaved number in WhatsApp. Simply select the number that you want to text (anywhere you encountered), and then select "[QT] WhatsApp" to text the number without saving. Useful if you want to text people for temporary purposes.</string>
 </resources>
