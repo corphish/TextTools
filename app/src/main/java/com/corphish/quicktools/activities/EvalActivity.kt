@@ -10,19 +10,8 @@ import java.util.Locale
 import kotlin.math.ceil
 import kotlin.math.floor
 
-class EvalActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        handleIntent(intent)
-    }
-
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-
-        handleIntent(intent)
-    }
-
-    private fun handleIntent(intent: Intent) {
+class EvalActivity : NoUIActivity() {
+    override fun handleIntent(intent: Intent) {
         if (intent.hasExtra(Intent.EXTRA_PROCESS_TEXT)) {
             val readonly = intent.getBooleanExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, false)
             if (readonly) {
@@ -54,7 +43,5 @@ class EvalActivity : AppCompatActivity() {
             resultIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, resultText)
             setResult(RESULT_OK, resultIntent)
         }
-
-        finish()
     }
 }

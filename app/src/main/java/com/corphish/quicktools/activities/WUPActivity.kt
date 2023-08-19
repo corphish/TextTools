@@ -11,19 +11,8 @@ import com.corphish.quicktools.data.Constants
  * unknown phone numbers in whatsapp without saving them as a contact by
  * opening it in wa.me/<phone_number>.
  */
-class WUPActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        handleIntent(intent)
-    }
-
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-
-        handleIntent(intent)
-    }
-
-    private fun handleIntent(intent: Intent) {
+class WUPActivity : NoUIActivity() {
+    override fun handleIntent(intent: Intent) {
         if (intent.hasExtra(Intent.EXTRA_PROCESS_TEXT)) {
             val text = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT)
             val regex = Regex(Constants.PHONE_NUMBER_REGEX)
