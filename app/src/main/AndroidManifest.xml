@@ -12,15 +12,25 @@
         android:theme="@style/Theme.QuickTools"
         tools:targetApi="31">
         <activity
-            android:name=".activities.WUPActivity"
-            android:theme="@android:style/Theme.NoDisplay"
-            android:label="@string/quick_tools_whatsapp"
-            android:icon="@drawable/ic_whatsapp"
-            android:exported="true" >
+            android:name=".activities.EvalActivity"
+            android:exported="true"
+            android:label="@string/quick_tools_eval"
+            android:theme="@android:style/Theme.NoDisplay">
             <intent-filter>
-                <action android:name="android.intent.action.PROCESS_TEXT"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <data android:mimeType="text/plain"/>
+                <action android:name="android.intent.action.PROCESS_TEXT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activities.WUPActivity"
+            android:exported="true"
+            android:label="@string/quick_tools_whatsapp"
+            android:theme="@android:style/Theme.NoDisplay">
+            <intent-filter>
+                <action android:name="android.intent.action.PROCESS_TEXT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
         <activity

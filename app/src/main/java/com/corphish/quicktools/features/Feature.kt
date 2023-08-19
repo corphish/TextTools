@@ -18,6 +18,11 @@ data class Feature(
                 icon = R.drawable.ic_whatsapp,
                 featureTitle = R.string.wup_title,
                 featureDesc = R.string.wup_desc
+            ),
+            Feature(
+                icon = R.drawable.ic_numbers,
+                featureTitle = R.string.eval_title,
+                featureDesc = R.string.eval_desc
             )
         )
     }

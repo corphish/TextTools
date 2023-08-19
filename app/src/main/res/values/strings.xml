@@ -1,10 +1,15 @@
 <resources>
     <string name="app_name">Text Tools</string>
-    <string name="quick_tools_whatsapp">[T\u00B2] WhatsApp</string>
     <string name="app_desc">Collection of useful text related functions which can be accessed within the Android System by selecting a text within it. The supported options appear in the context menu that appears after selecting a text. You may have to reveal them by pressing the 3 dots icon in the context menu. The list of supported functions will keep on growing.</string>
 
     <string name="features">Features</string>
 
+    <string name="quick_tools_whatsapp">[T\u00B2] WhatsApp</string>
     <string name="wup_title">Text unsaved numbers in WhatsApp</string>
     <string name="wup_desc">Easily text any unsaved number in WhatsApp. Simply select the number that you want to text (anywhere you encountered), and then select \"[T\u00B2] WhatsApp\" from the context menu to text the number without saving. Useful if you want to text people for temporary purposes.</string>
+
+    <string name="quick_tools_eval">[T\u00B2] Evaluate</string>
+    <string name="eval_title">Evaluate mathematical expressions</string>
+    <string name="eval_desc">Evaluate mathematical expressions inline and replace the expression with its result. Works only on text selected that can be edited.</string>
+    <string name="invalid_expression">Invalid mathematical expression</string>
 </resources>
