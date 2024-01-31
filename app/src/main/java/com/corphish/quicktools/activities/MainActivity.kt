@@ -48,20 +48,20 @@ fun Greeting() {
     ) {
         Text(
             text = stringResource(id = R.string.app_name),
-            style = Typography.titleLarge,
+            style = Typography.headlineLarge,
             color = MaterialTheme.colorScheme.primary
         )
         Text(
             text = stringResource(id = R.string.app_desc),
-            style = Typography.bodySmall
+            style = Typography.bodyMedium
         )
         Text(
             text = stringResource(id = R.string.features),
-            style = Typography.labelSmall,
+            style = Typography.labelMedium,
             modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
             color = MaterialTheme.colorScheme.primary
         )
-        
+
         for (feature in Feature.LIST) {
             FeatureItem(feature = feature)
         }
@@ -83,11 +83,18 @@ fun FeatureItem(feature: Feature) {
         Column(
             modifier = Modifier.padding(start = 8.dp)
         ) {
-            Text(text = stringResource(id = feature.featureTitle), style = Typography.labelMedium)
-            Text(text = stringResource(id = feature.featureDesc), style = Typography.bodySmall)
+            Text(text = stringResource(id = feature.featureTitle), style = Typography.labelLarge)
+            Text(text = stringResource(id = feature.featureDesc), style = Typography.bodyMedium)
             Row {
-                Text(text = stringResource(id = R.string.context_menu_option), style = Typography.labelSmall)
-                Text(text = stringResource(id = feature.contextMenuText), style = Typography.bodySmall)
+                Text(
+                    text = stringResource(id = R.string.context_menu_option),
+                    style = Typography.labelMedium
+                )
+                Text(
+                    text = stringResource(id = feature.contextMenuText),
+                    style = Typography.bodyMedium,
+                    modifier = Modifier.padding(start = 4.dp)
+                )
             }
         }
     }
