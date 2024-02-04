@@ -77,11 +77,11 @@ fun Greeting() {
 fun FeatureItem(feature: Feature) {
     val context = LocalContext.current
     Row(
-        modifier = Modifier.padding(vertical = 4.dp).clickable {
+        modifier = Modifier.padding(vertical = 4.dp)/*.clickable {
             val intent = Intent(context, TryOutActivity::class.java)
             intent.putExtra(TryOutActivity.TRY_OUT_FLOW, feature.flow)
             context.startActivity(intent)
-        }
+        }*/
     ) {
         Image(
             painterResource(id = feature.icon),
