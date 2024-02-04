@@ -1,9 +1,12 @@
 package com.corphish.quicktools.activities
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -49,7 +53,8 @@ fun Greeting() {
         Text(
             text = stringResource(id = R.string.app_name),
             style = Typography.headlineLarge,
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(bottom = 16.dp)
         )
         Text(
             text = stringResource(id = R.string.app_desc),
@@ -70,8 +75,13 @@ fun Greeting() {
 
 @Composable
 fun FeatureItem(feature: Feature) {
+    val context = LocalContext.current
     Row(
-        modifier = Modifier.padding(vertical = 4.dp)
+        modifier = Modifier.padding(vertical = 4.dp).clickable {
+            val intent = Intent(context, TryOutActivity::class.java)
+            intent.putExtra(TryOutActivity.TRY_OUT_FLOW, feature.flow)
+            context.startActivity(intent)
+        }
     ) {
         Image(
             painterResource(id = feature.icon),

@@ -65,6 +65,9 @@ dependencies {
 
     // To evaluate mathematical expressions
     implementation("net.objecthunter:exp4j:0.4.8")
+    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
+    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
 
     // Compose debug
     debugImplementation("androidx.compose.ui:ui-tooling")

@@ -12,13 +12,20 @@
         android:theme="@style/Theme.QuickTools"
         tools:targetApi="31">
         <activity
+            android:name=".activities.TryOutActivity"
+            android:exported="false"
+            android:label="@string/title_activity_try_out"
+            android:theme="@style/Theme.QuickTools" />
+        <activity
             android:name=".activities.EvalActivity"
             android:exported="true"
             android:label="@string/context_menu_eval"
             android:theme="@android:style/Theme.NoDisplay">
             <intent-filter>
                 <action android:name="android.intent.action.PROCESS_TEXT" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
@@ -29,7 +36,9 @@
             android:theme="@android:style/Theme.NoDisplay">
             <intent-filter>
                 <action android:name="android.intent.action.PROCESS_TEXT" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
@@ -40,6 +49,7 @@
             android:theme="@style/Theme.QuickTools">
             <intent-filter android:label="@string/app_name">
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
