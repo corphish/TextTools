@@ -11,6 +11,9 @@ Collection of useful text related tools that can be accessed from the context me
 
 ![Eval](assets/eval.gif)
 
+### Installation warning
+While installing the app (you have to sideload), Google Play may block the installation saying it has never seen the app before. While it is true (from Google Play POV), kindly proceed with installing the app. If you have doubts about the app being malicious, you are free to verify the same from the source code (it would not be open-source if the app was malicious in the first place, right?).
+
 ### Issues
 Issues may be observed as in the contextual menu options may not be available inside certain apps, or the functionalities may not work as expeceted. In such cases, kindly raise issue in this Github repo.
 
