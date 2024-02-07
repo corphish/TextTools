@@ -1,0 +1,1 @@
+Collection of useful text related tools that can be accessed from the context menu that appears on text selection.
