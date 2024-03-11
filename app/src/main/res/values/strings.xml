@@ -22,4 +22,11 @@
     <string name="trial_error_msg">If it did not work, you can raise an issue in the Github repo. Would you like to do that now?</string>
     <string name="trial_success">It worked</string>
     <string name="trial_error">It did not work</string>
+
+    <string name="app_info">App Info</string>
+    <string name="app_version">Version - %1$s (%2$d)</string>
+
+    <string name="oss_info">Open Source</string>
+    <string name="oss_desc">This app is open source! Feel free to contribute, raise issue and check it out.</string>
+    <string name="oss_check">Check it out</string>
 </resources>

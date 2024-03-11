@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "com.corphish.quicktools"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.corphish.quicktools"
         minSdk = 30
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 4
         versionName = "1.0.3"
 
@@ -38,6 +38,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
@@ -62,6 +63,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.ui:ui-text-google-fonts")
 
     // To evaluate mathematical expressions
     implementation("net.objecthunter:exp4j:0.4.8")
