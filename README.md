@@ -1,6 +1,11 @@
 # Text Tools
 Collection of useful text related tools that can be accessed from the context menu that appears on text selection. The feature list will keep on growing. Let me know if you have any ideas.
 
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+alt="Get it on F-Droid"
+height="80">](https://f-droid.org/packages/com.corphish.quicktools)
+
+
 ### Current Features
 - __Text unsaved numbers in WhatsApp__ - Often we find ourselves needing to text/send file/share location to someone for temporary purposes (if you ask me, I face this a lot in situations where I go to a printing centre where they ask me to share the file that I want to print over WhatsApp, so I have to save their contact, refresh my WhatsApp contact list and then send them). Having a context menu option to directly open a WhatsApp chat from their phone number would save a lot of time and keep your phonebook clean, right?
 
@@ -18,4 +23,4 @@ While installing the app (you have to sideload), Google Play may block the insta
 Issues may be observed as in the contextual menu options may not be available inside certain apps, or the functionalities may not work as expeceted. In such cases, kindly raise issue in this Github repo.
 
 ### Releases
-Check releases section, only debug variants will be available in order to not show that Play Protect warning while installing the apk.
+Check releases section, download the apk and install (sideload) it in your device. If you are presented with Google Play Protect warning, please ignore it and continue with the installation. __The reason you may get the Google Play Protect warning is because Google Play might not have seen this app as it is not available in the Google Play Store.__ 
