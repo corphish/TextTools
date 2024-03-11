@@ -2,9 +2,6 @@ package com.corphish.quicktools.activities
 
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.util.Log
 import com.corphish.quicktools.data.Constants
 
 /**
@@ -28,7 +25,6 @@ class WUPActivity : NoUIActivity() {
 
     private fun openInWeb(phoneNumber: String) {
         val url = "https://wa.me/$phoneNumber"
-        Log.d("WUP", "https://wa.me/${specialCharactersRemovedFrom(phoneNumber)}")
         val browserIntent = Intent(Intent.ACTION_VIEW)
         browserIntent.data = Uri.parse(url)
         startActivity(browserIntent)
