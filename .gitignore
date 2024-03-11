@@ -8,3 +8,6 @@
 .externalNativeBuild
 .cxx
 local.properties
+*.jks
+*.apk
+app/release/
