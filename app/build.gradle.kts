@@ -51,13 +51,13 @@ android {
 
 dependencies {
     // Core
-    implementation("androidx.core:core-ktx:1.10.1")
+    implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
 
     // Compose
-    implementation("androidx.activity:activity-compose:1.7.2")
-    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
+    implementation("androidx.activity:activity-compose:1.8.2")
+    implementation(platform("androidx.compose:compose-bom:2024.02.02"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
@@ -66,10 +66,8 @@ dependencies {
     // To evaluate mathematical expressions
     implementation("net.objecthunter:exp4j:0.4.8")
 
-    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
-
-    
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
+    // Testing
+    androidTestImplementation(platform("androidx.compose:compose-bom:2024.02.02"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
 
     // Compose debug
