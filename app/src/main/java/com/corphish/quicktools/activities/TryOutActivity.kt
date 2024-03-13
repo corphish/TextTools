@@ -41,6 +41,10 @@ import com.corphish.quicktools.R
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.ui.theme.Typography
 
+/**
+ * Try outs are disabled as of now because it looks like there is a known issue with
+ * Jetpack Compose textfields which does not show context menu.
+ */
 class TryOutActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
