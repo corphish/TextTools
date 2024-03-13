@@ -29,4 +29,5 @@
     <string name="oss_info">Open Source</string>
     <string name="oss_desc">This app is open source! Feel free to contribute, raise issue and check it out.</string>
     <string name="oss_check">Check it out</string>
+    <string name="invalid_phone_number">Invalid phone number</string>
 </resources>

@@ -2,6 +2,8 @@ package com.corphish.quicktools.activities
 
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
+import com.corphish.quicktools.R
 import com.corphish.quicktools.data.Constants
 
 /**
@@ -17,6 +19,8 @@ class WUPActivity : NoUIActivity() {
             val regex = Regex(Constants.PHONE_NUMBER_REGEX)
             if (regex.matches(modified)) {
                 openInWeb(phoneNumber = modified)
+            } else {
+                Toast.makeText(this, R.string.invalid_phone_number, Toast.LENGTH_LONG).show()
             }
         }
 
