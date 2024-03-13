@@ -3,8 +3,9 @@ package com.corphish.quicktools.activities
 import android.content.Intent
 import android.widget.Toast
 import com.corphish.quicktools.R
+import com.corphish.quicktools.settings.SettingsHelper
 import net.objecthunter.exp4j.ExpressionBuilder
-import java.util.Locale
+import java.text.DecimalFormat
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -25,7 +26,10 @@ class EvalActivity : NoUIActivity() {
                 if (ceil(result) == floor(result)) {
                     result.toInt().toString()
                 } else {
-                    String.format(Locale.getDefault(), "%.2f", result)
+                    val settingsHelper = SettingsHelper(this)
+                    val decimalPoints = settingsHelper.getDecimalPoints()
+                    val decimalFormat = DecimalFormat("0.${"#".repeat(decimalPoints)}")
+                    decimalFormat.format(result)
                 }
             } catch (e: Exception) {
                 Toast.makeText(
