@@ -92,5 +92,20 @@ val TypographyV2 = Typography(
     bodySmall = TextStyle(
         fontSize = 12.sp,
         letterSpacing = 0.5.sp
+    ),
+    displayLarge = TextStyle(
+        fontFamily = BrandFontFamily,
+        fontSize = 16.sp,
+        letterSpacing = 0.5.sp
+    ),
+    displayMedium = TextStyle(
+        fontFamily = BrandFontFamily,
+        fontSize = 14.sp,
+        letterSpacing = 0.5.sp
+    ),
+    displaySmall = TextStyle(
+        fontFamily = BrandFontFamily,
+        fontSize = 12.sp,
+        letterSpacing = 0.5.sp
     )
 )

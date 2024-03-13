@@ -11,6 +11,7 @@
 
     <string name="context_menu_eval">[T\u00B2] Evaluate</string>
     <string name="eval_title">Evaluate mathematical expressions</string>
+    <string name="eval_title_small">Evaluate</string>
     <string name="eval_desc">Evaluate mathematical expressions inline and replace the expression with its result. Works only on text selected that can be edited.</string>
     <string name="invalid_expression">Invalid mathematical expression</string>
     <string name="title_activity_try_out">Try It Out</string>
@@ -30,4 +31,12 @@
     <string name="oss_desc">This app is open source! Feel free to contribute, raise issue and check it out.</string>
     <string name="oss_check">Check it out</string>
     <string name="invalid_phone_number">Invalid phone number</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="prepend_country_code_title">Automatically add country code</string>
+    <string name="prepend_country_code_desc">If the selected phone number does not have any country code, the preset country code will be automatically added if enabled.</string>
+    <string name="messaging">Messaging</string>
+    <string name="preset_country_code">Preset country code</string>
+    <string name="decimal_points_title">Decimal points</string>
+    <string name="decimal_points_desc">Number of digits shown after the decimal point as a result of an evaluate function. If the result is an integer (whole number with no decimal), the decimal point will not be shown.</string>
+    <string name="releases">Releases page</string>
 </resources>
