@@ -5,6 +5,7 @@ import android.net.Uri
 import android.widget.Toast
 import com.corphish.quicktools.R
 import com.corphish.quicktools.data.Constants
+import com.corphish.quicktools.settings.SettingsHelper
 
 /**
  * WUP (WhatsApp Unknown Phone number) activity handles messaging to
@@ -28,10 +29,20 @@ class WUPActivity : NoUIActivity() {
     }
 
     private fun openInWeb(phoneNumber: String) {
-        val url = "https://wa.me/$phoneNumber"
+        val url = "https://wa.me/${countryCodedNumber(phoneNumber)}"
         val browserIntent = Intent(Intent.ACTION_VIEW)
         browserIntent.data = Uri.parse(url)
         startActivity(browserIntent)
+    }
+
+    private fun countryCodedNumber(phoneNumber: String): String {
+        val settingsHelper = SettingsHelper(this)
+        return if (settingsHelper.getPrependCountryCodeEnabled()) {
+            val code = settingsHelper.getPrependCountryCode()
+            "$code$phoneNumber"
+        } else {
+            phoneNumber
+        }
     }
 
     private fun specialCharactersRemovedFrom(phoneNumber: String) : String {
