@@ -66,7 +66,6 @@ class TryOutActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TryOut(flow: String) {
     val openSuccessDialog = remember { mutableStateOf(false) }
