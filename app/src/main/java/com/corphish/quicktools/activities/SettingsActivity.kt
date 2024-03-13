@@ -199,7 +199,8 @@ fun TextSettings(settingsHelper: SettingsHelper) {
             ) {
                 Text(
                     text = stringResource(id = R.string.prepend_country_code_title),
-                    style = TypographyV2.displayLarge
+                    style = TypographyV2.labelMedium,
+                    fontWeight = FontWeight.W600,
                 )
                 Text(
                     text = stringResource(id = R.string.prepend_country_code_desc),
@@ -232,7 +233,8 @@ fun EvaluateSettings(settingsHelper: SettingsHelper) {
     Column {
         Text(
             text = stringResource(id = R.string.decimal_points_title),
-            style = TypographyV2.displayLarge
+            style = TypographyV2.labelMedium,
+            fontWeight = FontWeight.W600,
         )
         Text(
             text = stringResource(id = R.string.decimal_points_desc),
