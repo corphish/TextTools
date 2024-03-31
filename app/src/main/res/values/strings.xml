@@ -64,4 +64,5 @@
     <string name="title_case_first_word_only">Title case (first word only)</string>
     <string name="title_case_all_words">Title Case (All Words)</string>
     <string name="random_case">rAnDOm cASe</string>
+    <string name="contributors">Contributors</string>
 </resources>

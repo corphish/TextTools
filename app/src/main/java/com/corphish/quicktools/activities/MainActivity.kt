@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -68,6 +70,7 @@ class MainActivity : ComponentActivity() {
 fun Greeting() {
     val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
+    val scrollState = rememberScrollState()
 
     Scaffold(floatingActionButton = {
         FloatingActionButton(
@@ -120,17 +123,33 @@ fun Greeting() {
                 text = stringResource(id = R.string.oss_desc), style = Typography.bodyMedium
             )
 
-            Button(
-                onClick = { uriHandler.openUri("https://github.com/corphish/TextTools/") },
-                modifier = Modifier.padding(top = 8.dp)
+            Row(
+                modifier = Modifier.padding(top = 8.dp).horizontalScroll(scrollState)
             ) {
-                Icon(painterResource(id = R.drawable.ic_open_in_new), contentDescription = "")
-                Text(
-                    text = stringResource(id = R.string.oss_check),
-                    modifier = Modifier.padding(start = 16.dp),
-                    style = TypographyV2.labelMedium,
-                    fontWeight = FontWeight.W600
-                )
+                Button(
+                    onClick = { uriHandler.openUri("https://github.com/corphish/TextTools/") },
+                ) {
+                    Icon(painterResource(id = R.drawable.ic_open_in_new), contentDescription = "")
+                    Text(
+                        text = stringResource(id = R.string.oss_check),
+                        modifier = Modifier.padding(start = 16.dp),
+                        style = TypographyV2.labelMedium,
+                        fontWeight = FontWeight.W600
+                    )
+                }
+
+                Button(
+                    onClick = { uriHandler.openUri("https://github.com/corphish/TextTools/blob/main/CONTRIBUTORS.md") },
+                    modifier = Modifier.padding(start = 16.dp)
+                ) {
+                    Icon(painterResource(id = R.drawable.ic_open_in_new), contentDescription = "")
+                    Text(
+                        text = stringResource(id = R.string.contributors),
+                        modifier = Modifier.padding(start = 16.dp),
+                        style = TypographyV2.labelMedium,
+                        fontWeight = FontWeight.W600
+                    )
+                }
             }
         }
     }
