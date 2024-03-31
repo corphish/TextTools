@@ -13,7 +13,7 @@ import com.corphish.quicktools.settings.SettingsHelper
  * opening it in wa.me/<phone_number>.
  */
 class WUPActivity : NoUIActivity() {
-    override fun handleIntent(intent: Intent) {
+    override fun handleIntent(intent: Intent): Boolean {
         if (intent.hasExtra(Intent.EXTRA_PROCESS_TEXT)) {
             val text = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT)?.toString() ?: ""
             val modified = specialCharactersRemovedFrom(text)
@@ -25,7 +25,7 @@ class WUPActivity : NoUIActivity() {
             }
         }
 
-        finish()
+        return true
     }
 
     private fun openInWeb(phoneNumber: String) {
