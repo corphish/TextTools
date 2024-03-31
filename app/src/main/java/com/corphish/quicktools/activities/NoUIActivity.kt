@@ -11,8 +11,10 @@ abstract class NoUIActivity: AppCompatActivity() {
 
     /**
      * Main intent handling logic goes here that must be overridden by other feature classes.
+     * @return Boolean value indicating whether the activity should be finished after handling the
+     *         intent or not.
      */
-    abstract fun handleIntent(intent: Intent)
+    abstract fun handleIntent(intent: Intent): Boolean
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,7 +27,7 @@ abstract class NoUIActivity: AppCompatActivity() {
     }
 
     private fun handleIntentWrapper(intent: Intent) {
-        handleIntent(intent)
-        finish()
+        if (handleIntent(intent))
+            finish()
     }
 }
