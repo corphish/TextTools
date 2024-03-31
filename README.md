@@ -16,6 +16,11 @@ height="80">](https://f-droid.org/packages/com.corphish.quicktools)
 
 ![Eval](assets/eval.gif)
 
+- __Transform text__ - Transform the selected text inline. Supported transformations include changing the case, wrapping it with text etc.
+
+![Transform Example 1](assets/transform_1.gif)
+![Transform Example 2](assets/transform_2.gif)
+
 ### Installation warning
 While installing the app (you have to sideload), Google Play may block the installation saying it has never seen the app before. While it is true (from Google Play POV), kindly proceed with installing the app. If you have doubts about the app being malicious, you are free to verify the same from the source code (it would not be open-source if the app was malicious in the first place, right?).
 
