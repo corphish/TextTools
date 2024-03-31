@@ -30,6 +30,13 @@ data class Feature(
                 featureDesc = R.string.eval_desc,
                 contextMenuText = R.string.context_menu_eval,
                 flow = TryOutActivity.TRY_OUT_FLOW_EVAL,
+            ),
+            Feature(
+                icon = R.drawable.ic_text_transform,
+                featureTitle = R.string.transform_long,
+                featureDesc = R.string.transform_desc,
+                contextMenuText = R.string.context_menu_transform,
+                flow = TryOutActivity.TRY_OUT_FLOW
             )
         )
     }

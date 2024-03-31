@@ -43,6 +43,8 @@
     <string name="context_menu_transform">[T\u00B2] Transform</string>
     <string name="transform">Transform</string>
     <string name="transform_message">Select how you want to transform the text</string>
+    <string name="transform_long">Transform text</string>
+    <string name="transform_desc">Provides various ways to transform the selected text like changing its case, wrapping it with other text and more.</string>
     <string name="wrap_text">Wrap text</string>
     <string name="change_case">Change case</string>
 
