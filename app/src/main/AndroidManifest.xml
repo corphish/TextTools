@@ -11,16 +11,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.QuickTools"
         tools:targetApi="31">
+
         <activity
             android:name=".activities.SettingsActivity"
             android:exported="false"
             android:label="@string/title_activity_settings"
             android:theme="@style/Theme.QuickTools" />
+
         <activity
             android:name=".activities.TryOutActivity"
             android:exported="false"
             android:label="@string/title_activity_try_out"
             android:theme="@style/Theme.QuickTools" />
+
         <activity
             android:name=".activities.EvalActivity"
             android:exported="true"
@@ -65,6 +68,30 @@
                 <data android:scheme="https" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".activities.TransformActivity"
+            android:exported="true"
+            android:label="@string/context_menu_transform"
+            android:theme="@style/Theme.AppCompat.Translucent">
+            <intent-filter>
+                <action android:name="android.intent.action.PROCESS_TEXT" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".activities.MainActivity"
             android:exported="true"

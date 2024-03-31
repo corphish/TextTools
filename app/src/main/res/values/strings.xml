@@ -39,4 +39,27 @@
     <string name="decimal_points_title">Decimal points</string>
     <string name="decimal_points_desc">Number of digits shown after the decimal point as a result of an evaluate function. If the result is an integer (whole number with no decimal), the decimal point will not be shown.</string>
     <string name="releases">Releases page</string>
+
+    <string name="context_menu_transform">[T\u00B2] Transform</string>
+    <string name="transform">Transform</string>
+    <string name="transform_message">Select how you want to transform the text</string>
+    <string name="wrap_text">Wrap text</string>
+    <string name="change_case">Change case</string>
+
+    <string name="wrap_message">Select the character with which you would like to wrap the text</string>
+    <string name="wrap_single_inverted">\'\' (Single inverted commas)</string>
+    <string name="wrap_double_inverted">\"\" (Double inverted commas)</string>
+    <string name="wrap_first_bracket">() (First brackets)</string>
+    <string name="wrap_curly_braces">{} (Curly braces)</string>
+    <string name="wrap_square_bracket">[] (Square brackets)</string>
+    <string name="custom_wrapper_text">Custom wrapper text</string>
+    <string name="custom_wrapper_desc">The custom wrapper text should contain even number of letters. The first half of the custom wrapper text will be added to beginning of the selected text and the remaining will be added to the end of the selected text.</string>
+    <string name="custom_wrapper_error">Custom wrapper text must contain even number of letters</string>
+
+    <string name="change_case_message">Select how you want to change the case</string>
+    <string name="upper_case">UPPER CASE</string>
+    <string name="lower_case">lower case</string>
+    <string name="title_case_first_word_only">Title case (first word only)</string>
+    <string name="title_case_all_words">Title Case (All Words)</string>
+    <string name="random_case">rAnDOm cASe</string>
 </resources>
