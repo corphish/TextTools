@@ -10,12 +10,12 @@ import kotlin.math.ceil
 import kotlin.math.floor
 
 class EvalActivity : NoUIActivity() {
-    override fun handleIntent(intent: Intent) {
+    override fun handleIntent(intent: Intent): Boolean {
         if (intent.hasExtra(Intent.EXTRA_PROCESS_TEXT)) {
             val readonly = intent.getBooleanExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, false)
             if (readonly) {
                 // We are only interested in editable text
-                return
+                return true
             }
 
             val text = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT).toString()
@@ -45,5 +45,7 @@ class EvalActivity : NoUIActivity() {
             resultIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, resultText)
             setResult(RESULT_OK, resultIntent)
         }
+
+        return true
     }
 }
