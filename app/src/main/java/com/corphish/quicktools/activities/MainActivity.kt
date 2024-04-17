@@ -6,7 +6,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,7 +22,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -39,10 +39,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import com.corphish.quicktools.BuildConfig
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.R
 import com.corphish.quicktools.features.Feature
@@ -70,7 +68,8 @@ class MainActivity : ComponentActivity() {
 fun Greeting() {
     val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
-    val scrollState = rememberScrollState()
+    val mainScrollState = rememberScrollState()
+    val contributorScrollState = rememberScrollState()
 
     Scaffold(floatingActionButton = {
         FloatingActionButton(
@@ -87,7 +86,7 @@ fun Greeting() {
                 bottom = it.calculateBottomPadding().plus(16.dp),
                 start = it.calculateStartPadding(LayoutDirection.Ltr).plus(16.dp),
                 end = it.calculateEndPadding(LayoutDirection.Ltr).plus(16.dp)
-            )
+            ).scrollable(mainScrollState, orientation = Orientation.Vertical)
         ) {
             Text(
                 text = stringResource(id = R.string.app_name),
@@ -124,7 +123,9 @@ fun Greeting() {
             )
 
             Row(
-                modifier = Modifier.padding(top = 8.dp).horizontalScroll(scrollState)
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .horizontalScroll(contributorScrollState)
             ) {
                 Button(
                     onClick = { uriHandler.openUri("https://github.com/corphish/TextTools/") },
