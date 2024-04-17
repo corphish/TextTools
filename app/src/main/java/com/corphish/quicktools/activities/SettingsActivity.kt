@@ -118,7 +118,7 @@ fun Settings(settingsHelper: SettingsHelper) {
         Text(
             text = stringResource(id = R.string.eval_title_small),
             style = TypographyV2.labelSmall,
-            modifier = Modifier.padding(top = 16.dp, bottom = 4.dp),
+            modifier = Modifier.padding(top = 24.dp, bottom = 4.dp),
             fontFamily = BrandFontFamily,
             color = MaterialTheme.colorScheme.primary
         )
@@ -128,7 +128,7 @@ fun Settings(settingsHelper: SettingsHelper) {
         Text(
             text = stringResource(id = R.string.app_info),
             style = TypographyV2.labelSmall,
-            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
+            modifier = Modifier.padding(top = 24.dp, bottom = 8.dp),
             fontFamily = BrandFontFamily,
             color = MaterialTheme.colorScheme.primary
         )
@@ -218,7 +218,7 @@ fun TextSettings(settingsHelper: SettingsHelper) {
             label = { Text(stringResource(id = R.string.preset_country_code)) },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 8.dp),
+                .padding(top = 16.dp),
             enabled = prependCountryCodeEnabled
         )
     }
@@ -246,7 +246,7 @@ fun EvaluateSettings(settingsHelper: SettingsHelper) {
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 4.dp)
+                .padding(top = 8.dp)
         )
         Slider(
             value = decimalPoints,
