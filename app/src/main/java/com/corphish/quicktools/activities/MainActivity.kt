@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
@@ -86,7 +87,7 @@ fun Greeting() {
                 bottom = it.calculateBottomPadding().plus(16.dp),
                 start = it.calculateStartPadding(LayoutDirection.Ltr).plus(16.dp),
                 end = it.calculateEndPadding(LayoutDirection.Ltr).plus(16.dp)
-            ).scrollable(mainScrollState, orientation = Orientation.Vertical)
+            ).verticalScroll(mainScrollState)
         ) {
             Text(
                 text = stringResource(id = R.string.app_name),
@@ -95,9 +96,12 @@ fun Greeting() {
                 fontFamily = BrandFontFamily,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
+
+
             Text(
                 text = stringResource(id = R.string.app_desc), style = Typography.bodyMedium
             )
+
             Text(
                 text = stringResource(id = R.string.features),
                 style = TypographyV2.labelSmall,
