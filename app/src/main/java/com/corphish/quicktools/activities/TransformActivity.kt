@@ -34,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.corphish.quicktools.R
+import com.corphish.quicktools.ui.common.ListDialog
 import com.corphish.quicktools.ui.theme.BrandFontFamily
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.ui.theme.TypographyV2
@@ -100,7 +101,9 @@ class TransformActivity : NoUIActivity() {
                             ListDialog(
                                 title = stringResource(id = R.string.transform),
                                 message = stringResource(id = R.string.transform_message),
-                                list = transformOptions, onItemSelected = {
+                                list = transformOptions,
+                                stringResourceSelector = { it },
+                                onItemSelected = {
                                     optionsArray[it].value = true
                                     mainOptionDialog.value = false
                                 }) {
@@ -118,6 +121,7 @@ class TransformActivity : NoUIActivity() {
                                     wrapOptionDialog.value = false
                                     mainOptionDialog.value = true
                                 },
+                                stringResourceSelector = { it },
                                 onItemSelected = {
                                     var res = ""
                                     when (it) {
@@ -152,6 +156,7 @@ class TransformActivity : NoUIActivity() {
                                     caseOptionDialog.value = false
                                     mainOptionDialog.value = true
                                 },
+                                stringResourceSelector = { it },
                                 onItemSelected = {
                                     var res = ""
                                     when (it) {
