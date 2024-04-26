@@ -15,6 +15,7 @@ class EvalActivity : NoUIActivity() {
             val readonly = intent.getBooleanExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, false)
             if (readonly) {
                 // We are only interested in editable text
+                Toast.makeText(this, R.string.editable_error, Toast.LENGTH_LONG).show()
                 return true
             }
 

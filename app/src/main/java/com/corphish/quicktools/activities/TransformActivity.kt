@@ -1,6 +1,7 @@
 package com.corphish.quicktools.activities
 
 import android.content.Intent
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -74,6 +75,7 @@ class TransformActivity : NoUIActivity() {
             val readonly = intent.getBooleanExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, false)
             if (readonly) {
                 // We are only interested in editable text
+                Toast.makeText(this, R.string.editable_error, Toast.LENGTH_LONG).show()
                 return true
             }
 
