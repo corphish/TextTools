@@ -43,7 +43,7 @@ class OptionsActivity : NoUIActivity() {
                             title = stringResource(id = R.string.app_name),
                             message = stringResource(id = R.string.app_single_op, text.truncate()),
                             list = _options,
-                            stringResourceSelector = { it.optionResourceId },
+                            stringSelector = { stringResource(id = it.optionResourceId) },
                             onItemSelected = {
                                 val routeIntent = Intent(this, _options[it].handlingClass)
                                 routeIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, text)
