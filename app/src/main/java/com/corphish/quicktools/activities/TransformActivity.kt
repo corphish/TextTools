@@ -108,6 +108,7 @@ class TransformActivity : NoUIActivity() {
                                     mainOptionDialog.value = false
                                 }) {
                                 mainOptionDialog.value = false
+                                finish()
                             }
                         }
 
