@@ -36,7 +36,7 @@ fun <T> ListDialog(
     message: String,
     list: List<T>,
     supportBack: Boolean = false,
-    onItemSelected: (T) -> Unit,
+    onItemSelected: (Int) -> Unit,
     stringResourceSelector: (T) -> Int,
     onBackPressed: () -> Unit = {},
     onDismissRequest: () -> Unit
@@ -89,10 +89,10 @@ fun <T> ListDialog(
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
 
-                for (item in list) {
+                for ((index, item) in list.withIndex()) {
                     Button(
                         onClick = {
-                            onItemSelected(item)
+                            onItemSelected(index)
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
