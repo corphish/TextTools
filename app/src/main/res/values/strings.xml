@@ -1,11 +1,13 @@
 <resources>
     <string name="app_name">Text Tools</string>
     <string name="app_desc">Collection of useful text related functions which can be accessed within many apps inside the Android System by selecting a text within it. The supported options appear in the context menu that appears after selecting a text. You may have to reveal them by pressing the 3 dots icon in the context menu. The list of supported functions will keep on growing.</string>
+    <string name="app_single_op">Select the function that you would like to perform. Selected text - %1$s</string>
 
     <string name="features">Features</string>
     <string name="context_menu_option">Context menu option: </string>
 
     <string name="context_menu_whatsapp">[T\u00B2] WhatsApp</string>
+    <string name="whatsapp">WhatsApp</string>
     <string name="wup_title">Text unsaved numbers in WhatsApp</string>
     <string name="wup_desc">Easily text any unsaved number in WhatsApp. Useful if you want to text people for temporary purposes.</string>
 
