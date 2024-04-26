@@ -30,14 +30,14 @@
             android:exported="true"
             android:label="@string/context_menu_eval"
             android:theme="@android:style/Theme.NoDisplay">
-            <intent-filter>
+            <intent-filter android:label="@string/context_menu_eval">
                 <action android:name="android.intent.action.PROCESS_TEXT" />
 
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:mimeType="text/plain" />
             </intent-filter>
-            <intent-filter>
+            <intent-filter android:label="@string/context_menu_eval">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -51,14 +51,14 @@
             android:exported="true"
             android:label="@string/context_menu_whatsapp"
             android:theme="@android:style/Theme.NoDisplay">
-            <intent-filter>
+            <intent-filter android:label="@string/context_menu_whatsapp">
                 <action android:name="android.intent.action.PROCESS_TEXT" />
 
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:mimeType="text/plain" />
             </intent-filter>
-            <intent-filter>
+            <intent-filter android:label="@string/context_menu_whatsapp">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -73,14 +73,14 @@
             android:exported="true"
             android:label="@string/context_menu_transform"
             android:theme="@style/Theme.AppCompat.Translucent">
-            <intent-filter>
+            <intent-filter android:label="@string/context_menu_transform">
                 <action android:name="android.intent.action.PROCESS_TEXT" />
 
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:mimeType="text/plain" />
             </intent-filter>
-            <intent-filter>
+            <intent-filter android:label="@string/context_menu_transform">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
