@@ -29,6 +29,33 @@ android {
             )
         }
     }
+
+    flavorDimensions += "variant"
+
+    productFlavors {
+        /*
+         * This flavor provides all the supported process_text options inside the
+         * text selection context menu. This provides options directly to the user
+         * at the cost of cluttered context menu.
+         */
+        create("multipleOptions") {
+            dimension = "variant"
+            versionCode = 100000 + (android.defaultConfig.versionCode ?: 0)
+            versionNameSuffix = "-multi"
+        }
+
+        /*
+         * This flavor provides a single option inside the text selection context menu
+         * that reveals all the supported options. This helps to reduce clutter in the
+         * context menu at expense of 1 more step.
+         */
+        create("singleOption") {
+            dimension = "variant"
+            versionCode = 200000 + (android.defaultConfig.versionCode ?: 0)
+            versionNameSuffix = "-single"
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
