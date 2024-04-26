@@ -38,7 +38,7 @@ fun <T> ListDialog(
     list: List<T>,
     supportBack: Boolean = false,
     onItemSelected: (Int) -> Unit,
-    stringResourceSelector: (T) -> Int,
+    stringSelector: @Composable (T) -> String,
     onBackPressed: () -> Unit = {},
     additionalContent: @Composable ColumnScope.() -> Unit = {},
     onDismissRequest: () -> Unit
@@ -98,7 +98,7 @@ fun <T> ListDialog(
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(text = stringResource(id = stringResourceSelector(item)), fontFamily = BrandFontFamily,)
+                        Text(text = stringSelector(item), fontFamily = BrandFontFamily,)
                     }
                 }
 
