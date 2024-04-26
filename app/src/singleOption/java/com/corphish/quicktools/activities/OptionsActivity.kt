@@ -15,9 +15,9 @@ import com.corphish.quicktools.ui.theme.QuickToolsTheme
 class OptionsActivity : NoUIActivity() {
 
     private val _options = listOf(
-        Option(R.string.whatsapp, WUPActivity::class.java),
-        Option(R.string.eval_title_small, EvalActivity::class.java),
-        Option(R.string.transform_long, TransformActivity::class.java),
+        Option(R.string.whatsapp, WUPActivity::class.java, false),
+        Option(R.string.eval_title_small, EvalActivity::class.java, true),
+        Option(R.string.transform_long, TransformActivity::class.java, true),
     )
 
     private val router = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -42,7 +42,7 @@ class OptionsActivity : NoUIActivity() {
                         ListDialog(
                             title = stringResource(id = R.string.app_name),
                             message = stringResource(id = R.string.app_single_op, text.truncate()),
-                            list = _options,
+                            list = _options.filter { !readonly || !it.requiresEditable },
                             stringSelector = { stringResource(id = it.optionResourceId) },
                             onItemSelected = {
                                 val routeIntent = Intent(this, _options[it].handlingClass)
@@ -63,8 +63,24 @@ class OptionsActivity : NoUIActivity() {
         return true
     }
 
+    /**
+     * Denotes an option.
+     */
     data class Option(
+        /**
+         * String resource id of the option.
+         */
         @StringRes val optionResourceId: Int,
+
+        /**
+         * Activity that handles the option function.
+         */
         val handlingClass: Class<out NoUIActivity>,
+
+        /**
+         * Boolean indicating whether this option requires editable
+         * text input.
+         */
+        val requiresEditable: Boolean
     )
 }
