@@ -3,18 +3,21 @@ package com.corphish.quicktools.activities
 import android.content.Intent
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -34,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.corphish.quicktools.R
+import com.corphish.quicktools.extensions.truncate
 import com.corphish.quicktools.ui.common.ListDialog
 import com.corphish.quicktools.ui.theme.BrandFontFamily
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
@@ -94,6 +98,14 @@ class TransformActivity : NoUIActivity() {
                         mutableStateOf(false)
                     }
 
+                    val casePreviewEnabled = remember {
+                        mutableStateOf(false)
+                    }
+
+                    val wrapPreviewEnabled = remember {
+                        mutableStateOf(false)
+                    }
+
                     val optionsArray = arrayOf(wrapOptionDialog, caseOptionDialog)
 
                     when {
@@ -102,7 +114,7 @@ class TransformActivity : NoUIActivity() {
                                 title = stringResource(id = R.string.transform),
                                 message = stringResource(id = R.string.transform_message),
                                 list = transformOptions,
-                                stringResourceSelector = { it },
+                                stringSelector = { stringResource(id = it) },
                                 onItemSelected = {
                                     optionsArray[it].value = true
                                     mainOptionDialog.value = false
@@ -116,13 +128,40 @@ class TransformActivity : NoUIActivity() {
                             ListDialog(
                                 title = stringResource(id = R.string.wrap_text),
                                 message = stringResource(id = R.string.wrap_message),
-                                list = wrapOptions,
+                                list = if (wrapPreviewEnabled.value) previewWrap(text.truncate()) else wrapOptions,
                                 supportBack = true,
                                 onBackPressed = {
                                     wrapOptionDialog.value = false
                                     mainOptionDialog.value = true
                                 },
-                                stringResourceSelector = { it },
+                                stringSelector = {
+                                    if (wrapPreviewEnabled.value) {
+                                        it as String
+                                    } else {
+                                        stringResource(id = it as Int)
+                                    }
+                                },
+                                additionalContent = {
+                                    Row(
+                                        modifier = Modifier
+                                            .padding(top = 8.dp)
+                                            .fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+
+                                        Checkbox(
+                                            checked = wrapPreviewEnabled.value,
+                                            onCheckedChange = { wrapPreviewEnabled.value = it },
+                                            enabled = true,
+                                        )
+
+                                        Text(
+                                            text = stringResource(id = R.string.enable_preview),
+                                            style = TypographyV2.bodyMedium
+                                        )
+                                    }
+                                },
                                 onItemSelected = {
                                     var res = ""
                                     when (it) {
@@ -151,13 +190,40 @@ class TransformActivity : NoUIActivity() {
                             ListDialog(
                                 title = stringResource(id = R.string.change_case),
                                 message = stringResource(id = R.string.change_case_message),
-                                list = caseOptions,
+                                list = if (casePreviewEnabled.value) previewCase(text.truncate()) else caseOptions,
                                 supportBack = true,
                                 onBackPressed = {
                                     caseOptionDialog.value = false
                                     mainOptionDialog.value = true
                                 },
-                                stringResourceSelector = { it },
+                                stringSelector = {
+                                    if (casePreviewEnabled.value) {
+                                        it as String
+                                    } else {
+                                        stringResource(id = it as Int)
+                                    }
+                                },
+                                additionalContent = {
+                                    Row(
+                                        modifier = Modifier
+                                            .padding(top = 8.dp)
+                                            .fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+
+                                        Checkbox(
+                                            checked = casePreviewEnabled.value,
+                                            onCheckedChange = { casePreviewEnabled.value = it },
+                                            enabled = true,
+                                        )
+
+                                        Text(
+                                            text = stringResource(id = R.string.enable_preview),
+                                            style = TypographyV2.bodyMedium
+                                        )
+                                    }
+                                },
                                 onItemSelected = {
                                     var res = ""
                                     when (it) {
@@ -179,8 +245,12 @@ class TransformActivity : NoUIActivity() {
 
                         customWrapDialog.value -> {
                             CustomWrapperTextDialog(
+                                previewText = { customWrap(text.truncate(), it) },
                                 onTextConfirmed = {
-                                    resultIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, customWrap(text, it))
+                                    resultIntent.putExtra(
+                                        Intent.EXTRA_PROCESS_TEXT,
+                                        customWrap(text, it)
+                                    )
                                     setResult(RESULT_OK, resultIntent)
                                     finish()
                                 },
@@ -203,6 +273,24 @@ class TransformActivity : NoUIActivity() {
         return false
     }
 
+    @Composable
+    private fun previewWrap(text: String) = listOf(
+        "'$text'",
+        "\"$text\"",
+        "($text)",
+        "{$text}",
+        "[$text]",
+        stringResource(id = R.string.custom_wrapper_text)
+    )
+
+    private fun previewCase(text: String) = listOf(
+        text.uppercase(Locale.getDefault()),
+        text.lowercase(Locale.getDefault()),
+        titleCase(text, true),
+        titleCase(text, false),
+        randomCase(text),
+    )
+
     private fun titleCase(str: String, firstWordOnly: Boolean): String {
         val parts = str.split(" ")
         val builder = StringBuilder()
@@ -224,8 +312,8 @@ class TransformActivity : NoUIActivity() {
     }
 
     private fun customWrap(str: String, wrap: String): String {
-        val first = wrap.substring(0, wrap.length/2)
-        val second = wrap.substring(wrap.length/2)
+        val first = wrap.substring(0, wrap.length / 2)
+        val second = wrap.substring(wrap.length / 2)
 
         return "${first}${str}${second}"
     }
@@ -244,12 +332,12 @@ class TransformActivity : NoUIActivity() {
 }
 
 
-
 /**
  * Dialog that lets the user select the custom wrapper text.
  */
 @Composable
 fun CustomWrapperTextDialog(
+    previewText: (String) -> String,
     onTextConfirmed: (String) -> Unit,
     onBackPressed: () -> Unit = {},
     onDismissRequest: () -> Unit
@@ -322,6 +410,11 @@ fun CustomWrapperTextDialog(
                                 text = stringResource(id = R.string.custom_wrapper_error),
                                 color = MaterialTheme.colorScheme.error
                             )
+                        } else {
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                text = stringResource(id = R.string.wrap_result, previewText(text)),
+                            )
                         }
                     },
                     singleLine = true,
@@ -334,20 +427,13 @@ fun CustomWrapperTextDialog(
                         modifier = Modifier.align(Alignment.CenterEnd),
                         enabled = !isError
                     ) {
-                        Text(text = stringResource(id = android.R.string.ok), fontFamily = BrandFontFamily,)
+                        Text(
+                            text = stringResource(id = android.R.string.ok),
+                            fontFamily = BrandFontFamily,
+                        )
                     }
                 }
             }
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ListPreview() {
-    QuickToolsTheme {
-        CustomWrapperTextDialog(onTextConfirmed = {}) {
-
         }
     }
 }
