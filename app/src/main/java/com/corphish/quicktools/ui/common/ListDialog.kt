@@ -2,6 +2,7 @@ package com.corphish.quicktools.ui.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -39,6 +40,7 @@ fun <T> ListDialog(
     onItemSelected: (Int) -> Unit,
     stringResourceSelector: (T) -> Int,
     onBackPressed: () -> Unit = {},
+    additionalContent: @Composable ColumnScope.() -> Unit = {},
     onDismissRequest: () -> Unit
 ) {
     Dialog(onDismissRequest = { onDismissRequest() }) {
@@ -99,6 +101,8 @@ fun <T> ListDialog(
                         Text(text = stringResource(id = stringResourceSelector(item)), fontFamily = BrandFontFamily,)
                     }
                 }
+
+                additionalContent()
             }
         }
     }
