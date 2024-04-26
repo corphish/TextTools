@@ -28,6 +28,7 @@
         <activity
             android:name=".activities.EvalActivity"
             android:exported="true"
+            android:excludeFromRecents="true"
             android:label="@string/context_menu_eval"
             android:theme="@android:style/Theme.NoDisplay">
             <intent-filter android:label="@string/context_menu_eval">
@@ -49,6 +50,7 @@
         <activity
             android:name=".activities.WUPActivity"
             android:exported="true"
+            android:excludeFromRecents="true"
             android:label="@string/context_menu_whatsapp"
             android:theme="@android:style/Theme.NoDisplay">
             <intent-filter android:label="@string/context_menu_whatsapp">
@@ -71,6 +73,7 @@
         <activity
             android:name=".activities.TransformActivity"
             android:exported="true"
+            android:excludeFromRecents="true"
             android:label="@string/context_menu_transform"
             android:theme="@style/Theme.AppCompat.Translucent">
             <intent-filter android:label="@string/context_menu_transform">
