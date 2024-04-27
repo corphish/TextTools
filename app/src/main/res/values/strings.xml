@@ -72,4 +72,5 @@
     <string name="wrap_result">Result - %1$s</string>
 
     <string name="editable_error">This option works only on editable text input</string>
+    <string name="previewed_text_truncated">Previewed result is truncated. Transformation will be applied to the entire selection.</string>
 </resources>
