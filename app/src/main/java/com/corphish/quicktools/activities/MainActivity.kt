@@ -42,8 +42,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.corphish.quicktools.BuildConfig
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.R
+import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.features.Feature
 import com.corphish.quicktools.ui.theme.BrandFontFamily
 import com.corphish.quicktools.ui.theme.Typography
@@ -194,18 +196,22 @@ fun FeatureItem(feature: Feature) {
                 fontWeight = FontWeight.W600
             )
             Text(text = stringResource(id = feature.featureDesc), style = Typography.bodyMedium)
-            Row(
-                modifier = Modifier.padding(top = 4.dp)
-            ) {
-                Text(
-                    text = stringResource(id = R.string.context_menu_option),
-                    style = Typography.labelMedium,
-                )
-                Text(
-                    text = stringResource(id = feature.contextMenuText),
-                    style = Typography.bodyMedium,
-                    modifier = Modifier.padding(start = 8.dp)
-                )
+
+            // Don't show context menu option in single option flavor
+            if (BuildConfig.FLAVOR == Constants.FLAVOR_MULTIPLE_OPTIONS) {
+                Row(
+                    modifier = Modifier.padding(top = 4.dp)
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.context_menu_option),
+                        style = Typography.labelMedium,
+                    )
+                    Text(
+                        text = stringResource(id = feature.contextMenuText),
+                        style = Typography.bodyMedium,
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
             }
         }
     }

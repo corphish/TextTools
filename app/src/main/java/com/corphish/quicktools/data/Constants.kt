@@ -9,4 +9,8 @@ object Constants {
 
     // Remove these special characters from the phone number
     val PHONE_NUMBER_SPECIAL_CHARACTERS = listOf(" ", "-", "(", ")")
+
+    // Flavors
+    const val FLAVOR_MULTIPLE_OPTIONS = "multipleOptions"
+    const val FLAVOR_SINGLE_OPTION = "singleOption"
 }
