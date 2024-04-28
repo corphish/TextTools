@@ -1,4 +1,9 @@
 # Text Tools
+
+![GitHub Release](https://img.shields.io/github/v/release/corphish/TextTools)
+[![Crowdin](https://badges.crowdin.net/text-tools/localized.svg)](https://crowdin.com/project/text-tools)
+[![Github All Releases](https://img.shields.io/github/downloads/corphish/TextTools/total.svg)]()
+
 Collection of useful text related tools that can be accessed from the context menu that appears on text selection. The feature list will keep on growing. Let me know if you have any ideas.
 
 [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
@@ -22,10 +27,13 @@ height="80">](https://f-droid.org/packages/com.corphish.quicktools)
 ![Transform Example 2](assets/transform_2.gif)
 
 ### Installation warning
-While installing the app (you have to sideload), Google Play may block the installation saying it has never seen the app before. While it is true (from Google Play POV), kindly proceed with installing the app. If you have doubts about the app being malicious, you are free to verify the same from the source code (it would not be open-source if the app was malicious in the first place, right?).
+While installing the app (you have to sideload), Google Play may block the installation saying it has never seen the app before. While it is true (from Google Play POV), you can proceed with installing the app. If you have doubts about the app being malicious, you are free to verify the same from the source code (it would not be open-source if the app was malicious in the first place, right?).
 
 ### Issues
-Issues may be observed as in the contextual menu options may not be available inside certain apps, or the functionalities may not work as expeceted. In such cases, kindly raise issue in this Github repo.
+Issues may be observed as in the contextual menu options may not be available inside certain apps, or the functionalities may not work as expected. In such cases, kindly raise issue in this Github repo.
 
-### Releases
-Check releases section, download the apk and install (sideload) it in your device. If you are presented with Google Play Protect warning, please ignore it and continue with the installation. __The reason you may get the Google Play Protect warning is because Google Play might not have seen this app as it is not available in the Google Play Store.__ 
+### Translations
+If you would like to contribute to this project by translating the various text shown in the app, you may do so by heading over to the [Crowdin Project](https://crowdin.com/project/text-tools).
+
+### Support
+If you like my work and would like to support me, you can help to [buy me un gelato](https://www.paypal.com/paypalme/corphish).
