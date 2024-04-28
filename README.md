@@ -29,7 +29,6 @@ height="80">](https://f-droid.org/packages/com.corphish.quicktools)
 ### Variants
 Since one of the functions of the app is to provide additional options in the text selection context menu, some users may want all of the options to be available at once for easy access while others may prefer a clean context menu. For this, we have 2 variants of the app. Functionalities remain same across all the variants.
 - __Multiple Options__ (default) - This variant shows all of the supported options at once in the text selection context menu.
-  - SKS
 
 ![Multiple Options](assets/multi.png)
 
