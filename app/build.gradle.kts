@@ -3,6 +3,9 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
+val variantMultipleOptions = "multipleOptions"
+val variantSingleOption = "singleOption"
+
 android {
     namespace = "com.corphish.quicktools"
     compileSdk = 34
@@ -38,7 +41,7 @@ android {
          * text selection context menu. This provides options directly to the user
          * at the cost of cluttered context menu.
          */
-        create("multipleOptions") {
+        create(variantMultipleOptions) {
             dimension = "variant"
             versionCode = 100000 + (android.defaultConfig.versionCode ?: 0)
             versionNameSuffix = "-multi"
@@ -49,10 +52,22 @@ android {
          * that reveals all the supported options. This helps to reduce clutter in the
          * context menu at expense of 1 more step.
          */
-        create("singleOption") {
+        create(variantSingleOption) {
             dimension = "variant"
             versionCode = 200000 + (android.defaultConfig.versionCode ?: 0)
             versionNameSuffix = "-single"
+        }
+    }
+
+    androidComponents {
+        onVariants { variant ->
+            val apkName = if (variant.name.startsWith(variantMultipleOptions)) "app-release.apk" else "app-release-single.apk"
+
+            variant.outputs.forEach { output ->
+                if (output is com.android.build.api.variant.impl.VariantOutputImpl) {
+                    output.outputFileName = apkName
+                }
+            }
         }
     }
 
