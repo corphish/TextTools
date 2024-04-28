@@ -26,6 +26,22 @@ height="80">](https://f-droid.org/packages/com.corphish.quicktools)
 ![Transform Example 1](assets/transform_1.gif)
 ![Transform Example 2](assets/transform_2.gif)
 
+### Variants
+Since one of the functions of the app is to provide additional options in the text selection context menu, some users may want all of the options to be available at once for easy access while others may prefer a clean context menu. For this, we have 2 variants of the app. Functionalities remain same across all the variants.
+- __Multiple Options__ (default) - This variant shows all of the supported options at once in the text selection context menu.
+  - SKS
+
+![Multiple Options](assets/multi.png)
+
+Helpful if fast access to the options is required. In order to download this, download the _app-release.apk_ from [releases page](https://github.com/corphish/TextTools/releases/latest).
+
+- __Single Option__ - This variant shows a single option in the text selection context menu which reveals all the supported functions when clicked.
+
+![Single Option](assets/single.png)
+![Single Option](assets/single_options.png)
+
+Helpful if the text selection context menu needs to be clean and clutter free. In order to download this, download the _app-release-single.apk_ from [releases page](https://github.com/corphish/TextTools/releases/latest).
+
 ### Installation warning
 While installing the app (you have to sideload), Google Play may block the installation saying it has never seen the app before. While it is true (from Google Play POV), you can proceed with installing the app. If you have doubts about the app being malicious, you are free to verify the same from the source code (it would not be open-source if the app was malicious in the first place, right?).
 
