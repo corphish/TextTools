@@ -73,4 +73,6 @@
 
     <string name="editable_error">This option works only on editable text input</string>
     <string name="previewed_text_truncated">Previewed result is truncated. Transformation will be applied to the entire selection.</string>
+    <string name="donate">Donate</string>
+    <string name="donate_msg">Do you like this app? If so, you can make a small donation. This helps to keep me motivated and work on this project to make it even better.</string>
 </resources>

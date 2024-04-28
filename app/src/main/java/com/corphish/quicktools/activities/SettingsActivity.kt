@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -153,6 +154,32 @@ fun Settings(settingsHelper: SettingsHelper) {
             Icon(painterResource(id = R.drawable.ic_open_in_new), contentDescription = "")
             Text(
                 text = stringResource(id = R.string.releases),
+                modifier = Modifier.padding(start = 16.dp),
+                style = TypographyV2.labelMedium,
+                fontWeight = FontWeight.W600
+            )
+        }
+
+        Text(
+            text = stringResource(id = R.string.donate),
+            style = TypographyV2.labelSmall,
+            modifier = Modifier.padding(top = 24.dp, bottom = 8.dp),
+            fontFamily = BrandFontFamily,
+            color = MaterialTheme.colorScheme.primary
+        )
+
+        Text(
+            text = stringResource(id = R.string.donate_msg),
+            style = Typography.bodyMedium
+        )
+
+        Button(
+            onClick = { uriHandler.openUri("https://www.paypal.com/paypalme/corphish") },
+            modifier = Modifier.padding(top = 8.dp)
+        ) {
+            Icon(Icons.Default.ThumbUp, contentDescription = "")
+            Text(
+                text = stringResource(id = R.string.donate),
                 modifier = Modifier.padding(start = 16.dp),
                 style = TypographyV2.labelMedium,
                 fontWeight = FontWeight.W600
