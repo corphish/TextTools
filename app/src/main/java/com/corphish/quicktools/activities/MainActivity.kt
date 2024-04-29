@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -84,12 +85,22 @@ fun Greeting() {
         }
     }) {
         Column(
-            modifier = Modifier.padding(
-                top = it.calculateTopPadding().plus(16.dp),
-                bottom = it.calculateBottomPadding().plus(16.dp),
-                start = it.calculateStartPadding(LayoutDirection.Ltr).plus(16.dp),
-                end = it.calculateEndPadding(LayoutDirection.Ltr).plus(16.dp)
-            ).verticalScroll(mainScrollState)
+            modifier = Modifier
+                .padding(
+                    top = it
+                        .calculateTopPadding()
+                        .plus(16.dp),
+                    bottom = it
+                        .calculateBottomPadding()
+                        .plus(16.dp),
+                    start = it
+                        .calculateStartPadding(LayoutDirection.Ltr)
+                        .plus(16.dp),
+                    end = it
+                        .calculateEndPadding(LayoutDirection.Ltr)
+                        .plus(16.dp)
+                )
+                .verticalScroll(mainScrollState)
         ) {
             Text(
                 text = stringResource(id = R.string.app_name),
@@ -158,6 +169,9 @@ fun Greeting() {
                     )
                 }
             }
+
+            // Placeholder so that FAB does not overlap the contents
+            Box(modifier = Modifier.height(64.dp))
         }
     }
 }
