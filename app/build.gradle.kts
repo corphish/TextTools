@@ -43,8 +43,6 @@ android {
          */
         create(variantMultipleOptions) {
             dimension = "variant"
-            versionCode = 100000 + (android.defaultConfig.versionCode ?: 0)
-            versionNameSuffix = "-multi"
         }
 
         /*
@@ -54,8 +52,7 @@ android {
          */
         create(variantSingleOption) {
             dimension = "variant"
-            versionCode = 200000 + (android.defaultConfig.versionCode ?: 0)
-            versionNameSuffix = "-single"
+            applicationIdSuffix = ".single"
         }
     }
 
