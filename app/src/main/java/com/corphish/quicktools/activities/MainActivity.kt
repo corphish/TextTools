@@ -86,7 +86,7 @@ fun Greeting() {
         Column(
             modifier = Modifier.padding(
                 top = it.calculateTopPadding().plus(16.dp),
-                bottom = it.calculateBottomPadding().plus(80.dp), // Extra bottom padding to accommodate the FAB
+                bottom = it.calculateBottomPadding().plus(16.dp),
                 start = it.calculateStartPadding(LayoutDirection.Ltr).plus(16.dp),
                 end = it.calculateEndPadding(LayoutDirection.Ltr).plus(16.dp)
             ).verticalScroll(mainScrollState)
