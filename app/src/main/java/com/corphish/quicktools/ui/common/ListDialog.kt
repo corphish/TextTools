@@ -1,6 +1,10 @@
 package com.corphish.quicktools.ui.common
 
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -21,6 +25,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -38,6 +46,7 @@ fun <T> ListDialog(
     supportBack: Boolean = false,
     onItemSelected: (Int) -> Unit,
     stringSelector: @Composable (T) -> String,
+    iconSelector: @Composable (T) -> Int,
     onBackPressed: () -> Unit = {},
     additionalContent: @Composable ColumnScope.() -> Unit = {},
     onDismissRequest: () -> Unit
@@ -91,18 +100,50 @@ fun <T> ListDialog(
                 )
 
                 for ((index, item) in list.withIndex()) {
-                    Button(
-                        onClick = {
-                            onItemSelected(index)
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(text = stringSelector(item), fontFamily = BrandFontFamily)
+                    ListDialogItem(text = stringSelector(item), icon = iconSelector(item)) {
+                        onItemSelected(index)
                     }
                 }
 
                 additionalContent()
             }
+        }
+    }
+}
+
+@Composable
+fun ListDialogItem(text: String, @DrawableRes icon: Int, onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+    ) {
+        Row(
+            modifier = Modifier.padding(all = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painterResource(id = icon),
+                    contentDescription = "",
+                    modifier = Modifier.size(24.dp),
+                    colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onPrimary)
+                )
+            }
+
+            Text(
+                text = text,
+                style = TypographyV2.labelMedium,
+                fontFamily = BrandFontFamily,
+                fontWeight = FontWeight.W400,
+                modifier = Modifier.padding(start = 16.dp)
+            )
         }
     }
 }

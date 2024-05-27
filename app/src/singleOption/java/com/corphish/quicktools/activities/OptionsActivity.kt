@@ -3,6 +3,7 @@ package com.corphish.quicktools.activities
 import android.content.Intent
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -15,10 +16,10 @@ import com.corphish.quicktools.ui.theme.QuickToolsTheme
 class OptionsActivity : NoUIActivity() {
 
     private val _options = listOf(
-        Option(R.string.whatsapp, WUPActivity::class.java, false),
-        Option(R.string.eval_title_small, EvalActivity::class.java, true),
-        Option(R.string.transform_long, TransformActivity::class.java, true),
-        Option(R.string.save_text_title, SaveTextActivity::class.java, false),
+        Option(R.string.whatsapp, R.drawable.ic_whatsapp, WUPActivity::class.java, false),
+        Option(R.string.eval_title_small, R.drawable.ic_numbers, EvalActivity::class.java, true),
+        Option(R.string.transform_long, R.drawable.ic_text_transform, TransformActivity::class.java, true),
+        Option(R.string.save_text_title, R.drawable.ic_save, SaveTextActivity::class.java, false),
     )
 
     private val router = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -45,6 +46,7 @@ class OptionsActivity : NoUIActivity() {
                             message = stringResource(id = R.string.app_single_op, text.truncate()),
                             list = _options.filter { !readonly || !it.requiresEditable },
                             stringSelector = { stringResource(id = it.optionResourceId) },
+                            iconSelector = { it.icon },
                             onItemSelected = {
                                 val routeIntent = Intent(this, _options[it].handlingClass)
                                 routeIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, text)
@@ -72,6 +74,11 @@ class OptionsActivity : NoUIActivity() {
          * String resource id of the option.
          */
         @StringRes val optionResourceId: Int,
+
+        /**
+         * Icon of this option
+         */
+        @DrawableRes val icon: Int,
 
         /**
          * Activity that handles the option function.

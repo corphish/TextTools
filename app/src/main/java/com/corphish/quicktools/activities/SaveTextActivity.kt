@@ -50,7 +50,8 @@ class SaveTextActivity : NoUIActivity() {
                             }
                         }
                     },
-                    stringSelector = { stringResource(id = it) }
+                    stringSelector = { stringResource(id = it) },
+                    iconSelector = { R.drawable.ic_save }
                 ) {
                     finish()
                 }

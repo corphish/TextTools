@@ -116,6 +116,7 @@ class TransformActivity : NoUIActivity() {
                                 message = stringResource(id = R.string.transform_message),
                                 list = transformOptions,
                                 stringSelector = { stringResource(id = it) },
+                                iconSelector = { R.drawable.ic_text_transform },
                                 onItemSelected = {
                                     optionsArray[it].value = true
                                     mainOptionDialog.value = false
@@ -171,6 +172,7 @@ class TransformActivity : NoUIActivity() {
                                         )
                                     }
                                 },
+                                iconSelector = { R.drawable.ic_text_transform },
                                 onItemSelected = {
                                     var res = ""
                                     when (it) {
@@ -241,6 +243,7 @@ class TransformActivity : NoUIActivity() {
                                         )
                                     }
                                 },
+                                iconSelector = { R.drawable.ic_text_transform },
                                 onItemSelected = {
                                     var res = ""
                                     when (it) {
