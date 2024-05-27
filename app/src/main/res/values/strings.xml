@@ -75,4 +75,12 @@
     <string name="previewed_text_truncated">Previewed result is truncated. Transformation will be applied to the entire selection.</string>
     <string name="donate">Donate</string>
     <string name="donate_msg">Do you like this app? If so, you can make a small donation. This helps to keep me motivated and work on this project to make it even better.</string>
+    <string name="context_menu_save">[T\u00B2] Save</string>
+    <string name="save_text_title">Save text</string>
+    <string name="save_text_message">Save the selected text so that you can access it later</string>
+    <string name="save_text_desc">Lets you save the selected text (to some file) so that you can access it later.</string>
+    <string name="save_option_txt">As .txt file</string>
+    <string name="save_option_note">As a note</string>
+    <string name="no_note_taking_apps">No note taking apps found</string>
+    <string name="note_taking_not_supported">Note taking is not supported</string>
 </resources>

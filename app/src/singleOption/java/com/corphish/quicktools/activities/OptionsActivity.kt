@@ -18,6 +18,7 @@ class OptionsActivity : NoUIActivity() {
         Option(R.string.whatsapp, WUPActivity::class.java, false),
         Option(R.string.eval_title_small, EvalActivity::class.java, true),
         Option(R.string.transform_long, TransformActivity::class.java, true),
+        Option(R.string.save_text_title, SaveTextActivity::class.java, false),
     )
 
     private val router = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {

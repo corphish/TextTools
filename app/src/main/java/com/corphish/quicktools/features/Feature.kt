@@ -37,7 +37,14 @@ data class Feature(
                 featureDesc = R.string.transform_desc,
                 contextMenuText = R.string.context_menu_transform,
                 flow = TryOutActivity.TRY_OUT_FLOW
-            )
+            ),
+            Feature(
+                icon = R.drawable.ic_save,
+                featureTitle = R.string.save_text_title,
+                featureDesc = R.string.save_text_desc,
+                contextMenuText = R.string.context_menu_save,
+                flow = TryOutActivity.TRY_OUT_FLOW
+            ),
         )
     }
 }
