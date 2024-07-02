@@ -45,6 +45,13 @@ data class Feature(
                 contextMenuText = R.string.context_menu_save,
                 flow = TryOutActivity.TRY_OUT_FLOW
             ),
+            Feature(
+                icon = R.drawable.ic_find_and_replace,
+                featureTitle = R.string.title_activity_find_and_replace,
+                featureDesc = R.string.find_and_replace_desc,
+                contextMenuText = R.string.context_menu_find_and_replace,
+                flow = TryOutActivity.TRY_OUT_FLOW
+            )
         )
     }
 }
