@@ -1,5 +1,6 @@
 package com.corphish.quicktools.activities
 
+import android.app.Activity
 import android.content.Intent
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,6 +21,7 @@ class OptionsActivity : NoUIActivity() {
         Option(R.string.eval_title_small, R.drawable.ic_numbers, EvalActivity::class.java, true),
         Option(R.string.transform_long, R.drawable.ic_text_transform, TransformActivity::class.java, true),
         Option(R.string.save_text_title, R.drawable.ic_save, SaveTextActivity::class.java, false),
+        Option(R.string.title_activity_find_and_replace, R.drawable.ic_find_and_replace, FindAndReplaceActivity::class.java, true)
     )
 
     private val router = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -83,7 +85,7 @@ class OptionsActivity : NoUIActivity() {
         /**
          * Activity that handles the option function.
          */
-        val handlingClass: Class<out NoUIActivity>,
+        val handlingClass: Class<out Activity>,
 
         /**
          * Boolean indicating whether this option requires editable
