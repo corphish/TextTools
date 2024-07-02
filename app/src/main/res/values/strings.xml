@@ -83,4 +83,18 @@
     <string name="save_option_note">As a note</string>
     <string name="no_note_taking_apps">No note taking apps found</string>
     <string name="note_taking_not_supported">Note taking is not supported</string>
+
+    <string name="title_activity_find_and_replace">Find &amp; Replace</string>
+    <string name="context_menu_find_and_replace">[T\u00B2] Find &amp; Replace</string>
+    <string name="replace_this">Replace</string>
+    <string name="replace_all">Replace All</string>
+    <string name="find_next">Find Next (%1$d/%2$d)</string>
+    <string name="replace">Replace</string>
+    <string name="find">Find</string>
+    <string name="ignore_case">Ignore case</string>
+    <string name="undo">Undo</string>
+    <string name="save">Save</string>
+    <string name="apply">Apply</string>
+    <string name="reset">Reset</string>
+    <string name="redo">Redo</string>
 </resources>

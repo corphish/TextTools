@@ -94,6 +94,29 @@
         </activity>
 
         <activity
+            android:name=".activities.FindAndReplaceActivity"
+            android:exported="true"
+            android:label="@string/context_menu_find_and_replace"
+            android:theme="@style/Theme.QuickTools" >
+
+            <intent-filter android:label="@string/context_menu_find_and_replace">
+                <action android:name="android.intent.action.PROCESS_TEXT" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter android:label="@string/context_menu_find_and_replace">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="https" />
+            </intent-filter>
+        </activity>
+
+        <activity
             android:name=".activities.SaveTextActivity"
             android:exported="true"
             android:excludeFromRecents="true"
