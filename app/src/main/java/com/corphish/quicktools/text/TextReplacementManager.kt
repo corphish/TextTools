@@ -15,7 +15,7 @@ class TextReplacementManager(private val inputString: String) {
 
     private var mCurrentText = inputString
 
-    private val _debug = true
+    private val _debug = false
 
     init {
         dumpState("Init")
