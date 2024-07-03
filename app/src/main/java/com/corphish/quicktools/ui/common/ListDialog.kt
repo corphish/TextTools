@@ -32,6 +32,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.corphish.quicktools.ui.theme.BrandFontFamily
 import com.corphish.quicktools.ui.theme.TypographyV2
 
@@ -49,9 +50,16 @@ fun <T> ListDialog(
     iconSelector: @Composable (T) -> Int,
     onBackPressed: () -> Unit = {},
     additionalContent: @Composable ColumnScope.() -> Unit = {},
+    dismissible: Boolean = true,
     onDismissRequest: () -> Unit
 ) {
-    Dialog(onDismissRequest = { onDismissRequest() }) {
+    Dialog(
+        onDismissRequest = { onDismissRequest() },
+        properties = DialogProperties(
+            dismissOnBackPress = dismissible,
+            dismissOnClickOutside = dismissible
+        )
+    ) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
