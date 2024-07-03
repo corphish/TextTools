@@ -132,6 +132,7 @@ class TransformActivity : NoUIActivity() {
                                 message = stringResource(id = R.string.wrap_message),
                                 list = if (wrapPreviewEnabled.value) previewWrap(text.truncate()) else wrapOptions,
                                 supportBack = true,
+                                dismissible = false,
                                 onBackPressed = {
                                     wrapOptionDialog.value = false
                                     mainOptionDialog.value = true
@@ -203,6 +204,7 @@ class TransformActivity : NoUIActivity() {
                                 message = stringResource(id = R.string.change_case_message),
                                 list = if (casePreviewEnabled.value) previewCase(text.truncate()) else caseOptions,
                                 supportBack = true,
+                                dismissible = false,
                                 onBackPressed = {
                                     caseOptionDialog.value = false
                                     mainOptionDialog.value = true
