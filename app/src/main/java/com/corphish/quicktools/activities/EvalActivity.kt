@@ -44,7 +44,9 @@ class EvalActivity : NoUIActivity() {
             val text = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT).toString()
             val settingsHelper = SettingsHelper(this)
             val decimalPoints = settingsHelper.getDecimalPoints()
-            when (val mode = settingsHelper.getEvaluateResultMode()) {
+            val mode = settingsHelper.getEvaluateResultMode()
+
+            when (mode) {
                 EVAL_RESULT_MODE_ASK_NEXT_TIME -> {
                     // Show option to user
                     setContent {
@@ -54,7 +56,7 @@ class EvalActivity : NoUIActivity() {
 
                         QuickToolsTheme {
                             ListDialog(
-                                title = stringResource(id = R.string.eval_title),
+                                title = stringResource(id = R.string.eval_title_small),
                                 message = stringResource(id = R.string.eval_result_desc),
                                 list = listOf(
                                     R.string.eval_mode_result,
@@ -130,7 +132,7 @@ class EvalActivity : NoUIActivity() {
         return true
     }
 
-    private fun handleEvaluation(text: String, decimalPoints: Int): String {
+    private fun handleEvaluation(text: String, decimalPoints: Int, onError: () -> String = { text }): String {
         val resultText: String = try {
             val expression = ExpressionBuilder(text).build()
             val result = expression.evaluate()
@@ -148,7 +150,7 @@ class EvalActivity : NoUIActivity() {
                 Toast.LENGTH_LONG
             ).show()
 
-            text
+            onError()
         }
 
         return resultText
@@ -164,10 +166,14 @@ class EvalActivity : NoUIActivity() {
     }
 
     private fun handleEvaluationCopy(text: String, decimalPoints: Int) {
-        val result = handleEvaluation(text, decimalPoints)
+        val result = handleEvaluation(text, decimalPoints, onError = { "err" })
         val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText("evaluation_result", result)
         clipboard.setPrimaryClip(clip)
+
+        if ("err" != result) {
+            Toast.makeText(this, R.string.copied_to_clipboard, Toast.LENGTH_LONG).show()
+        }
     }
 
     companion object {

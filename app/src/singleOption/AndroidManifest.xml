@@ -49,7 +49,7 @@
             android:excludeFromRecents="true"
             android:exported="false"
             android:label="@string/context_menu_eval"
-            android:theme="@android:style/Theme.NoDisplay" />
+            android:theme="@style/Theme.AppCompat.Translucent" />
         <activity
             android:name=".activities.WUPActivity"
             android:excludeFromRecents="true"
