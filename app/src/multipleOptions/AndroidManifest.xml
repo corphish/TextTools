@@ -30,7 +30,7 @@
             android:exported="true"
             android:excludeFromRecents="true"
             android:label="@string/context_menu_eval"
-            android:theme="@android:style/Theme.NoDisplay">
+            android:theme="@style/Theme.AppCompat.Translucent">
             <intent-filter android:label="@string/context_menu_eval">
                 <action android:name="android.intent.action.PROCESS_TEXT" />
 
