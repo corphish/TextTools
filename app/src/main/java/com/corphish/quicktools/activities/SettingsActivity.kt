@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +20,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -255,11 +261,21 @@ fun TextSettings(settingsHelper: SettingsHelper) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EvaluateSettings(settingsHelper: SettingsHelper) {
     var decimalPoints by remember {
         mutableFloatStateOf(settingsHelper.getDecimalPoints().toFloat())
     }
+
+    val options = listOf(
+        stringResource(id = R.string.eval_mode_ask_next_time),
+        stringResource(id = R.string.eval_mode_result),
+        stringResource(id = R.string.eval_mode_append),
+        stringResource(id = R.string.eval_mode_copy)
+    )
+    var expanded by remember { mutableStateOf(false) }
+    var selectedOptionText by remember { mutableStateOf(options[settingsHelper.getEvaluateResultMode()]) }
 
     Column {
         Text(
@@ -288,6 +304,60 @@ fun EvaluateSettings(settingsHelper: SettingsHelper) {
             valueRange = 1f..5f,
             steps = 3
         )
+        
+        Box(modifier = Modifier.padding(vertical = 8.dp))
+
+        Text(
+            text = stringResource(id = R.string.eval_result_handling),
+            style = TypographyV2.labelMedium,
+            fontWeight = FontWeight.W600,
+        )
+        Text(
+            text = stringResource(id = R.string.eval_result_desc),
+            style = TypographyV2.bodySmall
+        )
+        Box(modifier = Modifier.padding(vertical = 4.dp))
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = {
+                expanded = !expanded
+            }
+        ) {
+            TextField(
+                readOnly = true,
+                value = selectedOptionText,
+                onValueChange = { },
+                label = { Text(stringResource(id = R.string.eval_result_handling)) },
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(
+                        expanded = expanded
+                    )
+                },
+                colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                modifier = Modifier.menuAnchor().fillMaxWidth()
+            )
+
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = {
+                    expanded = false
+                },
+                modifier = Modifier.exposedDropdownSize()
+            ) {
+                options.forEachIndexed { index, selectionOption ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(text = selectionOption)
+                        },
+                        onClick = {
+                            settingsHelper.setEvaluateResultMode(index)
+                            selectedOptionText = selectionOption
+                            expanded = false
+                        }
+                    )
+                }
+            }
+        }
     }
 }
 
