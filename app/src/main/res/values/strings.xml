@@ -98,4 +98,9 @@
     <string name="reset">Reset</string>
     <string name="redo">Redo</string>
     <string name="find_and_replace_desc">Quickly find certain text and replace them with text of your choice within the selected text.</string>
+    <string name="eval_result_desc">Select what you would like to do with the result</string>
+    <string name="eval_mode_result">Replace selected text with result</string>
+    <string name="eval_mode_append">Append result to the selected text</string>
+    <string name="eval_mode_copy">Copy result to the clipboard</string>
+    <string name="remember_this_choice">Remember this choice</string>
 </resources>
