@@ -106,4 +106,11 @@
     <string name="eval_mode_ask_next_time">Not sure, ask me next time</string>
     <string name="eval_result_handling">Result handling</string>
     <string name="copied_to_clipboard">Copied to clipboard</string>
+    <string name="sort_lines">Sort lines</string>
+    <string name="count_text">Count text</string>
+    <string name="repeat_text">Repeat text</string>
+    <string name="remove_text">Remove text</string>
+    <string name="add_prefix_suffix">Add prefix/suffix</string>
+    <string name="number_lines">Number lines</string>
+    <string name="reverse_text">Reverse text</string>
 </resources>

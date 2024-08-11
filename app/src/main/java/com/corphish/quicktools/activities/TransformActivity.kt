@@ -50,6 +50,13 @@ class TransformActivity : NoUIActivity() {
     private val transformOptions = listOf(
         R.string.wrap_text,
         R.string.change_case,
+        R.string.sort_lines,
+        R.string.count_text,
+        R.string.repeat_text,
+        R.string.remove_text,
+        R.string.add_prefix_suffix,
+        R.string.number_lines,
+        R.string.reverse_text,
     )
 
     private val wrapOptions = listOf(
@@ -118,8 +125,33 @@ class TransformActivity : NoUIActivity() {
                                 stringSelector = { stringResource(id = it) },
                                 iconSelector = { R.drawable.ic_text_transform },
                                 onItemSelected = {
-                                    optionsArray[it].value = true
-                                    mainOptionDialog.value = false
+                                    when (it) {
+                                        0, 1 -> {
+                                            optionsArray[it].value = true
+                                            mainOptionDialog.value = false
+                                        }
+                                        2 -> {
+                                            // Sort
+                                        }
+                                        3 -> {
+                                            // Count text
+                                        }
+                                        4 -> {
+                                            // Repeat
+                                        }
+                                        5 -> {
+                                            // Remove
+                                        }
+                                        6 -> {
+                                            // Add prefix/suffix
+                                        }
+                                        7 -> {
+                                            // Number lines
+                                        }
+                                        8 -> {
+                                            // Reverse text
+                                        }
+                                    }
                                 }) {
                                 mainOptionDialog.value = false
                                 finish()
