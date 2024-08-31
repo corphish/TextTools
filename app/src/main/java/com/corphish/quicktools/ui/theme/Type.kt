@@ -53,17 +53,17 @@ val Typography = Typography(
 val TypographyV2 = Typography(
     headlineLarge = TextStyle(
         fontFamily = BrandFontFamily,
-        fontWeight = FontWeight.W200,
+        fontWeight = FontWeight.W500,
         fontSize = 48.sp
     ),
     headlineMedium = TextStyle(
         fontFamily = BrandFontFamily,
-        fontWeight = FontWeight.W600,
+        fontWeight = FontWeight.W500,
         fontSize = 32.sp
     ),
     headlineSmall = TextStyle(
         fontFamily = BrandFontFamily,
-        fontWeight = FontWeight.W600,
+        fontWeight = FontWeight.W500,
         fontSize = 28.sp
     ),
     labelLarge = TextStyle(

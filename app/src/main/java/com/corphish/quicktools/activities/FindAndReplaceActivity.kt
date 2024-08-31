@@ -204,7 +204,6 @@ fun FindAndReplace(
                 style = TypographyV2.headlineMedium,
                 color = MaterialTheme.colorScheme.primary,
                 fontFamily = BrandFontFamily,
-                fontWeight = FontWeight.W200,
                 modifier = Modifier.padding(start = 16.dp),
                 maxLines = 1
             )
