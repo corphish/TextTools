@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -65,6 +66,7 @@ fun <T> ListDialog(
                 .fillMaxWidth()
                 .padding(16.dp),
             shape = RoundedCornerShape(16.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
         ) {
             Column(
                 modifier = Modifier
@@ -72,7 +74,7 @@ fun <T> ListDialog(
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(bottom = 16.dp)
+                    modifier = Modifier.padding(bottom = 4.dp)
                 ) {
                     if (supportBack) {
                         IconButton(
@@ -95,7 +97,6 @@ fun <T> ListDialog(
                         text = title,
                         style = TypographyV2.headlineMedium,
                         fontFamily = BrandFontFamily,
-                        fontWeight = FontWeight.W200,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(start = if (supportBack) 16.dp else 0.dp)
                     )
