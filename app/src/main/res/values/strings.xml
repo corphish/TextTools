@@ -113,4 +113,12 @@
     <string name="add_prefix_suffix">Add prefix/suffix</string>
     <string name="number_lines">Number lines</string>
     <string name="reverse_text">Reverse text</string>
+    <string name="preview">Preview</string>
+    <string name="input">Input text</string>
+    <string name="none">None</string>
+    <string name="remove_first">Remove first</string>
+    <string name="remove_last">Remove last</string>
+    <string name="remove_all">Remove all</string>
+    <string name="prefix">Prefix</string>
+    <string name="suffix">Suffix</string>
 </resources>

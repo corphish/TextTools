@@ -75,7 +75,7 @@
             android:exported="true"
             android:excludeFromRecents="true"
             android:label="@string/context_menu_transform"
-            android:theme="@style/Theme.AppCompat.Translucent">
+            android:theme="@style/Theme.QuickTools">
             <intent-filter android:label="@string/context_menu_transform">
                 <action android:name="android.intent.action.PROCESS_TEXT" />
 
