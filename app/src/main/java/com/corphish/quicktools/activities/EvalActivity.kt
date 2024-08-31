@@ -64,7 +64,7 @@ class EvalActivity : NoUIActivity() {
                                     R.string.eval_mode_copy
                                 ),
                                 supportBack = false,
-                                dismissible = false,
+                                dismissible = true,
                                 stringSelector = {
                                     stringResource(id = it)
                                 },
