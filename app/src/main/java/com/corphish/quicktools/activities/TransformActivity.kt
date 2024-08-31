@@ -5,14 +5,19 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -22,6 +27,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -35,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -111,6 +118,7 @@ class TransformActivity : ComponentActivity() {
                     TextTransformUI(
                         textToTransform = text,
                         textTransformer = TextTransformer(),
+                        onCancel = { finish() },
                         onApply = {
                             resultIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, it)
                             setResult(RESULT_OK, resultIntent)
@@ -159,7 +167,7 @@ fun CustomWrapperTextDialog(
                     text = stringResource(id = R.string.wrap_text),
                     style = TypographyV2.headlineMedium,
                     fontFamily = BrandFontFamily,
-                    fontWeight = FontWeight.W200,
+                    fontWeight = FontWeight.W500,
                     color = MaterialTheme.colorScheme.primary
                 )
 
@@ -214,6 +222,7 @@ fun CustomWrapperTextDialog(
 fun TextTransformUI(
     textToTransform: String,
     textTransformer: TextTransformer,
+    onCancel: () -> Unit = {},
     onApply: (String) -> Unit = {}
 ) {
     var inputText by remember { mutableStateOf(textToTransform) }
@@ -248,10 +257,42 @@ fun TextTransformUI(
             )
     ) {
         val (
+            header,
             inputTextField,
             previewTextField,
             functionSheet
         ) = createRefs()
+
+        // Header
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.constrainAs(header) {
+                start.linkTo(parent.start, margin = 16.dp)
+                top.linkTo(parent.top, margin = 16.dp)
+            }
+        ) {
+            IconButton(
+                onClick = { onCancel() },
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary)
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowLeft,
+                    contentDescription = "",
+                    modifier = Modifier.size(32.dp),
+                    tint = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+
+            Text(
+                text = stringResource(id = R.string.transform_long),
+                style = TypographyV2.headlineMedium,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(start = 16.dp),
+                maxLines = 1
+            )
+        }
 
         OutlinedTextField(
             value = inputText,
@@ -266,7 +307,7 @@ fun TextTransformUI(
                 )
             },
             modifier = Modifier.constrainAs(inputTextField) {
-                top.linkTo(parent.top, margin = 16.dp)
+                top.linkTo(header.bottom, margin = 16.dp)
                 bottom.linkTo(previewTextField.top, margin = 8.dp)
                 start.linkTo(parent.start, margin = 8.dp)
                 end.linkTo(parent.end, margin = 8.dp)
