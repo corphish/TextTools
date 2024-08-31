@@ -24,6 +24,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -443,7 +444,7 @@ fun FindAndReplace(
             )
         }
 
-        TextField(
+        OutlinedTextField(
             value = replaceText,
             onValueChange = { replaceText = it },
             modifier = Modifier
@@ -461,7 +462,7 @@ fun FindAndReplace(
                 )
             })
 
-        TextField(
+        OutlinedTextField(
             value = findText,
             onValueChange = {
                 if (it.isNotEmpty()) {
@@ -522,7 +523,7 @@ fun FindAndReplace(
             Text(text = stringResource(id = R.string.ignore_case))
         }
 
-        TextField(
+        OutlinedTextField(
             value = mainTextState,
             onValueChange = {
                 mainTextState = it
