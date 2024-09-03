@@ -112,6 +112,7 @@ class TextTransformer {
                 val replaced = reversed.replaceFirst(remove, "")
                 reverseText(replaced)
             }
+
             else -> text.replace(remove, "")
         }
 
@@ -141,4 +142,347 @@ class TextTransformer {
      * Adds suffix to a given string.
      */
     fun addSuffix(text: String, suffix: String) = "$text$suffix"
+
+    /**
+     * Converts the given string to bold (serif).
+     * Only alphanumeric characters will be converted.
+     */
+    fun boldSerif(s: String): String {
+        // Logic:
+        // 1. Prepend alphanumeric codepoints with -16, -99, -105 for alphabets and -16 -99 -97 for digits
+        // 2. Update the alphanumeric character based on the following rule:
+        // Uppercase -> ASCII value - 193
+        // Lowercase -> ASCII value - 199
+        // Digit -> ASCII value - 162
+        val alphanumericCount = countAlphanumericCharacters(s)
+        val otherCharCount = s.length - alphanumericCount
+        val result = ByteArray(4 * alphanumericCount + otherCharCount)
+        var index = 0
+
+        s.codePoints().forEach {
+            if (Character.isDigit(it)) {
+                result[index] = -16
+                result[index + 1] = -99
+                result[index + 2] = -97
+                result[index + 3] = (it - 162).toByte()
+                index += 4
+            } else if (Character.isUpperCase(it)) {
+                result[index] = -16
+                result[index + 1] = -99
+                result[index + 2] = -112
+                result[index + 3] = (it - 193).toByte()
+                index += 4
+            } else if (Character.isLowerCase(it)) {
+                result[index] = -16
+                result[index + 1] = -99
+                result[index + 2] = -112
+                result[index + 3] = (it - 199).toByte()
+                index += 4
+            } else {
+                result[index] = it.toByte()
+                index += 1
+            }
+        }
+
+        return String(result)
+    }
+
+    /**
+     * Converts the given string to italic (serif).
+     * Only alphabetic characters will be converted.
+     */
+    fun italicSerif(s: String): String {
+        // Logic:
+        // 1. Prepend alphanumeric codepoints with -16, -99, -112 for uppercase and -16, -99, -111 for lowercase
+        // 2. Update the alphanumeric character based on the following rule:
+        // Uppercase -> ASCII value - 141
+        // Lowercase -> ASCII value - 211
+        // Exception: h -> -30 -124 -114
+        // Exceptions: from M to Z -> -16 -99 -111 (codepoint - 205)
+        val alphabeticCount = countAlphabeticCharacters(s)
+        val otherCharCount = s.length - alphabeticCount
+        val smallHCount = s.count { it == 'h' }
+        val result = ByteArray(4 * alphabeticCount + otherCharCount - smallHCount)
+        var index = 0
+
+        s.codePoints().forEach {
+            if (Character.isUpperCase(it)) {
+                if (it < 77) {
+                    // A-L
+                    result[index] = -16
+                    result[index + 1] = -99
+                    result[index + 2] = -112
+                    result[index + 3] = (it - 141).toByte()
+                } else {
+                    // M-Z
+                    result[index] = -16
+                    result[index + 1] = -99
+                    result[index + 2] = -111
+                    result[index + 3] = (it - 205).toByte()
+                }
+                index += 4
+            } else if (Character.isLowerCase(it)) {
+                if (it == 104) {
+                    // Exception for h
+                    result[index] = -30
+                    result[index + 1] = -124
+                    result[index + 2] = -114
+                    index += 3
+                } else {
+                    result[index] = -16
+                    result[index + 1] = -99
+                    result[index + 2] = -111
+                    result[index + 3] = (it - 211).toByte()
+                    index += 4
+                }
+            } else {
+                result[index] = it.toByte()
+                index += 1
+            }
+        }
+
+        return String(result)
+    }
+
+    /**
+     * Converts the given string to bold/italic (serif).
+     * Only alphabetic characters will be converted.
+     */
+    fun boldItalicSerif(s: String): String {
+        // Logic:
+        // 1. Prepend alphanumeric codepoints with -16, -99, -111 for uppercase and -16, -99, -110 for lowercase
+        // 2. Update the alphanumeric character based on the following rule:
+        // Uppercase -> ASCII value - 153
+        // Lowercase -> ASCII value - 223
+        // Exceptions:
+        // Y -> -16 -99 -110 -128
+        // Z -> -16 -99 -110 -127
+        val alphabeticCount = countAlphabeticCharacters(s)
+        val otherCharCount = s.length - alphabeticCount
+        val result = ByteArray(4 * alphabeticCount + otherCharCount)
+        var index = 0
+
+        s.codePoints().forEach {
+            if (it == 89) {
+                // Exception for Y
+                result[index] = -16
+                result[index + 1] = -99
+                result[index + 2] = -110
+                result[index + 3] = -128
+                index += 4
+            } else if (it == 90) {
+                // Exception for Z
+                result[index] = -16
+                result[index + 1] = -99
+                result[index + 2] = -110
+                result[index + 3] = -127
+                index += 4
+            } else if (Character.isUpperCase(it)) {
+                result[index] = -16
+                result[index + 1] = -99
+                result[index + 2] = -111
+                result[index + 3] = (it - 153).toByte()
+                index += 4
+            } else if (Character.isLowerCase(it)) {
+                result[index] = -16
+                result[index + 1] = -99
+                result[index + 2] = -110
+                result[index + 3] = (it - 223).toByte()
+                index += 4
+            } else {
+                result[index] = it.toByte()
+                index += 1
+            }
+        }
+
+        return String(result)
+    }
+
+    /**
+     * Converts the given string to bold (sans).
+     * Only alphanumeric characters will be converted.
+     */
+    fun boldSans(s: String): String {
+        // Logic:
+        // 1. Prepend alphanumeric codepoints with -16, -99, -105 for alphabets and -16 -99 -97 for digits
+        // 2. Update the alphanumeric character based on the following rule:
+        // Uppercase -> ASCII value - 173
+        // Lowercase -> ASCII value - 179
+        // Digit -> ASCII value - 132
+        // Exceptions: s-z -> [-16, -99, -104, codepoint - 243]
+        val alphanumericCount = countAlphanumericCharacters(s)
+        val otherCharCount = s.length - alphanumericCount
+        val result = ByteArray(4 * alphanumericCount + otherCharCount)
+        var index = 0
+
+        s.codePoints().forEach {
+            if (Character.isDigit(it)) {
+                result[index] = -16
+                result[index + 1] = -99
+                result[index + 2] = -97
+                result[index + 3] = (it - 132).toByte()
+                index += 4
+            } else if (Character.isUpperCase(it)) {
+                result[index] = -16
+                result[index + 1] = -99
+                result[index + 2] = -105
+                result[index + 3] = (it - 173).toByte()
+                index += 4
+            } else if (Character.isLowerCase(it)) {
+                if (it < 115) {
+                    // a-r
+                    result[index] = -16
+                    result[index + 1] = -99
+                    result[index + 2] = -105
+                    result[index + 3] = (it - 179).toByte()
+                } else {
+                    // s-z
+                    result[index] = -16
+                    result[index + 1] = -99
+                    result[index + 2] = -104
+                    result[index + 3] = (it - 243).toByte()
+                }
+                index += 4
+            } else {
+                result[index] = it.toByte()
+                index += 1
+            }
+        }
+
+        return String(result)
+    }
+
+    /**
+     * Converts the given string to italic (sans).
+     * Only alphabetic characters will be converted.
+     */
+    fun italicSans(s: String): String {
+        // Logic:
+        // 1. Prepend alphanumeric codepoints with -16, -99, -104
+        // 2. Update the alphanumeric character based on the following rule:
+        // Uppercase -> ASCII value - 185
+        // Lowercase -> ASCII value - 191
+        val alphabeticCount = countAlphabeticCharacters(s)
+        val otherCharCount = s.length - alphabeticCount
+        val result = ByteArray(4 * alphabeticCount + otherCharCount)
+        var index = 0
+
+        s.codePoints().forEach {
+            if (Character.isUpperCase(it)) {
+                result[index] = -16
+                result[index + 1] = -99
+                result[index + 2] = -104
+                result[index + 3] = (it - 185).toByte()
+                index += 4
+            } else if (Character.isLowerCase(it)) {
+                result[index] = -16
+                result[index + 1] = -99
+                result[index + 2] = -104
+                result[index + 3] = (it - 191).toByte()
+                index += 4
+            } else {
+                result[index] = it.toByte()
+                index += 1
+            }
+        }
+
+        return String(result)
+    }
+
+    /**
+     * Converts the given string to bold/italic (sans).
+     * Only alphabetic characters will be converted.
+     */
+    fun boldItalicSans(s: String): String {
+        // Logic:
+        // 1. Prepend alphanumeric codepoints with -16, -99, -104 for uppercase and -16, -99, -103 for lowercase
+        // 2. Update the alphanumeric character based on the following rule:
+        // Uppercase -> ASCII value - 133
+        // Lowercase -> ASCII value - 203
+        // Exceptions: E-Z -> [-16, -99, -103, codepoint - 197]
+        val alphabeticCount = countAlphabeticCharacters(s)
+        val otherCharCount = s.length - alphabeticCount
+        val result = ByteArray(4 * alphabeticCount + otherCharCount)
+        var index = 0
+
+        s.codePoints().forEach {
+            if (Character.isUpperCase(it)) {
+                if (it < 69) {
+                    // A-D
+                    result[index] = -16
+                    result[index + 1] = -99
+                    result[index + 2] = -104
+                    result[index + 3] = (it - 133).toByte()
+                } else {
+                    // E-Z
+                    result[index] = -16
+                    result[index + 1] = -99
+                    result[index + 2] = -103
+                    result[index + 3] = (it - 197).toByte()
+                }
+                index += 4
+            } else if (Character.isLowerCase(it)) {
+                result[index] = -16
+                result[index + 1] = -99
+                result[index + 2] = -103
+                result[index + 3] = (it - 203).toByte()
+                index += 4
+            } else {
+                result[index] = it.toByte()
+                index += 1
+            }
+        }
+
+        return String(result)
+    }
+
+    /**
+     * Decorates the text with short strikethrough (unicode text).
+     */
+    fun shortStrikethrough(s: String): String {
+        // Logic: append each codeword with -52 -75
+        val result = ByteArray(3 * s.length)
+        var index = 0
+        s.codePoints().forEach {
+            result[index] = it.toByte()
+            result[index + 1] = -52
+            result[index + 2] = -75
+            index += 3
+        }
+
+        return String(result)
+    }
+
+    /**
+     * Decorates the text with long strikethrough (unicode text).
+     */
+    fun longStrikethrough(s: String): String {
+        // Logic: append each codeword with -52 -74
+        val result = ByteArray(3 * s.length)
+        var index = 0
+        s.codePoints().forEach {
+            result[index] = it.toByte()
+            result[index + 1] = -52
+            result[index + 2] = -74
+            index += 3
+        }
+
+        return String(result)
+    }
+
+    /**
+     * Counts the number of alphanumeric characters.
+     */
+    private fun countAlphanumericCharacters(s: String) =
+        s.codePoints().filter { codePoint ->
+            (codePoint in 65..90) || (codePoint in 97..122) || (codePoint in 48..57)
+        }.count().toInt()
+
+    /**
+     * Counts the number of alphabetic characters.
+     */
+    private fun countAlphabeticCharacters(s: String) =
+        s.codePoints().filter { codePoint ->
+            (codePoint in 65..90) || (codePoint in 97..122)
+        }.count().toInt()
 }
