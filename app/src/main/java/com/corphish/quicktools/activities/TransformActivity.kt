@@ -31,7 +31,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -68,6 +67,7 @@ private val transformOptions = listOf(
     R.string.add_prefix_suffix,
     R.string.number_lines,
     R.string.reverse_text,
+    R.string.text_decorate
 )
 
 private val wrapOptions = listOf(
@@ -96,6 +96,21 @@ private val removeOptions = listOf(
 private val prefixSuffixOptions = listOf(
     R.string.prefix,
     R.string.suffix
+)
+
+private val decorateOptions = listOf(
+    R.string.bold_serif,
+    R.string.italic_serif,
+    R.string.bold_italic_serif,
+    R.string.bold_sans,
+    R.string.italic_sans,
+    R.string.bold_italic_sans,
+    R.string.strikethrough_short,
+    R.string.strikethrough_long,
+)
+
+private val optionsWithSecondaryDropDown = listOf(
+    1, 2, 6, 7, 10
 )
 
 class TransformActivity : ComponentActivity() {
@@ -410,7 +425,7 @@ fun TextTransformUI(
 
                                 // Select the appropriate choice for change and wrap case
                                 when (selectedPrimaryIndex) {
-                                    1, 2, 6, 7 -> {
+                                    1, 2, 6, 7, 10 -> {
                                         selectedSecondaryIndex = 0
                                         secondaryFunctionText = ""
                                     }
@@ -419,9 +434,6 @@ fun TextTransformUI(
                                         // Default for repeat
                                         secondaryFunctionText = "1"
                                     }
-                                }
-                                if (selectedPrimaryIndex == 1 || selectedPrimaryIndex == 2) {
-                                    selectedSecondaryIndex = 0
                                 }
 
                                 previewText = if (selectedPrimaryIndex == 4) {
@@ -480,12 +492,13 @@ fun TextTransformUI(
                 )
             }
 
-            if (selectedPrimaryIndex == 1 || selectedPrimaryIndex == 2 || selectedPrimaryIndex == 6 || selectedPrimaryIndex == 7) {
+            if (optionsWithSecondaryDropDown.contains(selectedPrimaryIndex)) {
                 val secondaryList = when (selectedPrimaryIndex) {
                     1 -> wrapOptions
                     2 -> caseOptions
                     6 -> removeOptions
                     7 -> prefixSuffixOptions
+                    10 -> decorateOptions
                     else -> listOf()
                 }
 
@@ -625,6 +638,20 @@ fun processTextOperation(
     9 -> {
         // Reverse text
         textTransformer.reverseText(inputText)
+    }
+
+    10 -> {
+        when (selectedSecondaryIndex) {
+            0 -> textTransformer.boldSerif(inputText)
+            1 -> textTransformer.italicSerif(inputText)
+            2 -> textTransformer.boldItalicSerif(inputText)
+            3 -> textTransformer.boldSans(inputText)
+            4 -> textTransformer.italicSans(inputText)
+            5 -> textTransformer.boldItalicSans(inputText)
+            6 -> textTransformer.shortStrikethrough(inputText)
+            7 -> textTransformer.longStrikethrough(inputText)
+            else -> inputText
+        }
     }
 
     else -> {

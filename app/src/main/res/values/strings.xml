@@ -121,4 +121,13 @@
     <string name="remove_all">Remove all</string>
     <string name="prefix">Prefix</string>
     <string name="suffix">Suffix</string>
+    <string name="text_decorate">Decorate text</string>
+    <string name="bold_serif">Bold (serif)</string>
+    <string name="italic_serif">Italic (serif)</string>
+    <string name="bold_italic_serif">Bold/Italic (serif)</string>
+    <string name="bold_sans">Bold (sans)</string>
+    <string name="italic_sans">Italic (sans)</string>
+    <string name="bold_italic_sans">Bold/Italic (sans)</string>
+    <string name="strikethrough_short">Strikethrough (short)</string>
+    <string name="strikethrough_long">Strikethrough (long)</string>
 </resources>
