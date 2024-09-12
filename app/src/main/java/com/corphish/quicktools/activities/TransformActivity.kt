@@ -116,6 +116,7 @@ private val decorateOptions = listOf(
     R.string.bold_italic_sans,
     R.string.strikethrough_short,
     R.string.strikethrough_long,
+    R.string.cursive,
 )
 
 private val optionsWithSecondaryDropDown = listOf(
@@ -682,6 +683,7 @@ fun processTextOperation(
             5 -> textTransformer.boldItalicSans(inputText)
             6 -> textTransformer.shortStrikethrough(inputText)
             7 -> textTransformer.longStrikethrough(inputText)
+            8 -> textTransformer.cursive(inputText)
             else -> inputText
         }
     }

@@ -552,6 +552,129 @@ class TextTransformer {
     }
 
     /**
+     * Decorates text as cursive (unicode text).
+     */
+    fun cursive(s: String): String {
+        // Logic:
+        // 1. Prepend alphanumeric codepoints with -16, -99, -110 for uppercase and -16, -99, -110 for lowercase
+        // 2. Update the alphanumeric character based on the following rule:
+        // Uppercase -> ASCII value - 165
+        // Lowercase -> ASCII value - 171
+        // Exceptions: k-z -> [-16, -99, -109, codepoint - 235]
+        // B -> [-30 -124 -84]
+        // E -> [-30 -124 -80]
+        // F -> [-30 -124 -79]
+        // H -> [-30 -124 -117]
+        // I -> [-30 -124 -112]
+        // L -> [-30 -124 -110]
+        // M -> [-30 -124 -77]
+        // R -> [-30 -124 -101]
+        // e -> [-30 -124 -81]
+        // g -> [-30 -124 -118]
+        // o -> [-30 -124 -76]
+        val exceptionChars = "egoBEFHILMR"
+        var exceptionCount = 0
+
+        s.forEach {
+            if (exceptionChars.contains("$it")) {
+                exceptionCount += 1
+            }
+        }
+
+        val alphabeticCount = countAlphabeticCharacters(s)
+        val otherCharCount = s.length - alphabeticCount
+        val result = ByteArray(4 * alphabeticCount + otherCharCount - exceptionCount)
+        var index = 0
+
+        s.codePoints().forEach {
+            if (Character.isUpperCase(it)) {
+                // A-D
+                if (it == 66) {
+                    result[index] = -30
+                    result[index + 1] = -124
+                    result[index + 2] = -84
+                    index += 3
+                } else if (it == 69) {
+                    result[index] = -30
+                    result[index + 1] = -124
+                    result[index + 2] = -80
+                    index += 3
+                } else if (it == 70) {
+                    result[index] = -30
+                    result[index + 1] = -124
+                    result[index + 2] = -79
+                    index += 3
+                } else if (it == 72) {
+                    result[index] = -30
+                    result[index + 1] = -124
+                    result[index + 2] = -117
+                    index += 3
+                } else if (it == 73) {
+                    result[index] = -30
+                    result[index + 1] = -124
+                    result[index + 2] = -112
+                    index += 3
+                } else if (it == 76) {
+                    result[index] = -30
+                    result[index + 1] = -124
+                    result[index + 2] = -110
+                    index += 3
+                } else if (it == 77) {
+                    result[index] = -30
+                    result[index + 1] = -124
+                    result[index + 2] = -77
+                    index += 3
+                } else if (it == 82) {
+                    result[index] = -30
+                    result[index + 1] = -124
+                    result[index + 2] = -101
+                    index += 3
+                } else {
+                    result[index] = -16
+                    result[index + 1] = -99
+                    result[index + 2] = -110
+                    result[index + 3] = (it - 165).toByte()
+                    index += 4
+                }
+            } else if (Character.isLowerCase(it)) {
+                if (it == 101) {
+                    result[index] = -30
+                    result[index + 1] = -124
+                    result[index + 2] = -81
+                    index += 3
+                } else if (it == 103) {
+                    result[index] = -30
+                    result[index + 1] = -124
+                    result[index + 2] = -118
+                    index += 3
+                } else if (it == 111) {
+                    result[index] = -30
+                    result[index + 1] = -124
+                    result[index + 2] = -76
+                    index += 3
+                } else if (it < 107) {
+                    result[index] = -16
+                    result[index + 1] = -99
+                    result[index + 2] = -110
+                    result[index + 3] = (it - 171).toByte()
+                    index += 4
+                } else {
+                    result[index] = -16
+                    result[index + 1] = -99
+                    result[index + 2] = -109
+                    result[index + 3] = (it - 235).toByte()
+                    index += 4
+                }
+            } else {
+                result[index] = it.toByte()
+                index += 1
+            }
+        }
+
+        return String(result)
+    }
+
+    /**
      * Counts the number of alphanumeric characters.
      */
     private fun countAlphanumericCharacters(s: String) =
