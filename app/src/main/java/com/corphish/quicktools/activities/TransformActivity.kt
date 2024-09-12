@@ -92,7 +92,14 @@ private val caseOptions = listOf(
 private val removeOptions = listOf(
     R.string.remove_first,
     R.string.remove_last,
-    R.string.remove_all
+    R.string.remove_all,
+    R.string.remove_whitespaces,
+    R.string.remove_line_breaks,
+    R.string.remove_empty_lines,
+    R.string.remove_duplicate_words,
+    R.string.remove_duplicate_words_case_sensitive,
+    R.string.remove_duplicate_lines,
+    R.string.remove_duplicate_lines_case_sensitive
 )
 
 private val prefixSuffixOptions = listOf(
@@ -460,6 +467,8 @@ fun TextTransformUI(
             if (selectedPrimaryIndex == 5 || selectedPrimaryIndex == 6 || selectedPrimaryIndex == 7) {
                 OutlinedTextField(
                     value = secondaryFunctionText,
+                    // Disable when remove option is selected for preset characters
+                    enabled = !(selectedPrimaryIndex == 6 && selectedSecondaryIndex > 2),
                     onValueChange = {
                         secondaryFunctionText = it
                         previewText = if (selectedPrimaryIndex == 4) {
@@ -612,7 +621,18 @@ fun processTextOperation(
 
     6 -> {
         // Remove text
-        textTransformer.removeText(inputText, secondaryFunctionText, selectedSecondaryIndex)
+        when (selectedSecondaryIndex) {
+            0, 1, 2 -> textTransformer.removeText(inputText, secondaryFunctionText, selectedSecondaryIndex)
+            3 -> textTransformer.removeWhiteSpaces(inputText)
+            4 -> textTransformer.removeLineBreaks(inputText)
+            5 -> textTransformer.removeEmptyLines(inputText)
+            6 -> textTransformer.removeDuplicateWords(inputText, ignoreCase = true)
+            7 -> textTransformer.removeDuplicateWords(inputText, ignoreCase = false)
+            8 -> textTransformer.removeDuplicateLines(inputText, ignoreCase = true)
+            9 -> textTransformer.removeDuplicateLines(inputText, ignoreCase = false)
+            else -> inputText
+        }
+
     }
 
     7 -> {

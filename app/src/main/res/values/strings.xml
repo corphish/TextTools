@@ -132,4 +132,11 @@
     <string name="strikethrough_long">Strikethrough (long)</string>
     <string name="reverse_words">Reverse words</string>
     <string name="reverse_lines">Reverse lines</string>
+    <string name="remove_whitespaces">Remove whitespaces</string>
+    <string name="remove_line_breaks">Remove line breaks</string>
+    <string name="remove_empty_lines">Remove empty lines</string>
+    <string name="remove_duplicate_words">Remove duplicate words</string>
+    <string name="remove_duplicate_words_case_sensitive">Remove duplicate words (case sensitive)</string>
+    <string name="remove_duplicate_lines">Remove duplicate lines</string>
+    <string name="remove_duplicate_lines_case_sensitive">Remove duplicate lines (case sensitive)</string>
 </resources>

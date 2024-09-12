@@ -1,7 +1,7 @@
 package com.corphish.quicktools.text
 
-import java.lang.StringBuilder
 import java.util.Locale
+import kotlin.text.StringBuilder
 
 /**
  * Helper class to help with text transformation.
@@ -157,6 +157,71 @@ class TextTransformer {
     fun reverseLines(text: String): String {
         val words = text.split("\n")
         return words.joinToString("\n") { reverseText(it) }.trim()
+    }
+
+    /**
+     * Removes white spaces from the string.
+     */
+    fun removeWhiteSpaces(text: String) =
+        text.replace(" ", "")
+
+    /**
+     * Replaces line breaks from the string.
+     */
+    fun removeLineBreaks(text: String) =
+        text.replace("\n", "")
+
+    /**
+     * Removes empty lines from the string.
+     */
+    fun removeEmptyLines(text: String) =
+        text.split("\n").filter { it.isNotEmpty() }.joinToString("\n")
+
+    /**
+     * Removes duplicate words from the string.
+     */
+    fun removeDuplicateWords(text: String, ignoreCase: Boolean = true): String {
+        val words = text.split(" ")
+        println(words)
+        val sb = StringBuilder()
+        val set = HashSet<String>()
+
+        for (word in words) {
+            if (ignoreCase) {
+                if (set.add(word.lowercase())) {
+                    sb.append(word).append(" ")
+                }
+            } else {
+                if (set.add(word)) {
+                    sb.append(word).append(" ")
+                }
+            }
+        }
+
+        return sb.toString().trim()
+    }
+
+    /**
+     * Removes duplicate words from the string.
+     */
+    fun removeDuplicateLines(text: String, ignoreCase: Boolean = true): String {
+        val words = text.split("\n")
+        val sb = StringBuilder()
+        val set = HashSet<String>()
+
+        for (word in words) {
+            if (ignoreCase) {
+                if (set.add(word.lowercase())) {
+                    sb.append(word).append("\n")
+                }
+            } else {
+                if (set.add(word)) {
+                    sb.append(word).append("\n")
+                }
+            }
+        }
+
+        return sb.toString().trim()
     }
 
     /**
