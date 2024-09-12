@@ -144,6 +144,22 @@ class TextTransformer {
     fun addSuffix(text: String, suffix: String) = "$text$suffix"
 
     /**
+     * Reverses each word of the given string.
+     */
+    fun reverseWords(text: String): String {
+        val words = text.split(" ")
+        return words.joinToString(" ") { reverseText(it) }.trim()
+    }
+
+    /**
+     * Reverses each word of the given string.
+     */
+    fun reverseLines(text: String): String {
+        val words = text.split("\n")
+        return words.joinToString("\n") { reverseText(it) }.trim()
+    }
+
+    /**
      * Converts the given string to bold (serif).
      * Only alphanumeric characters will be converted.
      */

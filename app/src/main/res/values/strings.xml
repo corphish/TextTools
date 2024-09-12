@@ -130,4 +130,6 @@
     <string name="bold_italic_sans">Bold/Italic (sans)</string>
     <string name="strikethrough_short">Strikethrough (short)</string>
     <string name="strikethrough_long">Strikethrough (long)</string>
+    <string name="reverse_words">Reverse words</string>
+    <string name="reverse_lines">Reverse lines</string>
 </resources>

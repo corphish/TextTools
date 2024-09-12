@@ -67,6 +67,8 @@ private val transformOptions = listOf(
     R.string.add_prefix_suffix,
     R.string.number_lines,
     R.string.reverse_text,
+    R.string.reverse_words,
+    R.string.reverse_lines,
     R.string.text_decorate
 )
 
@@ -110,7 +112,7 @@ private val decorateOptions = listOf(
 )
 
 private val optionsWithSecondaryDropDown = listOf(
-    1, 2, 6, 7, 10
+    1, 2, 6, 7, 12
 )
 
 class TransformActivity : ComponentActivity() {
@@ -423,9 +425,9 @@ fun TextTransformUI(
                                 primaryFunctionExpanded = false
                                 selectedPrimaryIndex = index
 
-                                // Select the appropriate choice for change and wrap case
+                                // Select the appropriate choice for those supporting secondary functions
                                 when (selectedPrimaryIndex) {
-                                    1, 2, 6, 7, 10 -> {
+                                    1, 2, 6, 7, 12 -> {
                                         selectedSecondaryIndex = 0
                                         secondaryFunctionText = ""
                                     }
@@ -498,7 +500,7 @@ fun TextTransformUI(
                     2 -> caseOptions
                     6 -> removeOptions
                     7 -> prefixSuffixOptions
-                    10 -> decorateOptions
+                    12 -> decorateOptions
                     else -> listOf()
                 }
 
@@ -641,6 +643,16 @@ fun processTextOperation(
     }
 
     10 -> {
+        // Reverse words
+        textTransformer.reverseWords(inputText)
+    }
+
+    11 -> {
+        // Reverse lines
+        textTransformer.reverseLines(inputText)
+    }
+
+    12 -> {
         when (selectedSecondaryIndex) {
             0 -> textTransformer.boldSerif(inputText)
             1 -> textTransformer.italicSerif(inputText)
