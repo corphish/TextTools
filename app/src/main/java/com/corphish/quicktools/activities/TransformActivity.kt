@@ -56,12 +56,25 @@ import com.corphish.quicktools.ui.theme.BrandFontFamily
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.ui.theme.TypographyV2
 
+// Index mapping
+const val INDEX_NONE = 0
+const val INDEX_WRAP_TEXT = 1
+const val INDEX_CHANGE_CASE = 2
+const val INDEX_SORT_LINES = 3
+const val INDEX_REPEAT_TEXT = 4
+const val INDEX_REMOVE_TEXT = 5
+const val INDEX_ADD_PREFIX_SUFFIX = 6
+const val INDEX_NUMBER_LINES = 7
+const val INDEX_REVERSE_TEXT = 8
+const val INDEX_REVERSE_WORDS = 9
+const val INDEX_REVERSE_LINES = 10
+const val INDEX_DECORATE_TEXT = 11
+
 private val transformOptions = listOf(
     R.string.none,
     R.string.wrap_text,
     R.string.change_case,
     R.string.sort_lines,
-    R.string.count_text,
     R.string.repeat_text,
     R.string.remove_text,
     R.string.add_prefix_suffix,
@@ -120,7 +133,11 @@ private val decorateOptions = listOf(
 )
 
 private val optionsWithSecondaryDropDown = listOf(
-    1, 2, 6, 7, 12
+    INDEX_WRAP_TEXT,
+    INDEX_CHANGE_CASE,
+    INDEX_REMOVE_TEXT,
+    INDEX_ADD_PREFIX_SUFFIX,
+    INDEX_DECORATE_TEXT,
 )
 
 class TransformActivity : ComponentActivity() {
@@ -435,29 +452,24 @@ fun TextTransformUI(
 
                                 // Select the appropriate choice for those supporting secondary functions
                                 when (selectedPrimaryIndex) {
-                                    1, 2, 6, 7, 12 -> {
+                                    INDEX_WRAP_TEXT, INDEX_CHANGE_CASE, INDEX_REMOVE_TEXT, INDEX_ADD_PREFIX_SUFFIX, INDEX_DECORATE_TEXT -> {
                                         selectedSecondaryIndex = 0
                                         secondaryFunctionText = ""
                                     }
 
-                                    5 -> {
+                                    INDEX_REPEAT_TEXT -> {
                                         // Default for repeat
                                         secondaryFunctionText = "1"
                                     }
                                 }
 
-                                previewText = if (selectedPrimaryIndex == 4) {
-                                    // Count text
-                                    inputText
-                                } else {
-                                    processTextOperation(
-                                        textTransformer = textTransformer,
-                                        inputText = inputText,
-                                        selectedPrimaryIndex = selectedPrimaryIndex,
-                                        selectedSecondaryIndex = selectedSecondaryIndex,
-                                        secondaryFunctionText = secondaryFunctionText
-                                    )
-                                }
+                                previewText = processTextOperation(
+                                    textTransformer = textTransformer,
+                                    inputText = inputText,
+                                    selectedPrimaryIndex = selectedPrimaryIndex,
+                                    selectedSecondaryIndex = selectedSecondaryIndex,
+                                    secondaryFunctionText = secondaryFunctionText
+                                )
                             }
                         )
                     }
@@ -465,34 +477,29 @@ fun TextTransformUI(
             }
 
             // Text input for repeat/remove/add prefix or suffix
-            if (selectedPrimaryIndex == 5 || selectedPrimaryIndex == 6 || selectedPrimaryIndex == 7) {
+            if (selectedPrimaryIndex == INDEX_REPEAT_TEXT || selectedPrimaryIndex == INDEX_REMOVE_TEXT || selectedPrimaryIndex == INDEX_ADD_PREFIX_SUFFIX) {
                 OutlinedTextField(
                     value = secondaryFunctionText,
                     // Disable when remove option is selected for preset characters
-                    enabled = !(selectedPrimaryIndex == 6 && selectedSecondaryIndex > 2),
+                    enabled = !(selectedPrimaryIndex == INDEX_REMOVE_TEXT && selectedSecondaryIndex > 2),
                     onValueChange = {
                         secondaryFunctionText = it
-                        previewText = if (selectedPrimaryIndex == 4) {
-                            // Count text
-                            inputText
-                        } else {
-                            processTextOperation(
-                                textTransformer = textTransformer,
-                                inputText = inputText,
-                                selectedPrimaryIndex = selectedPrimaryIndex,
-                                selectedSecondaryIndex = selectedSecondaryIndex,
-                                secondaryFunctionText = secondaryFunctionText
-                            )
-                        }
+                        previewText = processTextOperation(
+                            textTransformer = textTransformer,
+                            inputText = inputText,
+                            selectedPrimaryIndex = selectedPrimaryIndex,
+                            selectedSecondaryIndex = selectedSecondaryIndex,
+                            secondaryFunctionText = secondaryFunctionText
+                        )
                     },
-                    keyboardOptions = KeyboardOptions(keyboardType = if (selectedPrimaryIndex == 5) KeyboardType.Number else KeyboardType.Text),
+                    keyboardOptions = KeyboardOptions(keyboardType = if (selectedPrimaryIndex == INDEX_REPEAT_TEXT) KeyboardType.Number else KeyboardType.Text),
                     label = {
                         Text(
                             stringResource(
                                 id = when (selectedPrimaryIndex) {
-                                    5 -> R.string.repeat_text
-                                    6 -> R.string.remove_text
-                                    7 -> R.string.add_prefix_suffix
+                                    INDEX_REPEAT_TEXT -> R.string.repeat_text
+                                    INDEX_REMOVE_TEXT -> R.string.remove_text
+                                    INDEX_ADD_PREFIX_SUFFIX -> R.string.add_prefix_suffix
                                     else -> R.string.transform
                                 }
                             )
@@ -506,11 +513,11 @@ fun TextTransformUI(
 
             if (optionsWithSecondaryDropDown.contains(selectedPrimaryIndex)) {
                 val secondaryList = when (selectedPrimaryIndex) {
-                    1 -> wrapOptions
-                    2 -> caseOptions
-                    6 -> removeOptions
-                    7 -> prefixSuffixOptions
-                    12 -> decorateOptions
+                    INDEX_WRAP_TEXT -> wrapOptions
+                    INDEX_CHANGE_CASE -> caseOptions
+                    INDEX_REMOVE_TEXT -> removeOptions
+                    INDEX_ADD_PREFIX_SUFFIX -> prefixSuffixOptions
+                    INDEX_DECORATE_TEXT -> decorateOptions
                     else -> listOf()
                 }
 
@@ -553,21 +560,16 @@ fun TextTransformUI(
                                     secondaryFunctionExpanded = false
                                     selectedSecondaryIndex = index
 
-                                    if (selectedPrimaryIndex == 4) {
-                                        // Count text
-                                        previewText = inputText
+                                    if (selectedPrimaryIndex == INDEX_WRAP_TEXT && selectedSecondaryIndex == 5) {
+                                        customWrapDialog = true
                                     } else {
-                                        if (selectedPrimaryIndex == 1 && selectedSecondaryIndex == 5) {
-                                            customWrapDialog = true
-                                        } else {
-                                            previewText = processTextOperation(
-                                                textTransformer = textTransformer,
-                                                inputText = inputText,
-                                                selectedPrimaryIndex = selectedPrimaryIndex,
-                                                selectedSecondaryIndex = selectedSecondaryIndex,
-                                                secondaryFunctionText = secondaryFunctionText
-                                            )
-                                        }
+                                        previewText = processTextOperation(
+                                            textTransformer = textTransformer,
+                                            inputText = inputText,
+                                            selectedPrimaryIndex = selectedPrimaryIndex,
+                                            selectedSecondaryIndex = selectedSecondaryIndex,
+                                            secondaryFunctionText = secondaryFunctionText
+                                        )
                                     }
                                 }
                             )
@@ -595,32 +597,32 @@ fun processTextOperation(
     selectedSecondaryIndex: Int,
     secondaryFunctionText: String
 ) = when (selectedPrimaryIndex) {
-    0 -> {
+    INDEX_NONE -> {
         // None
         inputText
     }
 
-    1 -> {
+    INDEX_WRAP_TEXT -> {
         // Wrap
         textTransformer.presetWrap(inputText, selectedSecondaryIndex)
     }
 
-    2 -> {
+    INDEX_CHANGE_CASE -> {
         // Change case
         textTransformer.changeCase(inputText, selectedSecondaryIndex)
     }
 
-    3 -> {
+    INDEX_SORT_LINES -> {
         // Sort lines
         textTransformer.sortLines(inputText)
     }
 
-    5 -> {
+    INDEX_REPEAT_TEXT -> {
         // Repeat text
         textTransformer.repeatText(inputText, secondaryFunctionText.toIntOrNull() ?: 1)
     }
 
-    6 -> {
+    INDEX_REMOVE_TEXT -> {
         // Remove text
         when (selectedSecondaryIndex) {
             0, 1, 2 -> textTransformer.removeText(inputText, secondaryFunctionText, selectedSecondaryIndex)
@@ -636,7 +638,7 @@ fun processTextOperation(
 
     }
 
-    7 -> {
+    INDEX_ADD_PREFIX_SUFFIX -> {
         // Add prefix or suffix
         when (selectedSecondaryIndex) {
             0 -> {
@@ -653,27 +655,27 @@ fun processTextOperation(
         }
     }
 
-    8 -> {
+    INDEX_NUMBER_LINES -> {
         // Number lines
         textTransformer.numberLines(inputText)
     }
 
-    9 -> {
+    INDEX_REVERSE_TEXT -> {
         // Reverse text
         textTransformer.reverseText(inputText)
     }
 
-    10 -> {
+    INDEX_REVERSE_WORDS -> {
         // Reverse words
         textTransformer.reverseWords(inputText)
     }
 
-    11 -> {
+    INDEX_REVERSE_LINES -> {
         // Reverse lines
         textTransformer.reverseLines(inputText)
     }
 
-    12 -> {
+    INDEX_DECORATE_TEXT -> {
         when (selectedSecondaryIndex) {
             0 -> textTransformer.boldSerif(inputText)
             1 -> textTransformer.italicSerif(inputText)
