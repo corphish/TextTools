@@ -61,7 +61,7 @@
             android:excludeFromRecents="true"
             android:exported="false"
             android:label="@string/context_menu_transform"
-            android:theme="@style/Theme.AppCompat.Translucent"/>
+            android:theme="@style/Theme.QuickTools"/>
         <activity
             android:name=".activities.SaveTextActivity"
             android:excludeFromRecents="true"
