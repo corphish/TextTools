@@ -41,6 +41,7 @@ class TextTransformer {
 
         for (word in parts) {
             var w = word
+            if (w.isEmpty()) continue
             if (!firstWordOnly || !firstWordConverted) {
                 val array = w.toCharArray()
                 array[0] = Character.toUpperCase(array[0])
