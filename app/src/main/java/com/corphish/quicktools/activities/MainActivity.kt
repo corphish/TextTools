@@ -177,7 +177,7 @@ fun Greeting() {
 @Composable
 fun FeatureItem(feature: Feature) {
     Row(
-        modifier = Modifier.padding(vertical = 4.dp)/*.clickable {
+        modifier = Modifier.padding(vertical = 8.dp)/*.clickable {
             val intent = Intent(context, TryOutActivity::class.java)
             intent.putExtra(TryOutActivity.TRY_OUT_FLOW, feature.flow)
             context.startActivity(intent)
