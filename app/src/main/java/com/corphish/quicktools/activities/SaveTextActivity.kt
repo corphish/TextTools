@@ -4,14 +4,9 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.corphish.quicktools.R
 import com.corphish.quicktools.ui.common.ListDialog
@@ -20,7 +15,6 @@ import java.io.BufferedWriter
 import java.io.IOException
 import java.io.OutputStream
 import java.io.OutputStreamWriter
-
 
 class SaveTextActivity : NoUIActivity() {
 
