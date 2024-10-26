@@ -39,7 +39,18 @@ class WUPActivity : NoUIActivity() {
         val settingsHelper = SettingsHelper(this)
         return if (settingsHelper.getPrependCountryCodeEnabled()) {
             val code = settingsHelper.getPrependCountryCode()
-            "$code$phoneNumber"
+            if (code == null) {
+                phoneNumber
+            } else if (phoneNumber.startsWith(code)) {
+                // If the number already starts with country code, no need to append.
+                phoneNumber
+            } else if (phoneNumber.startsWith("+")) {
+                // If the number starts with some country code that is not the user specified
+                // country code, it must be considered.
+                phoneNumber
+            } else {
+                "$code$phoneNumber"
+            }
         } else {
             phoneNumber
         }
