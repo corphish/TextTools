@@ -29,9 +29,16 @@ Helpful if the text selection context menu needs to be clean and clutter free. I
 - Text unsaved numbers in WhatsApp
 - Evaluate mathematical expressions inline
 - Transform text
+- Text count
 - Save text to a file
+- Find & Replace in text
 
 For detailed description of each feature and their demo, please check the [features page](FEATURES.md).
+
+### Development methods
+- Developed in Jetpack compose using the latest libraries.
+- Use Material design for UI, with color scheme derived using Material You.
+- Starting app version 1.5.0, any new features added will use MVVM, while existing features will slowly be migrated to MVVM.
 
 ### Installation warning
 While installing the app (you have to side load), Google Play may block the installation saying it has never seen the app before. While it is true (from Google Play POV), you can proceed with installing the app. If you have doubts about the app being malicious, you are free to verify the same from the source code (it would not be open-source if the app was malicious in the first place, right?).

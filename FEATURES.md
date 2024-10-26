@@ -10,15 +10,24 @@ Often we find ourselves needing to text/send file/share location to someone for 
 ### Evaluate mathematical expressions inline
 We may often find ourselves to mathematically calculate something while texting someone (probably while making plans). Having an option to perform math calculations in line without needing to open calculator could save time.
 
-![Eval](assets/eval.gif)
+![Eval Example](assets/eval.gif)
 
 ### Transform text
-Transform the selected text inline. Supported transformations include changing the case, wrapping it with text etc.
+Transform the selected text inline. Supported transformations include changing the case, wrapping it with text and many more.
 
-![Transform Example 1](assets/transform_1.gif)
-![Transform Example 2](assets/transform_2.gif)
+![Transform Example](assets/text_transform.gif)
+
+### Text count
+Get detailed analysis about character count, word count, letter count and more for the selected text.
+
+![Text Count Example](assets/text_count.gif)
 
 ### Save text
 Lets you save the selected text into a file so that it can be accessed later.
 
-![Save text example](assets/save.gif)
+![Save text Example](assets/save.gif)
+
+### Find & Replace
+Quickly find certain text and replace them with text of your choice within the selected text.
+
+![Find and Replace Example](assets/find_replace.gif)

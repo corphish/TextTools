@@ -6,3 +6,6 @@ People who have suggested cool ideas that have been added to the app are mention
 
 - Raffael (raffael7777@proton.me)
 - [boognish-rising](https://github.com/boognish-rising)
+- [brimwats](https://github.com/brimwats)
+- [AjayRahul1](https://github.com/AjayRahul1)
+- [Solovertical](https://github.com/Solovertical)
