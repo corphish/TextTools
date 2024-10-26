@@ -20,6 +20,7 @@ class OptionsActivity : NoUIActivity() {
         Option(R.string.whatsapp, R.drawable.ic_whatsapp, WUPActivity::class.java, false),
         Option(R.string.eval_title_small, R.drawable.ic_numbers, EvalActivity::class.java, true),
         Option(R.string.transform_long, R.drawable.ic_text_transform, TransformActivity::class.java, true),
+        Option(R.string.text_count, R.drawable.ic_text_count, TextCountActivity::class.java, false),
         Option(R.string.save_text_title, R.drawable.ic_save, SaveTextActivity::class.java, false),
         Option(R.string.title_activity_find_and_replace, R.drawable.ic_find_and_replace, FindAndReplaceActivity::class.java, true)
     )
