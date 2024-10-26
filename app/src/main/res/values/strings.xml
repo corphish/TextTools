@@ -140,4 +140,13 @@
     <string name="remove_duplicate_lines">Remove duplicate lines</string>
     <string name="remove_duplicate_lines_case_sensitive">Remove duplicate lines (case sensitive)</string>
     <string name="cursive">Cursive</string>
+    <string name="text_count">Text Count</string>
+    <string name="characters">Characters</string>
+    <string name="letters">Letters</string>
+    <string name="words">Words</string>
+    <string name="digits">Digits</string>
+    <string name="spaces">Spaces</string>
+    <string name="symbols">Other symbols</string>
+    <string name="word_frequency">Word frequency</string>
+    <string name="statistics">Statistics</string>
 </resources>
