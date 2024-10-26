@@ -39,6 +39,13 @@ data class Feature(
                 flow = TryOutActivity.TRY_OUT_FLOW
             ),
             Feature(
+                icon = R.drawable.ic_text_count,
+                featureTitle = R.string.text_count,
+                featureDesc = R.string.text_count_desc,
+                contextMenuText = R.string.context_menu_text_count,
+                flow = TryOutActivity.TRY_OUT_FLOW
+            ),
+            Feature(
                 icon = R.drawable.ic_save,
                 featureTitle = R.string.save_text_title,
                 featureDesc = R.string.save_text_desc,

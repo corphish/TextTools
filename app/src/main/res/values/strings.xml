@@ -150,4 +150,5 @@
     <string name="word_frequency">Word frequency</string>
     <string name="statistics">Statistics</string>
     <string name="context_menu_text_count">[T\u00B2] Text Count</string>
+    <string name="text_count_desc">Get detailed analysis about character count, word count, letter count and more for the selected text.</string>
 </resources>
