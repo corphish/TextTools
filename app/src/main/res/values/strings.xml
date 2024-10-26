@@ -149,4 +149,5 @@
     <string name="symbols">Other symbols</string>
     <string name="word_frequency">Word frequency</string>
     <string name="statistics">Statistics</string>
+    <string name="context_menu_text_count">[T\u00B2] Text Count</string>
 </resources>
