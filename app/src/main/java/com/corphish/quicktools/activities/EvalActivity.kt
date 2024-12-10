@@ -44,9 +44,7 @@ class EvalActivity : NoUIActivity() {
             val text = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT).toString()
             val settingsHelper = SettingsHelper(this)
             val decimalPoints = settingsHelper.getDecimalPoints()
-            val mode = settingsHelper.getEvaluateResultMode()
-
-            when (mode) {
+            when (val mode = settingsHelper.getEvaluateResultMode()) {
                 EVAL_RESULT_MODE_ASK_NEXT_TIME -> {
                     // Show option to user
                     setContent {

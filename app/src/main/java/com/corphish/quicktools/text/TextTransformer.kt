@@ -590,52 +590,62 @@ class TextTransformer {
         s.codePoints().forEach {
             if (Character.isUpperCase(it)) {
                 // A-D
-                if (it == 66) {
-                    result[index] = -30
-                    result[index + 1] = -124
-                    result[index + 2] = -84
-                    index += 3
-                } else if (it == 69) {
-                    result[index] = -30
-                    result[index + 1] = -124
-                    result[index + 2] = -80
-                    index += 3
-                } else if (it == 70) {
-                    result[index] = -30
-                    result[index + 1] = -124
-                    result[index + 2] = -79
-                    index += 3
-                } else if (it == 72) {
-                    result[index] = -30
-                    result[index + 1] = -124
-                    result[index + 2] = -117
-                    index += 3
-                } else if (it == 73) {
-                    result[index] = -30
-                    result[index + 1] = -124
-                    result[index + 2] = -112
-                    index += 3
-                } else if (it == 76) {
-                    result[index] = -30
-                    result[index + 1] = -124
-                    result[index + 2] = -110
-                    index += 3
-                } else if (it == 77) {
-                    result[index] = -30
-                    result[index + 1] = -124
-                    result[index + 2] = -77
-                    index += 3
-                } else if (it == 82) {
-                    result[index] = -30
-                    result[index + 1] = -124
-                    result[index + 2] = -101
-                    index += 3
-                } else {
-                    result[index] = -16
-                    result[index + 1] = -99
-                    result[index + 2] = -110
-                    result[index + 3] = (it - 165).toByte()
-                    index += 4
+                when (it) {
+                    66 -> {
+                        result[index] = -30
+                        result[index + 1] = -124
+                        result[index + 2] = -84
+                        index += 3
+                    }
+                    69 -> {
+                        result[index] = -30
+                        result[index + 1] = -124
+                        result[index + 2] = -80
+                        index += 3
+                    }
+                    70 -> {
+                        result[index] = -30
+                        result[index + 1] = -124
+                        result[index + 2] = -79
+                        index += 3
+                    }
+                    72 -> {
+                        result[index] = -30
+                        result[index + 1] = -124
+                        result[index + 2] = -117
+                        index += 3
+                    }
+                    73 -> {
+                        result[index] = -30
+                        result[index + 1] = -124
+                        result[index + 2] = -112
+                        index += 3
+                    }
+                    76 -> {
+                        result[index] = -30
+                        result[index + 1] = -124
+                        result[index + 2] = -110
+                        index += 3
+                    }
+                    77 -> {
+                        result[index] = -30
+                        result[index + 1] = -124
+                        result[index + 2] = -77
+                        index += 3
+                    }
+                    82 -> {
+                        result[index] = -30
+                        result[index + 1] = -124
+                        result[index + 2] = -101
+                        index += 3
+                    }
+                    else -> {
+                        result[index] = -16
+                        result[index + 1] = -99
+                        result[index + 2] = -110
+                        result[index + 3] = (it - 165).toByte()
+                        index += 4
+                    }
                 }
             } else if (Character.isLowerCase(it)) {
                 if (it == 101) {
