@@ -8,12 +8,12 @@ val variantSingleOption = "singleOption"
 
 android {
     namespace = "com.corphish.quicktools"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.corphish.quicktools"
         minSdk = 30
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 16
         versionName = "1.5.0"
 
