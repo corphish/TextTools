@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.corphish.quicktools.R
+import com.corphish.quicktools.data.Result
 import com.corphish.quicktools.viewmodels.WUPViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -25,14 +26,18 @@ class WUPActivity : NoUIActivity() {
 
             lifecycleScope.launch {
                 wupViewModel.processedPhoneNumber.collect {
-                    if (it != null) {
-                        if (it != WUPViewModel.INITIAL_VALUE) {
-                            openInWeb(phoneNumber = it)
-                        } else {
-                            // Do nothing as it is initial response
+                    when (it) {
+                        is Result.Success -> {
+                            openInWeb(phoneNumber = it.value)
                         }
-                    } else {
-                        Toast.makeText(this@WUPActivity, R.string.invalid_phone_number, Toast.LENGTH_LONG).show()
+
+                        is Result.Error -> {
+                            Toast.makeText(this@WUPActivity, R.string.invalid_phone_number, Toast.LENGTH_LONG).show()
+                        }
+
+                        is Result.Initial -> {
+                            // Do nothing
+                        }
                     }
                 }
             }

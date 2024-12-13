@@ -3,6 +3,7 @@ package com.corphish.quicktools.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.corphish.quicktools.data.Constants
+import com.corphish.quicktools.data.Result
 import com.corphish.quicktools.repository.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,20 +14,20 @@ import javax.inject.Inject
 @HiltViewModel
 class WUPViewModel @Inject constructor(private val settingsRepository: SettingsRepository): ViewModel() {
     // Nullable type to denote when phone number is invalid
-    private val _processedPhoneNumber = MutableStateFlow<String?>(INITIAL_VALUE)
-    val processedPhoneNumber: StateFlow<String?> = _processedPhoneNumber
+    private val _processedPhoneNumber = MutableStateFlow<Result<String>>(Result.Initial)
+    val processedPhoneNumber: StateFlow<Result<String>> = _processedPhoneNumber
 
     fun determinePhoneNumber(data: String?) {
         viewModelScope.launch {
             if (data == null) {
-                _processedPhoneNumber.value = null
+                _processedPhoneNumber.value = Result.Error
             } else {
                 val modified = specialCharactersRemovedFrom(data)
                 val regex = Regex(Constants.PHONE_NUMBER_REGEX)
                 if (regex.matches(modified)) {
-                    _processedPhoneNumber.value = countryCodedNumber(modified)
+                    _processedPhoneNumber.value = Result.Success(countryCodedNumber(modified))
                 } else {
-                    _processedPhoneNumber.value = null
+                    _processedPhoneNumber.value = Result.Error
                 }
             }
         }
