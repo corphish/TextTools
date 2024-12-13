@@ -5,32 +5,43 @@ import android.content.ClipboardManager
 import android.content.Intent
 import android.widget.Toast
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.lifecycleScope
 import com.corphish.quicktools.R
-import com.corphish.quicktools.repository.SettingsRepository
+import com.corphish.quicktools.data.Result
 import com.corphish.quicktools.ui.common.ListDialog
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.ui.theme.TypographyV2
-import net.objecthunter.exp4j.ExpressionBuilder
-import java.text.DecimalFormat
-import kotlin.math.ceil
-import kotlin.math.floor
+import com.corphish.quicktools.viewmodels.EvalViewModel
+import com.corphish.quicktools.viewmodels.EvalViewModel.Companion.EVAL_RESULT_APPEND
+import com.corphish.quicktools.viewmodels.EvalViewModel.Companion.EVAL_RESULT_COPY_TO_CLIPBOARD
+import com.corphish.quicktools.viewmodels.EvalViewModel.Companion.EVAL_RESULT_MODE_ASK_NEXT_TIME
+import com.corphish.quicktools.viewmodels.EvalViewModel.Companion.EVAL_RESULT_REPLACE
+import com.corphish.quicktools.viewmodels.EvaluateResult
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class EvalActivity : NoUIActivity() {
     // Result generator
-    private val _replaceResultGenerator: (String, String) -> String = { input, result -> result }
-    private val _appendResultGenerator: (String, String) -> String = { input, result -> "$input = $result" }
+    private val _replaceResultGenerator: (String, String) -> String = { _, result -> result }
+    private val _appendResultGenerator: (String, String) -> String =
+        { input, result -> "$input = $result" }
+
+    private val evalViewModel: EvalViewModel by viewModels()
 
     override fun handleIntent(intent: Intent): Boolean {
         if (intent.hasExtra(Intent.EXTRA_PROCESS_TEXT)) {
@@ -42,149 +53,145 @@ class EvalActivity : NoUIActivity() {
             }
 
             val text = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT).toString()
-            val settingsRepository = SettingsRepository(this)
-            val decimalPoints = settingsRepository.getDecimalPoints()
-            when (val mode = settingsRepository.getEvaluateResultMode()) {
-                EVAL_RESULT_MODE_ASK_NEXT_TIME -> {
-                    // Show option to user
-                    setContent {
-                        val rememberUserChoiceEnabled = remember {
-                            mutableStateOf(false)
-                        }
 
-                        QuickToolsTheme {
-                            ListDialog(
-                                title = stringResource(id = R.string.eval_title_small),
-                                message = stringResource(id = R.string.eval_result_desc),
-                                list = listOf(
-                                    R.string.eval_mode_result,
-                                    R.string.eval_mode_append,
-                                    R.string.eval_mode_copy
-                                ),
-                                supportBack = false,
-                                dismissible = true,
-                                stringSelector = {
-                                    stringResource(id = it)
-                                },
-                                additionalContent = {
-                                    Row(
-                                        modifier = Modifier
-                                            .padding(top = 8.dp)
-                                            .fillMaxWidth(),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.Center
-                                    ) {
-
-                                        Checkbox(
-                                            checked = rememberUserChoiceEnabled.value,
-                                            onCheckedChange = { rememberUserChoiceEnabled.value = it },
-                                            enabled = true,
-                                        )
-
-                                        Text(
-                                            text = stringResource(id = R.string.remember_this_choice),
-                                            style = TypographyV2.bodyMedium
-                                        )
-                                    }
-                                },
-                                iconSelector = { R.drawable.ic_numbers },
-                                onItemSelected = {
-                                    var selectedMode = EVAL_RESULT_MODE_ASK_NEXT_TIME
-                                    when (it) {
-                                        0 -> {
-                                            handleEvaluationIntent(EVAL_RESULT_REPLACE, text, decimalPoints)
-                                            selectedMode = EVAL_RESULT_REPLACE
-                                        }
-                                        1 -> {
-                                            handleEvaluationIntent(EVAL_RESULT_APPEND, text, decimalPoints)
-                                            selectedMode = EVAL_RESULT_APPEND
-                                        }
-                                        2 -> {
-                                            handleEvaluationCopy(text, decimalPoints)
-                                            selectedMode = EVAL_RESULT_COPY_TO_CLIPBOARD
-                                        }
-                                    }
-
-                                    if (rememberUserChoiceEnabled.value) {
-                                        settingsRepository.setEvaluateResultMode(selectedMode)
-                                    }
-
-                                    finish()
-                                }) {
-                                finish()
+            lifecycleScope.launch {
+                evalViewModel.evalMode.collect { mode ->
+                    when (mode) {
+                        EVAL_RESULT_MODE_ASK_NEXT_TIME -> {
+                            setContent {
+                                UserSelectionDialog(
+                                    onSelected = { selectedMode, rememberChoice ->
+                                        evalViewModel.denoteModeSelectionByUser(selectedMode)
+                                        evalViewModel.denoteUserRememberChoice(rememberChoice)
+                                        evalViewModel.evaluate(text)
+                                    },
+                                    onDismiss = { finish() }
+                                )
                             }
                         }
+
+                        else -> {
+                            evalViewModel.evaluate(text)
+                        }
                     }
+                }
+            }
 
-                    return false
-                }
-                EVAL_RESULT_REPLACE, EVAL_RESULT_APPEND -> {
-                    handleEvaluationIntent(mode, text, decimalPoints)
-                }
-                EVAL_RESULT_COPY_TO_CLIPBOARD -> {
-                    handleEvaluationCopy(text, decimalPoints)
+            lifecycleScope.launch {
+                evalViewModel.evalResult.collect { result: Result<EvaluateResult> ->
+                    when (result) {
+                        is Result.Success -> {
+                            val str = result.value.resultString
+                            when (val mode = result.value.finalMode) {
+                                EVAL_RESULT_REPLACE, EVAL_RESULT_APPEND -> {
+                                    handleEvaluationIntent(text, str, mode)
+                                }
+
+                                EVAL_RESULT_COPY_TO_CLIPBOARD -> {
+                                    handleEvaluationCopy(str)
+                                }
+                            }
+
+                            finish()
+                        }
+
+                        Result.Error -> {
+                            Toast.makeText(
+                                this@EvalActivity,
+                                R.string.invalid_expression,
+                                Toast.LENGTH_LONG
+                            ).show()
+
+                            finish()
+                        }
+
+                        Result.Initial -> {
+                            // Do nothing
+                        }
+                    }
                 }
             }
         }
 
-        return true
+        return false
     }
 
-    private fun handleEvaluation(text: String, decimalPoints: Int, onError: () -> String = { text }): String {
-        val resultText: String = try {
-            val expression = ExpressionBuilder(text).build()
-            val result = expression.evaluate()
-
-            if (ceil(result) == floor(result)) {
-                result.toInt().toString()
-            } else {
-                val decimalFormat = DecimalFormat("0.${"#".repeat(decimalPoints)}")
-                decimalFormat.format(result)
-            }
-        } catch (e: Exception) {
-            Toast.makeText(
-                this,
-                R.string.invalid_expression,
-                Toast.LENGTH_LONG
-            ).show()
-
-            onError()
-        }
-
-        return resultText
-    }
-
-    private fun handleEvaluationIntent(mode: Int, text: String, decimalPoints: Int) {
-        val result = handleEvaluation(text, decimalPoints)
-        val resultGenerator: (String, String) -> String = if (mode == EVAL_RESULT_APPEND) _appendResultGenerator else _replaceResultGenerator
+    private fun handleEvaluationIntent(text: String, result: String, mode: Int) {
+        val resultGenerator: (String, String) -> String =
+            if (mode == EVAL_RESULT_APPEND) _appendResultGenerator else _replaceResultGenerator
 
         val resultIntent = Intent()
         resultIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, resultGenerator(text, result))
         setResult(RESULT_OK, resultIntent)
     }
 
-    private fun handleEvaluationCopy(text: String, decimalPoints: Int) {
-        val result = handleEvaluation(text, decimalPoints, onError = { "err" })
+    private fun handleEvaluationCopy(text: String) {
         val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-        val clip = ClipData.newPlainText("evaluation_result", result)
+        val clip = ClipData.newPlainText("evaluation_result", text)
         clipboard.setPrimaryClip(clip)
+        Toast.makeText(this, R.string.copied_to_clipboard, Toast.LENGTH_LONG).show()
+    }
+}
 
-        if ("err" != result) {
-            Toast.makeText(this, R.string.copied_to_clipboard, Toast.LENGTH_LONG).show()
-        }
+@Composable
+fun UserSelectionDialog(
+    onSelected: (Int, Boolean) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val rememberUserChoiceEnabled = remember {
+        mutableStateOf(false)
     }
 
-    companion object {
-        // Eval result mode choices will be shown to user next time
-        const val EVAL_RESULT_MODE_ASK_NEXT_TIME = 0
+    QuickToolsTheme {
+        ListDialog(
+            title = stringResource(id = R.string.eval_title_small),
+            message = stringResource(id = R.string.eval_result_desc),
+            list = listOf(
+                R.string.eval_mode_result,
+                R.string.eval_mode_append,
+                R.string.eval_mode_copy
+            ),
+            supportBack = false,
+            dismissible = true,
+            stringSelector = {
+                stringResource(id = it)
+            },
+            additionalContent = {
+                Row(
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
 
-        // Eval result will be replaced by the selected text
-        const val EVAL_RESULT_REPLACE = 1
+                    Checkbox(
+                        checked = rememberUserChoiceEnabled.value,
+                        onCheckedChange = { rememberUserChoiceEnabled.value = it },
+                        enabled = true,
+                    )
 
-        // Eval result will be appended after the selected text with = sign
-        const val EVAL_RESULT_APPEND = 2
+                    Text(
+                        text = stringResource(id = R.string.remember_this_choice),
+                        style = TypographyV2.bodyMedium
+                    )
+                }
+            },
+            iconSelector = { R.drawable.ic_numbers },
+            onItemSelected = {
+                when (it) {
+                    0 -> {
+                        onSelected(EVAL_RESULT_REPLACE, rememberUserChoiceEnabled.value)
+                    }
 
-        // Eval result will be copied to the clipboard
-        const val EVAL_RESULT_COPY_TO_CLIPBOARD = 3
+                    1 -> {
+                        onSelected(EVAL_RESULT_APPEND, rememberUserChoiceEnabled.value)
+                    }
+
+                    2 -> {
+                        onSelected(EVAL_RESULT_COPY_TO_CLIPBOARD, rememberUserChoiceEnabled.value)
+                    }
+                }
+            }) { onDismiss() }
     }
 }

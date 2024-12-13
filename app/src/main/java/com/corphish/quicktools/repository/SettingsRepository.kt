@@ -3,7 +3,7 @@ package com.corphish.quicktools.repository
 import android.content.Context
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
-import com.corphish.quicktools.activities.EvalActivity
+import com.corphish.quicktools.viewmodels.EvalViewModel.Companion.EVAL_RESULT_MODE_ASK_NEXT_TIME
 
 class SettingsRepository(
     context: Context
@@ -43,7 +43,7 @@ class SettingsRepository(
     }
 
     fun getEvaluateResultMode() =
-        _sharedPreferenceManager.getInt(_evaluateResultMode, EvalActivity.EVAL_RESULT_MODE_ASK_NEXT_TIME)
+        _sharedPreferenceManager.getInt(_evaluateResultMode, EVAL_RESULT_MODE_ASK_NEXT_TIME)
 
     fun setEvaluateResultMode(mode: Int) {
         _sharedPreferenceManager.edit {
