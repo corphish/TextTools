@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
 }
 
 val variantMultipleOptions = "multipleOptions"
@@ -109,6 +110,10 @@ dependencies {
 
     // To evaluate mathematical expressions
     implementation("net.objecthunter:exp4j:0.4.8")
+
+    // Dagger
+    implementation("com.google.dagger:hilt-android:2.44")
+    kapt("com.google.dagger:hilt-compiler:2.44")
 
     // Testing
     androidTestImplementation(platform("androidx.compose:compose-bom:2024.11.00"))
