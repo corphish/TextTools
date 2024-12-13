@@ -5,7 +5,7 @@ import android.net.Uri
 import android.widget.Toast
 import com.corphish.quicktools.R
 import com.corphish.quicktools.data.Constants
-import com.corphish.quicktools.settings.SettingsHelper
+import com.corphish.quicktools.repository.SettingsRepository
 
 /**
  * WUP (WhatsApp Unknown Phone number) activity handles messaging to
@@ -36,9 +36,9 @@ class WUPActivity : NoUIActivity() {
     }
 
     private fun countryCodedNumber(phoneNumber: String): String {
-        val settingsHelper = SettingsHelper(this)
-        return if (settingsHelper.getPrependCountryCodeEnabled()) {
-            val code = settingsHelper.getPrependCountryCode()
+        val settingsRepository = SettingsRepository(this)
+        return if (settingsRepository.getPrependCountryCodeEnabled()) {
+            val code = settingsRepository.getPrependCountryCode()
             if (code == null) {
                 phoneNumber
             } else if (phoneNumber.startsWith(code)) {

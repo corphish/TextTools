@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.corphish.quicktools.R
-import com.corphish.quicktools.settings.SettingsHelper
+import com.corphish.quicktools.repository.SettingsRepository
 import com.corphish.quicktools.ui.common.ListDialog
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.ui.theme.TypographyV2
@@ -42,9 +42,9 @@ class EvalActivity : NoUIActivity() {
             }
 
             val text = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT).toString()
-            val settingsHelper = SettingsHelper(this)
-            val decimalPoints = settingsHelper.getDecimalPoints()
-            when (val mode = settingsHelper.getEvaluateResultMode()) {
+            val settingsRepository = SettingsRepository(this)
+            val decimalPoints = settingsRepository.getDecimalPoints()
+            when (val mode = settingsRepository.getEvaluateResultMode()) {
                 EVAL_RESULT_MODE_ASK_NEXT_TIME -> {
                     // Show option to user
                     setContent {
@@ -106,7 +106,7 @@ class EvalActivity : NoUIActivity() {
                                     }
 
                                     if (rememberUserChoiceEnabled.value) {
-                                        settingsHelper.setEvaluateResultMode(selectedMode)
+                                        settingsRepository.setEvaluateResultMode(selectedMode)
                                     }
 
                                     finish()

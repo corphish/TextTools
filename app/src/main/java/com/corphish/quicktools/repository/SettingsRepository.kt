@@ -1,11 +1,11 @@
-package com.corphish.quicktools.settings
+package com.corphish.quicktools.repository
 
 import android.content.Context
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import com.corphish.quicktools.activities.EvalActivity
 
-class SettingsHelper(
+class SettingsRepository(
     context: Context
 ) {
     private val _prependCCEnabledKey = "prepend_country_code_enabled"

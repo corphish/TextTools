@@ -56,7 +56,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.corphish.quicktools.BuildConfig
 import com.corphish.quicktools.R
-import com.corphish.quicktools.settings.SettingsHelper
+import com.corphish.quicktools.repository.SettingsRepository
 import com.corphish.quicktools.ui.theme.BrandFontFamily
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.ui.theme.Typography
@@ -65,7 +65,7 @@ import com.corphish.quicktools.ui.theme.TypographyV2
 class SettingsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val settingsHelper = SettingsHelper(this)
+        val settingsRepository = SettingsRepository(this)
         setContent {
             QuickToolsTheme {
                 // A surface container using the 'background' color from the theme
@@ -73,7 +73,7 @@ class SettingsActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Settings(settingsHelper)
+                    Settings(settingsRepository)
                 }
             }
         }
@@ -81,7 +81,7 @@ class SettingsActivity : ComponentActivity() {
 }
 
 @Composable
-fun Settings(settingsHelper: SettingsHelper) {
+fun Settings(settingsRepository: SettingsRepository) {
     val uriHandler = LocalUriHandler.current
     val activity = (LocalContext.current as? Activity)
 
@@ -126,7 +126,7 @@ fun Settings(settingsHelper: SettingsHelper) {
             color = MaterialTheme.colorScheme.primary
         )
 
-        TextSettings(settingsHelper)
+        TextSettings(settingsRepository)
 
         Text(
             text = stringResource(id = R.string.eval_title_small),
@@ -136,7 +136,7 @@ fun Settings(settingsHelper: SettingsHelper) {
             color = MaterialTheme.colorScheme.primary
         )
 
-        EvaluateSettings(settingsHelper)
+        EvaluateSettings(settingsRepository)
 
         Text(
             text = stringResource(id = R.string.app_info),
@@ -197,13 +197,13 @@ fun Settings(settingsHelper: SettingsHelper) {
 }
 
 @Composable
-fun TextSettings(settingsHelper: SettingsHelper) {
+fun TextSettings(settingsRepository: SettingsRepository) {
     var prependCountryCodeEnabled by remember {
-        mutableStateOf(settingsHelper.getPrependCountryCodeEnabled())
+        mutableStateOf(settingsRepository.getPrependCountryCodeEnabled())
     }
     var prependCountryCode by remember {
         mutableStateOf(
-            settingsHelper.getPrependCountryCode() ?: ""
+            settingsRepository.getPrependCountryCode() ?: ""
         )
     }
 
@@ -212,7 +212,7 @@ fun TextSettings(settingsHelper: SettingsHelper) {
             modifier = Modifier
                 .clickable {
                     prependCountryCodeEnabled = !prependCountryCodeEnabled
-                    settingsHelper.setPrependCountryCodeEnabled(prependCountryCodeEnabled)
+                    settingsRepository.setPrependCountryCodeEnabled(prependCountryCodeEnabled)
                 }
                 .fillMaxWidth()
         ) {
@@ -222,7 +222,7 @@ fun TextSettings(settingsHelper: SettingsHelper) {
                 checked = prependCountryCodeEnabled,
                 onCheckedChange = {
                     prependCountryCodeEnabled = it
-                    settingsHelper.setPrependCountryCodeEnabled(it)
+                    settingsRepository.setPrependCountryCodeEnabled(it)
                 },
                 modifier = Modifier.constrainAs(switch) {
                     end.linkTo(parent.end)
@@ -252,7 +252,7 @@ fun TextSettings(settingsHelper: SettingsHelper) {
             value = prependCountryCode,
             onValueChange = {
                 prependCountryCode = it
-                settingsHelper.setPrependCountryCode(it)
+                settingsRepository.setPrependCountryCode(it)
             },
             label = { Text(stringResource(id = R.string.preset_country_code)) },
             modifier = Modifier
@@ -265,9 +265,9 @@ fun TextSettings(settingsHelper: SettingsHelper) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EvaluateSettings(settingsHelper: SettingsHelper) {
+fun EvaluateSettings(settingsRepository: SettingsRepository) {
     var decimalPoints by remember {
-        mutableFloatStateOf(settingsHelper.getDecimalPoints().toFloat())
+        mutableFloatStateOf(settingsRepository.getDecimalPoints().toFloat())
     }
 
     val options = listOf(
@@ -277,7 +277,7 @@ fun EvaluateSettings(settingsHelper: SettingsHelper) {
         stringResource(id = R.string.eval_mode_copy)
     )
     var expanded by remember { mutableStateOf(false) }
-    var selectedOptionText by remember { mutableStateOf(options[settingsHelper.getEvaluateResultMode()]) }
+    var selectedOptionText by remember { mutableStateOf(options[settingsRepository.getEvaluateResultMode()]) }
 
     Column {
         Text(
@@ -301,7 +301,7 @@ fun EvaluateSettings(settingsHelper: SettingsHelper) {
             value = decimalPoints,
             onValueChange = {
                 decimalPoints = it
-                settingsHelper.setDecimalPoints(it.toInt())
+                settingsRepository.setDecimalPoints(it.toInt())
             },
             valueRange = 1f..5f,
             steps = 3
@@ -352,7 +352,7 @@ fun EvaluateSettings(settingsHelper: SettingsHelper) {
                             Text(text = selectionOption)
                         },
                         onClick = {
-                            settingsHelper.setEvaluateResultMode(index)
+                            settingsRepository.setEvaluateResultMode(index)
                             selectedOptionText = selectionOption
                             expanded = false
                         }
@@ -368,6 +368,6 @@ fun EvaluateSettings(settingsHelper: SettingsHelper) {
 fun SettingsPreview() {
     val context = LocalContext.current
     QuickToolsTheme {
-        Settings(SettingsHelper(context))
+        Settings(SettingsRepository(context))
     }
 }
