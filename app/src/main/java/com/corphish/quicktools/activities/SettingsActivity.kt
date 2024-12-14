@@ -4,6 +4,7 @@ import android.app.Activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -36,8 +37,8 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -50,22 +51,23 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.corphish.quicktools.BuildConfig
 import com.corphish.quicktools.R
-import com.corphish.quicktools.repository.SettingsRepository
 import com.corphish.quicktools.ui.theme.BrandFontFamily
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.ui.theme.Typography
 import com.corphish.quicktools.ui.theme.TypographyV2
+import com.corphish.quicktools.viewmodels.SettingsViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SettingsActivity : ComponentActivity() {
+    private val settingsViewModel: SettingsViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val settingsRepository = SettingsRepository(this)
         setContent {
             QuickToolsTheme {
                 // A surface container using the 'background' color from the theme
@@ -73,7 +75,7 @@ class SettingsActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Settings(settingsRepository)
+                    Settings(settingsViewModel)
                 }
             }
         }
@@ -81,9 +83,11 @@ class SettingsActivity : ComponentActivity() {
 }
 
 @Composable
-fun Settings(settingsRepository: SettingsRepository) {
+fun Settings(settingsViewModel: SettingsViewModel) {
     val uriHandler = LocalUriHandler.current
     val activity = (LocalContext.current as? Activity)
+    val versionName by settingsViewModel.appVersionName.collectAsState()
+    val versionCode by settingsViewModel.appVersionCode.collectAsState()
 
     Column(
         modifier = Modifier
@@ -117,7 +121,6 @@ fun Settings(settingsRepository: SettingsRepository) {
             )
         }
 
-
         Text(
             text = stringResource(id = R.string.messaging),
             style = TypographyV2.labelSmall,
@@ -126,7 +129,7 @@ fun Settings(settingsRepository: SettingsRepository) {
             color = MaterialTheme.colorScheme.primary
         )
 
-        TextSettings(settingsRepository)
+        TextSettings(settingsViewModel)
 
         Text(
             text = stringResource(id = R.string.eval_title_small),
@@ -136,7 +139,7 @@ fun Settings(settingsRepository: SettingsRepository) {
             color = MaterialTheme.colorScheme.primary
         )
 
-        EvaluateSettings(settingsRepository)
+        EvaluateSettings(settingsViewModel)
 
         Text(
             text = stringResource(id = R.string.app_info),
@@ -149,8 +152,8 @@ fun Settings(settingsRepository: SettingsRepository) {
         Text(
             text = stringResource(
                 id = R.string.app_version,
-                BuildConfig.VERSION_NAME,
-                BuildConfig.VERSION_CODE
+                versionName,
+                versionCode
             ),
             style = Typography.bodyMedium
         )
@@ -197,22 +200,15 @@ fun Settings(settingsRepository: SettingsRepository) {
 }
 
 @Composable
-fun TextSettings(settingsRepository: SettingsRepository) {
-    var prependCountryCodeEnabled by remember {
-        mutableStateOf(settingsRepository.getPrependCountryCodeEnabled())
-    }
-    var prependCountryCode by remember {
-        mutableStateOf(
-            settingsRepository.getPrependCountryCode() ?: ""
-        )
-    }
+fun TextSettings(settingsViewModel: SettingsViewModel) {
+    val prependCountryCodeEnabled by settingsViewModel.prependCountryCodeEnabled.collectAsState()
+    val prependCountryCode by settingsViewModel.prependCountryCode.collectAsState()
 
     Column {
         ConstraintLayout(
             modifier = Modifier
                 .clickable {
-                    prependCountryCodeEnabled = !prependCountryCodeEnabled
-                    settingsRepository.setPrependCountryCodeEnabled(prependCountryCodeEnabled)
+                    settingsViewModel.updatePrependCountryCodeEnabled(!prependCountryCodeEnabled)
                 }
                 .fillMaxWidth()
         ) {
@@ -221,8 +217,7 @@ fun TextSettings(settingsRepository: SettingsRepository) {
             Switch(
                 checked = prependCountryCodeEnabled,
                 onCheckedChange = {
-                    prependCountryCodeEnabled = it
-                    settingsRepository.setPrependCountryCodeEnabled(it)
+                    settingsViewModel.updatePrependCountryCodeEnabled(it)
                 },
                 modifier = Modifier.constrainAs(switch) {
                     end.linkTo(parent.end)
@@ -249,10 +244,9 @@ fun TextSettings(settingsRepository: SettingsRepository) {
         }
 
         OutlinedTextField(
-            value = prependCountryCode,
+            value = prependCountryCode ?: "",
             onValueChange = {
-                prependCountryCode = it
-                settingsRepository.setPrependCountryCode(it)
+                settingsViewModel.updatePrependCountryCode(it)
             },
             label = { Text(stringResource(id = R.string.preset_country_code)) },
             modifier = Modifier
@@ -265,10 +259,8 @@ fun TextSettings(settingsRepository: SettingsRepository) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EvaluateSettings(settingsRepository: SettingsRepository) {
-    var decimalPoints by remember {
-        mutableFloatStateOf(settingsRepository.getDecimalPoints().toFloat())
-    }
+fun EvaluateSettings(settingsViewModel: SettingsViewModel) {
+    val decimalPoints by settingsViewModel.decimalPoints.collectAsState()
 
     val options = listOf(
         stringResource(id = R.string.eval_mode_ask_next_time),
@@ -277,7 +269,7 @@ fun EvaluateSettings(settingsRepository: SettingsRepository) {
         stringResource(id = R.string.eval_mode_copy)
     )
     var expanded by remember { mutableStateOf(false) }
-    var selectedOptionText by remember { mutableStateOf(options[settingsRepository.getEvaluateResultMode()]) }
+    val selectedOptionText by settingsViewModel.evalResultMode.collectAsState()
 
     Column {
         Text(
@@ -290,7 +282,7 @@ fun EvaluateSettings(settingsRepository: SettingsRepository) {
             style = TypographyV2.bodySmall
         )
         Text(
-            text = "${decimalPoints.toInt()}",
+            text = "$decimalPoints",
             style = TypographyV2.labelLarge,
             textAlign = TextAlign.Center,
             modifier = Modifier
@@ -298,10 +290,9 @@ fun EvaluateSettings(settingsRepository: SettingsRepository) {
                 .padding(top = 8.dp)
         )
         Slider(
-            value = decimalPoints,
+            value = decimalPoints.toFloat(),
             onValueChange = {
-                decimalPoints = it
-                settingsRepository.setDecimalPoints(it.toInt())
+                settingsViewModel.updateDecimalPoints(it.toInt())
             },
             valueRange = 1f..5f,
             steps = 3
@@ -327,7 +318,7 @@ fun EvaluateSettings(settingsRepository: SettingsRepository) {
         ) {
             TextField(
                 readOnly = true,
-                value = selectedOptionText,
+                value = options[selectedOptionText],
                 onValueChange = { },
                 label = { Text(stringResource(id = R.string.eval_result_handling)) },
                 trailingIcon = {
@@ -352,22 +343,12 @@ fun EvaluateSettings(settingsRepository: SettingsRepository) {
                             Text(text = selectionOption)
                         },
                         onClick = {
-                            settingsRepository.setEvaluateResultMode(index)
-                            selectedOptionText = selectionOption
+                            settingsViewModel.updateEvaluateResultMode(index)
                             expanded = false
                         }
                     )
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun SettingsPreview() {
-    val context = LocalContext.current
-    QuickToolsTheme {
-        Settings(SettingsRepository(context))
     }
 }
