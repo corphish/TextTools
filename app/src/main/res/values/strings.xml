@@ -83,6 +83,8 @@
     <string name="save_option_note">As a note</string>
     <string name="no_note_taking_apps">No note taking apps found</string>
     <string name="note_taking_not_supported">Note taking is not supported</string>
+    <string name="save_text_success">Successfully saved the selected text</string>
+    <string name="save_text_error">Failed to save text</string>
 
     <string name="title_activity_find_and_replace">Find &amp; Replace</string>
     <string name="context_menu_find_and_replace">[T\u00B2] Find &amp; Replace</string>

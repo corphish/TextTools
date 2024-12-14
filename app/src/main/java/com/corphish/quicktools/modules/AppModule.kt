@@ -2,6 +2,8 @@ package com.corphish.quicktools.modules
 
 import android.content.Context
 import com.corphish.quicktools.repository.SettingsRepository
+import com.corphish.quicktools.repository.TextRepository
+import com.corphish.quicktools.repository.TextRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,4 +18,9 @@ object AppModule {
     @Singleton
     fun provideSettingsRepository(@ApplicationContext context: Context) =
         SettingsRepository(context)
+
+    @Provides
+    @Singleton
+    fun provideTextRepository(@ApplicationContext context: Context): TextRepository =
+        TextRepositoryImpl(context)
 }

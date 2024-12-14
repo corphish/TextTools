@@ -2,21 +2,25 @@ package com.corphish.quicktools.activities
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.lifecycleScope
 import com.corphish.quicktools.R
+import com.corphish.quicktools.data.Result
 import com.corphish.quicktools.ui.common.ListDialog
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
-import java.io.BufferedWriter
-import java.io.IOException
-import java.io.OutputStream
-import java.io.OutputStreamWriter
+import com.corphish.quicktools.viewmodels.SaveTextViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class SaveTextActivity : NoUIActivity() {
+
+    private val viewmodel: SaveTextViewModel by viewModels()
 
     override fun handleIntent(intent: Intent): Boolean {
         val text = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT).toString()
@@ -52,6 +56,24 @@ class SaveTextActivity : NoUIActivity() {
             }
         }
 
+        lifecycleScope.launch {
+            viewmodel.saveTextStatus.collect {
+                when (it) {
+                    is Result.Initial -> {
+                        // Do nothing
+                    }
+                    is Result.Error -> {
+                        Toast.makeText(this@SaveTextActivity, R.string.save_text_error, Toast.LENGTH_LONG).show()
+                        finish()
+                    }
+                    is Result.Success -> {
+                        Toast.makeText(this@SaveTextActivity, R.string.save_text_success, Toast.LENGTH_LONG).show()
+                        finish()
+                    }
+                }
+            }
+        }
+
         // Do not finish or else the dialog will go away
         return false
     }
@@ -82,7 +104,7 @@ class SaveTextActivity : NoUIActivity() {
             // There are no request codes
             val data: Intent? = result.data
             if (data != null) {
-                writeInFile(data.data, mSelectedText)
+                viewmodel.saveText(data.data, mSelectedText)
                 mSelectedText = ""
             }
         }
@@ -93,25 +115,5 @@ class SaveTextActivity : NoUIActivity() {
         intent.setType("text/plain")
         mSelectedText = text
         mResultLauncher.launch(intent)
-    }
-
-    private fun writeInFile(uri: Uri?, text: String) {
-        if (uri == null) {
-            finish()
-            return
-        }
-
-        val outputStream: OutputStream?
-        try {
-            outputStream = contentResolver.openOutputStream(uri)
-            val bw = BufferedWriter(OutputStreamWriter(outputStream))
-            bw.write(text)
-            bw.flush()
-            bw.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-
-        finish()
     }
 }
