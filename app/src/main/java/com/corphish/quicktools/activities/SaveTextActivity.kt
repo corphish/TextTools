@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.lifecycleScope
 import com.corphish.quicktools.R
@@ -27,32 +28,11 @@ class SaveTextActivity : NoUIActivity() {
 
         setContent {
             QuickToolsTheme {
-                // A surface container using the 'background' color from the theme
-                ListDialog(
-                    title = stringResource(id = R.string.save_text_title),
-                    message = stringResource(id = R.string.save_text_message),
-                    list = listOf(
-                        R.string.save_option_txt,
-                        // R.string.save_option_note, Note taking supported in keep only in A14 but not working in keep
-                    ),
-                    onItemSelected = {
-                        when (it) {
-                            0 -> {
-                                // Text
-                                processTextFile(text)
-                            }
-
-                            1 -> {
-                                // Note
-                                processNote(text)
-                            }
-                        }
-                    },
-                    stringSelector = { stringResource(id = it) },
-                    iconSelector = { R.drawable.ic_save }
-                ) {
-                    finish()
-                }
+                SaveTextSelectionDialog(
+                    onProcessNoteSelected = { processNote(text) },
+                    onProcessFileSelected = { processTextFile(text) },
+                    onDismiss = { finish() }
+                )
             }
         }
 
@@ -115,5 +95,39 @@ class SaveTextActivity : NoUIActivity() {
         intent.setType("text/plain")
         mSelectedText = text
         mResultLauncher.launch(intent)
+    }
+}
+
+@Composable
+fun SaveTextSelectionDialog(
+    onProcessNoteSelected: () -> Unit,
+    onProcessFileSelected: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    // A surface container using the 'background' color from the theme
+    ListDialog(
+        title = stringResource(id = R.string.save_text_title),
+        message = stringResource(id = R.string.save_text_message),
+        list = listOf(
+            R.string.save_option_txt,
+            // R.string.save_option_note, Note taking supported in keep only in A14 but not working in keep
+        ),
+        onItemSelected = {
+            when (it) {
+                0 -> {
+                    // Text
+                    onProcessFileSelected()
+                }
+
+                1 -> {
+                    // Note
+                    onProcessNoteSelected()
+                }
+            }
+        },
+        stringSelector = { stringResource(id = it) },
+        iconSelector = { R.drawable.ic_save }
+    ) {
+        onDismiss()
     }
 }
