@@ -58,7 +58,7 @@ val TypographyV2 = Typography(
     ),
     headlineMedium = TextStyle(
         fontFamily = BrandFontFamily,
-        fontWeight = FontWeight.W500,
+        fontWeight = FontWeight.Bold,
         fontSize = 32.sp
     ),
     headlineSmall = TextStyle(

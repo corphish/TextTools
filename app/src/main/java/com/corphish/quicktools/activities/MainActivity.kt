@@ -57,12 +57,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             QuickToolsTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
-                ) {
-                    Greeting()
-                }
+                Greeting()
             }
         }
     }
@@ -75,7 +70,8 @@ fun Greeting() {
     val mainScrollState = rememberScrollState()
     val contributorScrollState = rememberScrollState()
 
-    Scaffold(floatingActionButton = {
+    Scaffold(
+        floatingActionButton = {
         FloatingActionButton(
             onClick = {
                 context.startActivity(Intent(context, SettingsActivity::class.java))
@@ -104,7 +100,7 @@ fun Greeting() {
         ) {
             Text(
                 text = stringResource(id = R.string.app_name),
-                style = TypographyV2.headlineLarge,
+                style = TypographyV2.headlineMedium,
                 color = MaterialTheme.colorScheme.primary,
                 fontFamily = BrandFontFamily,
                 modifier = Modifier.padding(bottom = 8.dp)
