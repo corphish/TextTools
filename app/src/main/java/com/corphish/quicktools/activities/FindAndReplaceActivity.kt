@@ -5,24 +5,26 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
+import androidx.activity.viewModels
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -43,17 +45,23 @@ import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.corphish.quicktools.R
 import com.corphish.quicktools.text.TextReplacementManager
 import com.corphish.quicktools.ui.common.CircularButtonWithText
-import com.corphish.quicktools.ui.theme.BrandFontFamily
+import com.corphish.quicktools.ui.common.CustomTopAppBar
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
-import com.corphish.quicktools.ui.theme.TypographyV2
+import com.corphish.quicktools.viewmodels.TextReplacementViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class FindAndReplaceActivity : ComponentActivity() {
+    private val viewModel by viewModels<TextReplacementViewModel>()
+
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -66,23 +74,25 @@ class FindAndReplaceActivity : ComponentActivity() {
             }
 
             val text = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT).toString()
+            viewModel.initializeWith(text)
+
             setContent {
                 QuickToolsTheme {
                     // A surface container using the 'background' color from the theme
-                    Surface(
-                        modifier = Modifier.fillMaxSize(),
-                        color = MaterialTheme.colorScheme.background
+                    Scaffold(
+                        topBar = {
+                            CustomTopAppBar(
+                                id = R.string.title_activity_find_and_replace,
+                                onNavigationClick = { finish() })
+                        }
                     ) {
                         FindAndReplace(
-                            input = text,
-                            textReplacementManager = TextReplacementManager(text),
-                            onComplete = {
+                            defaultPadding = it,
+                            viewModel = viewModel,
+                            onComplete = { finalText ->
                                 val resultIntent = Intent()
-                                resultIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, it)
+                                resultIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, finalText)
                                 setResult(RESULT_OK, resultIntent)
-                                finish()
-                            },
-                            onCancel = {
                                 finish()
                             }
                         )
@@ -97,51 +107,24 @@ class FindAndReplaceActivity : ComponentActivity() {
 
 @Composable
 fun FindAndReplace(
-    input: String,
-    textReplacementManager: TextReplacementManager,
+    defaultPadding: PaddingValues,
+    viewModel: TextReplacementViewModel,
     onComplete: (String) -> Unit,
-    onCancel: () -> Unit
 ) {
     val highlightColor = MaterialTheme.colorScheme.secondary
     val highlightColorText = MaterialTheme.colorScheme.onSecondary
     val selectedColor = MaterialTheme.colorScheme.primary
     val selectedColorText = MaterialTheme.colorScheme.onPrimary
 
-    var mainTextState by remember {
-        mutableStateOf(input)
-    }
-
-    var findText by remember {
-        mutableStateOf("")
-    }
-
-    var replaceText by remember {
-        mutableStateOf("")
-    }
-
-    var counterIndex by remember {
-        mutableIntStateOf(0)
-    }
-
-    var counterTotal by remember {
-        mutableIntStateOf(0)
-    }
-
-    var findRanges by remember {
-        mutableStateOf(listOf<TextRange>())
-    }
-
-    var ignoreCase by remember {
-        mutableStateOf(false)
-    }
-
-    var undoState by remember {
-        mutableStateOf(textReplacementManager.canUndo())
-    }
-
-    var redoState by remember {
-        mutableStateOf(textReplacementManager.canRedo())
-    }
+    val mainTextState by viewModel.mainText.collectAsState()
+    val findText by viewModel.findText.collectAsState()
+    val replaceText by viewModel.replaceText.collectAsState()
+    val counterIndex by viewModel.counterIndex.collectAsState()
+    val counterTotal by viewModel.counterTotal.collectAsState()
+    val findRanges by viewModel.findRanges.collectAsState()
+    val ignoreCase by viewModel.ignoreCase.collectAsState()
+    val undoState by viewModel.undoState.collectAsState()
+    val redoState by viewModel.redoState.collectAsState()
 
     val visualTransformation = remember(findRanges, counterIndex) {
         HighlightVisualTransformation(
@@ -154,9 +137,8 @@ fun FindAndReplace(
         )
     }
 
-    ConstraintLayout {
+    ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val (
-            header,
             mainTextField,
             findTextField,
             replaceTextField,
@@ -172,88 +154,31 @@ fun FindAndReplace(
         ) =
             createRefs()
 
-        // Header
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.constrainAs(header) {
-                start.linkTo(parent.start, margin = 16.dp)
-                top.linkTo(parent.top, margin = 16.dp)
-            }
-        ) {
-            IconButton(
-                onClick = { onCancel() },
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primary)
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowLeft,
-                    contentDescription = "",
-                    modifier = Modifier.size(32.dp),
-                    tint = MaterialTheme.colorScheme.onPrimary
-                )
-            }
-
-            Text(
-                text = stringResource(id = R.string.title_activity_find_and_replace),
-                style = TypographyV2.headlineMedium,
-                color = MaterialTheme.colorScheme.primary,
-                fontFamily = BrandFontFamily,
-                modifier = Modifier.padding(start = 16.dp),
-                maxLines = 1
-            )
-        }
-
         // Action buttons in the bottom row
         // Undo
         CircularButtonWithText(
-            onClick = {
-                mainTextState = textReplacementManager.undo()
-
-                // Invoke find again
-                if (findText.isNotEmpty()) {
-                    findRanges = findText(mainTextState, findText, ignoreCase)
-                    counterIndex = 0
-                    counterTotal = findRanges.size
-                } else {
-                    findRanges = mutableListOf()
-                    counterIndex = 0
-                    counterTotal = 0
-                }
-
-                undoState = textReplacementManager.canUndo()
-                redoState = textReplacementManager.canRedo()
-            },
+            onClick = { viewModel.undo() },
             text = stringResource(id = R.string.undo),
             painterResource = painterResource(id = R.drawable.ic_undo),
             enabled = undoState,
             modifier = Modifier
                 .constrainAs(undoButton) {
-                    start.linkTo(parent.start, margin = 16.dp)
+                    start.linkTo(
+                        parent.start,
+                        margin = defaultPadding.calculateStartPadding(LayoutDirection.Ltr)
+                            .plus(16.dp)
+                    )
                     end.linkTo(redoButton.start, margin = 16.dp)
-                    bottom.linkTo(parent.bottom, margin = 16.dp)
+                    bottom.linkTo(
+                        parent.bottom,
+                        margin = defaultPadding.calculateBottomPadding().plus(16.dp)
+                    )
                 }
         )
 
         // Redo
         CircularButtonWithText(
-            onClick = {
-                mainTextState = textReplacementManager.redo()
-
-                // Invoke find again
-                if (findText.isNotEmpty()) {
-                    findRanges = findText(mainTextState, findText, ignoreCase)
-                    counterIndex = 0
-                    counterTotal = findRanges.size
-                } else {
-                    findRanges = mutableListOf()
-                    counterIndex = 0
-                    counterTotal = 0
-                }
-
-                undoState = textReplacementManager.canUndo()
-                redoState = textReplacementManager.canRedo()
-            },
+            onClick = { viewModel.redo() },
             painterResource = painterResource(id = R.drawable.ic_redo),
             text = stringResource(id = R.string.redo),
             enabled = redoState,
@@ -261,26 +186,26 @@ fun FindAndReplace(
                 .constrainAs(redoButton) {
                     start.linkTo(undoButton.end, margin = 16.dp)
                     end.linkTo(resetButton.start, margin = 16.dp)
-                    bottom.linkTo(parent.bottom, margin = 16.dp)
+                    bottom.linkTo(
+                        parent.bottom,
+                        margin = defaultPadding.calculateBottomPadding().plus(16.dp)
+                    )
                 }
         )
 
         // Reset
         CircularButtonWithText(
-            onClick = {
-                mainTextState = textReplacementManager.reset()
-                undoState = textReplacementManager.canUndo()
-                redoState = textReplacementManager.canRedo()
-                findText = ""
-                replaceText = ""
-            },
+            onClick = { viewModel.reset() },
             text = stringResource(id = R.string.reset),
             painterResource = painterResource(id = R.drawable.ic_reset),
             modifier = Modifier
                 .constrainAs(resetButton) {
                     start.linkTo(redoButton.end, margin = 16.dp)
                     end.linkTo(saveButton.start, margin = 16.dp)
-                    bottom.linkTo(parent.bottom, margin = 16.dp)
+                    bottom.linkTo(
+                        parent.bottom,
+                        margin = defaultPadding.calculateBottomPadding().plus(16.dp)
+                    )
                 }
         )
 
@@ -292,32 +217,20 @@ fun FindAndReplace(
             modifier = Modifier
                 .constrainAs(saveButton) {
                     start.linkTo(resetButton.end, margin = 16.dp)
-                    end.linkTo(parent.end, margin = 16.dp)
-                    bottom.linkTo(parent.bottom, margin = 16.dp)
+                    end.linkTo(
+                        parent.end,
+                        margin = defaultPadding.calculateEndPadding(LayoutDirection.Ltr).plus(16.dp)
+                    )
+                    bottom.linkTo(
+                        parent.bottom,
+                        margin = defaultPadding.calculateBottomPadding().plus(16.dp)
+                    )
                 }
         )
 
         // Replace current
         IconButton(
-            onClick = {
-                // Replace first
-                mainTextState =
-                    textReplacementManager.replaceOne(findRanges[counterIndex], replaceText)
-
-                // Invoke find again
-                if (findText.isNotEmpty()) {
-                    findRanges = findText(mainTextState, findText, ignoreCase)
-                    counterIndex = 0
-                    counterTotal = findRanges.size
-                } else {
-                    findRanges = mutableListOf()
-                    counterIndex = 0
-                    counterTotal = 0
-                }
-
-                undoState = textReplacementManager.canUndo()
-                redoState = textReplacementManager.canRedo()
-            },
+            onClick = { viewModel.replaceFirst() },
             colors = IconButtonDefaults.iconButtonColors(
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary,
@@ -342,23 +255,7 @@ fun FindAndReplace(
 
         // Replace all
         IconButton(
-            onClick = {
-                mainTextState = textReplacementManager.replaceAll(findText, replaceText, ignoreCase)
-
-                // Invoke find
-                if (findText.isNotEmpty()) {
-                    findRanges = findText(mainTextState, findText, ignoreCase)
-                    counterIndex = 0
-                    counterTotal = findRanges.size
-                } else {
-                    findRanges = mutableListOf()
-                    counterIndex = 0
-                    counterTotal = 0
-                }
-
-                undoState = textReplacementManager.canUndo()
-                redoState = textReplacementManager.canRedo()
-            },
+            onClick = { viewModel.replaceAll() },
             enabled = replaceText.isNotEmpty() && counterTotal > 0,
             colors = IconButtonDefaults.iconButtonColors(
                 containerColor = MaterialTheme.colorScheme.primary,
@@ -370,7 +267,12 @@ fun FindAndReplace(
                     start.linkTo(replaceThisButton.end, margin = 4.dp)
                     top.linkTo(replaceTextField.top)
                     bottom.linkTo(replaceTextField.bottom)
-                    end.linkTo(parent.end, margin = 16.dp)
+                    end.linkTo(
+                        parent.end,
+                        margin = defaultPadding
+                            .calculateEndPadding(LayoutDirection.Ltr)
+                            .plus(16.dp)
+                    )
                 }
                 .clip(CircleShape)
         ) {
@@ -383,12 +285,7 @@ fun FindAndReplace(
 
         // Find previous
         IconButton(
-            onClick = {
-                counterIndex = (counterIndex - 1) % counterTotal
-                if (counterIndex < 0) {
-                    counterIndex = counterTotal - 1
-                }
-            },
+            onClick = { viewModel.decrementCounter() },
             enabled = findText.isNotEmpty(),
             colors = IconButtonDefaults.iconButtonColors(
                 containerColor = MaterialTheme.colorScheme.primary,
@@ -413,9 +310,7 @@ fun FindAndReplace(
 
         // Find next
         IconButton(
-            onClick = {
-                counterIndex = (counterIndex + 1) % counterTotal
-            },
+            onClick = { viewModel.incrementCounter() },
             colors = IconButtonDefaults.iconButtonColors(
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary,
@@ -427,7 +322,12 @@ fun FindAndReplace(
                     start.linkTo(findPreviousButton.end, margin = 4.dp)
                     top.linkTo(findTextField.top)
                     bottom.linkTo(findTextField.bottom)
-                    end.linkTo(parent.end, margin = 16.dp)
+                    end.linkTo(
+                        parent.end,
+                        margin = defaultPadding
+                            .calculateEndPadding(LayoutDirection.Ltr)
+                            .plus(16.dp)
+                    )
                 }
                 .clip(CircleShape)
         ) {
@@ -440,10 +340,14 @@ fun FindAndReplace(
 
         OutlinedTextField(
             value = replaceText,
-            onValueChange = { replaceText = it },
+            onValueChange = { viewModel.setReplaceText(it) },
             modifier = Modifier
                 .constrainAs(replaceTextField) {
-                    start.linkTo(parent.start, margin = 16.dp)
+                    start.linkTo(
+                        parent.start,
+                        margin = defaultPadding.calculateStartPadding(LayoutDirection.Ltr)
+                            .plus(16.dp)
+                    )
                     bottom.linkTo(undoButton.top, margin = 16.dp)
                     end.linkTo(replaceThisButton.start, margin = 8.dp)
                     width = Dimension.fillToConstraints
@@ -459,17 +363,7 @@ fun FindAndReplace(
         OutlinedTextField(
             value = findText,
             onValueChange = {
-                if (it.isNotEmpty()) {
-                    findText = it
-                    findRanges = findText(mainTextState, findText, ignoreCase)
-                    counterIndex = 0
-                    counterTotal = findRanges.size
-                } else {
-                    findText = ""
-                    findRanges = mutableListOf()
-                    counterIndex = 0
-                    counterTotal = 0
-                }
+                viewModel.setFindText(it)
             },
             suffix = {
                 if (findText.isNotEmpty()) {
@@ -479,7 +373,12 @@ fun FindAndReplace(
             modifier = Modifier
                 .fillMaxWidth()
                 .constrainAs(findTextField) {
-                    start.linkTo(parent.start, margin = 16.dp)
+                    start.linkTo(
+                        parent.start,
+                        margin = defaultPadding
+                            .calculateStartPadding(LayoutDirection.Ltr)
+                            .plus(16.dp)
+                    )
                     bottom.linkTo(caseCheckBox.top, margin = 4.dp)
                     end.linkTo(findPreviousButton.start, margin = 8.dp)
                     width = Dimension.fillToConstraints
@@ -495,72 +394,45 @@ fun FindAndReplace(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.constrainAs(caseCheckBox) {
-                start.linkTo(parent.start, margin = 16.dp)
-                end.linkTo(parent.end, margin = 16.dp)
+                start.linkTo(
+                    parent.start,
+                    margin = defaultPadding.calculateStartPadding(LayoutDirection.Ltr).plus(16.dp)
+                )
+                end.linkTo(
+                    parent.end,
+                    margin = defaultPadding.calculateEndPadding(LayoutDirection.Ltr).plus(16.dp)
+                )
                 bottom.linkTo(replaceTextField.top, margin = 4.dp)
                 width = Dimension.fillToConstraints
             }
         ) {
-            Checkbox(checked = ignoreCase, onCheckedChange = {
-                ignoreCase = it
-                // Invoke find again
-                if (findText.isNotEmpty()) {
-                    findRanges = findText(mainTextState, findText, ignoreCase)
-                    counterIndex = 0
-                    counterTotal = findRanges.size
-                } else {
-                    findRanges = mutableListOf()
-                    counterIndex = 0
-                    counterTotal = 0
-                }
-            })
+            Checkbox(
+                checked = ignoreCase,
+                onCheckedChange = { viewModel.setIgnoreCase(it) }
+            )
             Text(text = stringResource(id = R.string.ignore_case))
         }
 
         OutlinedTextField(
             value = mainTextState,
-            onValueChange = {
-                mainTextState = it
-                textReplacementManager.updateText(it)
-                undoState = textReplacementManager.canUndo()
-                redoState = textReplacementManager.canRedo()
-            },
+            onValueChange = { viewModel.updateMainText(it) },
             modifier = Modifier.constrainAs(mainTextField) {
-                start.linkTo(parent.start, margin = 16.dp)
+                start.linkTo(
+                    parent.start,
+                    margin = defaultPadding.calculateStartPadding(LayoutDirection.Ltr).plus(16.dp)
+                )
                 bottom.linkTo(findTextField.top, margin = 8.dp)
-                end.linkTo(parent.end, margin = 16.dp)
-                top.linkTo(header.bottom, margin = 16.dp)
+                end.linkTo(
+                    parent.end,
+                    margin = defaultPadding.calculateEndPadding(LayoutDirection.Ltr).plus(16.dp)
+                )
+                top.linkTo(parent.top, margin = defaultPadding.calculateTopPadding().plus(16.dp))
                 width = Dimension.fillToConstraints
                 height = Dimension.fillToConstraints
             },
             visualTransformation = visualTransformation
         )
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun FindAndReplacePreview() {
-    QuickToolsTheme {
-        FindAndReplace("Android", TextReplacementManager(""), {}, {})
-    }
-}
-
-private fun findText(mainInput: String, findText: String, ignoreCase: Boolean): List<TextRange> {
-    val result = mutableListOf<TextRange>()
-    var index = -findText.length
-    do {
-        index = mainInput.indexOf(
-            findText,
-            startIndex = index + findText.length,
-            ignoreCase = ignoreCase
-        )
-        if (index != -1) {
-            result += TextRange(start = index, end = index + findText.length)
-        }
-    } while (index >= 0)
-
-    return result
 }
 
 class HighlightVisualTransformation(
