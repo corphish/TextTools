@@ -2,6 +2,7 @@ package com.corphish.quicktools.ui.common
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
@@ -16,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.corphish.quicktools.ui.theme.BrandFontFamily
 
@@ -63,6 +65,12 @@ fun CircularButtonWithText(
             }
         }
 
-        Text(text = text, color = if (enabled) MaterialTheme.colorScheme.onBackground else Color.Gray, fontFamily = BrandFontFamily)
+        Text(
+            text = text,
+            color = if (enabled) MaterialTheme.colorScheme.onBackground else Color.Gray,
+            fontFamily = BrandFontFamily,
+            fontWeight = FontWeight.W600,
+            modifier = Modifier.padding(top = 4.dp)
+        )
     }
 }
