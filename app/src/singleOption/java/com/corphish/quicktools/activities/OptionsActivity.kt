@@ -2,7 +2,6 @@ package com.corphish.quicktools.activities
 
 import android.app.Activity
 import android.content.Intent
-import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
