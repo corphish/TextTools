@@ -2,6 +2,7 @@ package com.corphish.quicktools.activities
 
 import android.app.Activity
 import android.content.Intent
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
@@ -44,14 +45,15 @@ class OptionsActivity : NoUIActivity() {
                     }
 
                     if (optionDialog.value) {
+                        val list = _options.filter { !readonly || !it.requiresEditable }
                         ListDialog(
                             title = stringResource(id = R.string.app_name),
                             message = stringResource(id = R.string.app_single_op, text.truncate()),
-                            list = _options.filter { !readonly || !it.requiresEditable },
+                            list = list,
                             stringSelector = { stringResource(id = it.optionResourceId) },
                             iconSelector = { it.icon },
                             onItemSelected = {
-                                val routeIntent = Intent(this, _options[it].handlingClass)
+                                val routeIntent = Intent(this, list[it].handlingClass)
                                 routeIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, text)
                                 routeIntent.putExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, readonly)
                                 router.launch(routeIntent)
