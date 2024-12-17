@@ -6,6 +6,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -25,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -56,7 +60,7 @@ class TextCountActivity : ComponentActivity() {
                     ) { innerPadding ->
                         TextCount(
                             text = text,
-                            modifier = Modifier.padding(innerPadding)
+                            innerPadding = innerPadding
                         )
                     }
                 }
@@ -66,7 +70,7 @@ class TextCountActivity : ComponentActivity() {
 }
 
 @Composable
-fun TextCount(text: String, modifier: Modifier = Modifier) {
+fun TextCount(text: String, innerPadding: PaddingValues = PaddingValues()) {
     val viewModel = viewModel { TextCountViewModel() }
     val inputText by viewModel.text.collectAsState()
     val characterCount by viewModel.characterCount.collectAsState()
@@ -76,6 +80,8 @@ fun TextCount(text: String, modifier: Modifier = Modifier) {
     val spaceCount by viewModel.spaceCount.collectAsState()
     val symbolCount by viewModel.symbolCount.collectAsState()
     val wordFrequency by viewModel.wordFrequency.collectAsState()
+
+    val modifier = Modifier
 
     LaunchedEffect(true) {
         viewModel.setTextAndProcess(text)
@@ -100,10 +106,10 @@ fun TextCount(text: String, modifier: Modifier = Modifier) {
                 viewModel.setTextAndProcess(it)
             },
             modifier = Modifier.constrainAs(textInputRef) {
-                top.linkTo(parent.top, margin = 16.dp)
+                top.linkTo(parent.top, margin = innerPadding.calculateTopPadding().plus(16.dp))
                 bottom.linkTo(statsLabelRef.top, margin = 8.dp)
-                start.linkTo(parent.start, margin = 16.dp)
-                end.linkTo(parent.end, margin = 16.dp)
+                start.linkTo(parent.start, margin = innerPadding.calculateStartPadding(LayoutDirection.Ltr).plus(16.dp))
+                end.linkTo(parent.end, margin = innerPadding.calculateEndPadding(LayoutDirection.Ltr).plus(16.dp))
                 width = Dimension.fillToConstraints
                 height = Dimension.fillToConstraints
             },
@@ -116,7 +122,7 @@ fun TextCount(text: String, modifier: Modifier = Modifier) {
             modifier = Modifier
                 .padding(top = 16.dp)
                 .constrainAs(statsLabelRef) {
-                    start.linkTo(parent.start, margin = 16.dp)
+                    start.linkTo(parent.start, margin = innerPadding.calculateStartPadding(LayoutDirection.Ltr).plus(16.dp))
                     bottom.linkTo(charCountRef.top, margin = 8.dp)
                 },
             fontFamily = BrandFontFamily,
@@ -127,7 +133,7 @@ fun TextCount(text: String, modifier: Modifier = Modifier) {
         Card(
             modifier = modifier.constrainAs(charCountRef) {
                 bottom.linkTo(letterCountRef.top, margin = 8.dp)
-                start.linkTo(parent.start, margin = 16.dp)
+                start.linkTo(parent.start, margin = innerPadding.calculateStartPadding(LayoutDirection.Ltr).plus(16.dp))
                 end.linkTo(wordCountRef.start, margin = 4.dp)
                 width = Dimension.fillToConstraints
             }
@@ -153,7 +159,7 @@ fun TextCount(text: String, modifier: Modifier = Modifier) {
             modifier = modifier.constrainAs(wordCountRef) {
                 bottom.linkTo(letterCountRef.top, margin = 8.dp)
                 start.linkTo(charCountRef.end, margin = 4.dp)
-                end.linkTo(parent.end, margin = 16.dp)
+                end.linkTo(parent.end, margin = innerPadding.calculateEndPadding(LayoutDirection.Ltr).plus(16.dp))
                 width = Dimension.fillToConstraints
             }
         ) {
@@ -178,7 +184,7 @@ fun TextCount(text: String, modifier: Modifier = Modifier) {
         Card(
             modifier = modifier.constrainAs(letterCountRef) {
                 bottom.linkTo(spaceCountRef.top, margin = 8.dp)
-                start.linkTo(parent.start, margin = 16.dp)
+                start.linkTo(parent.start, margin = innerPadding.calculateStartPadding(LayoutDirection.Ltr).plus(16.dp))
                 end.linkTo(digitCountRef.start, margin = 4.dp)
                 width = Dimension.fillToConstraints
             }
@@ -204,7 +210,7 @@ fun TextCount(text: String, modifier: Modifier = Modifier) {
             modifier = modifier.constrainAs(digitCountRef) {
                 bottom.linkTo(spaceCountRef.top, margin = 8.dp)
                 start.linkTo(letterCountRef.end, margin = 4.dp)
-                end.linkTo(parent.end, margin = 16.dp)
+                end.linkTo(parent.end, margin = innerPadding.calculateEndPadding(LayoutDirection.Ltr).plus(16.dp))
                 width = Dimension.fillToConstraints
             }
         ) {
@@ -229,7 +235,7 @@ fun TextCount(text: String, modifier: Modifier = Modifier) {
         Card(
             modifier = modifier.constrainAs(spaceCountRef) {
                 bottom.linkTo(frequencyRef.top, margin = 16.dp)
-                start.linkTo(parent.start, margin = 16.dp)
+                start.linkTo(parent.start, margin = innerPadding.calculateStartPadding(LayoutDirection.Ltr).plus(16.dp))
                 end.linkTo(symbolCountRef.start, margin = 4.dp)
                 width = Dimension.fillToConstraints
             }
@@ -255,7 +261,7 @@ fun TextCount(text: String, modifier: Modifier = Modifier) {
             modifier = modifier.constrainAs(symbolCountRef) {
                 bottom.linkTo(frequencyRef.top, margin = 16.dp)
                 start.linkTo(spaceCountRef.end, margin = 4.dp)
-                end.linkTo(parent.end, margin = 16.dp)
+                end.linkTo(parent.end, margin = innerPadding.calculateEndPadding(LayoutDirection.Ltr).plus(16.dp))
                 width = Dimension.fillToConstraints
             }
         ) {
@@ -279,9 +285,9 @@ fun TextCount(text: String, modifier: Modifier = Modifier) {
         Column(
             modifier = Modifier
                 .constrainAs(frequencyRef) {
-                    start.linkTo(parent.start, margin = 16.dp)
-                    end.linkTo(parent.end, margin = 16.dp)
-                    bottom.linkTo(parent.bottom, margin = 16.dp)
+                    start.linkTo(parent.start, margin = innerPadding.calculateStartPadding(LayoutDirection.Ltr).plus(16.dp))
+                    end.linkTo(parent.end, margin = innerPadding.calculateEndPadding(LayoutDirection.Ltr).plus(16.dp))
+                    bottom.linkTo(parent.bottom, margin = innerPadding.calculateBottomPadding().plus(16.dp))
                     width = Dimension.fillToConstraints
                 }
                 .fillMaxWidth()
