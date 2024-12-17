@@ -6,8 +6,6 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,20 +42,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.corphish.quicktools.R
-import com.corphish.quicktools.text.TextTransformer
 import com.corphish.quicktools.ui.theme.BrandFontFamily
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.ui.theme.TypographyV2
@@ -103,87 +96,6 @@ class TransformActivity : ComponentActivity() {
 
         // Do not finish or else the dialog will go away
         // return false
-    }
-}
-
-/**
- * Dialog that lets the user select the custom wrapper text.
- */
-@Composable
-fun CustomWrapperTextDialog(
-    onTextConfirmed: (String) -> Unit,
-    onDismissRequest: () -> Unit
-) {
-    var text by remember { mutableStateOf("") }
-    var isError by remember {
-        mutableStateOf(false)
-    }
-
-    Dialog(
-        onDismissRequest = { onDismissRequest() },
-    ) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            shape = RoundedCornerShape(16.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(16.dp),
-            ) {
-                Text(
-                    text = stringResource(id = R.string.wrap_text),
-                    style = TypographyV2.headlineMedium,
-                    fontFamily = BrandFontFamily,
-                    fontWeight = FontWeight.W500,
-                    color = MaterialTheme.colorScheme.primary
-                )
-
-                Text(
-                    text = stringResource(id = R.string.custom_wrapper_desc),
-                    style = TypographyV2.bodyMedium,
-                    modifier = Modifier.padding(bottom = 16.dp, top = 4.dp)
-                )
-
-                OutlinedTextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 8.dp),
-                    value = text,
-                    isError = isError,
-                    onValueChange = {
-                        text = it
-                        isError = text.length % 2 == 1
-                    },
-                    supportingText = {
-                        if (isError) {
-                            Text(
-                                modifier = Modifier.fillMaxWidth(),
-                                text = stringResource(id = R.string.custom_wrapper_error),
-                                color = MaterialTheme.colorScheme.error
-                            )
-                        }
-                    },
-                    singleLine = true,
-                    label = { Text("Enter text here") },
-                )
-
-                Box(modifier = Modifier.fillMaxWidth()) {
-                    Button(
-                        onClick = { if (!isError) onTextConfirmed(text) },
-                        modifier = Modifier.fillMaxWidth(),
-                        enabled = !isError
-                    ) {
-                        Text(
-                            text = stringResource(id = android.R.string.ok),
-                            fontFamily = BrandFontFamily,
-                        )
-                    }
-                }
-            }
-        }
     }
 }
 
@@ -417,7 +329,6 @@ fun TextTransformUI(
                                 onClick = {
                                     secondaryFunctionExpanded = false
                                     viewModel.selectSecondaryIndex(index)
-                                    // TODO: Move custom wrap text to be used as secondary text
                                 }
                             )
                         }

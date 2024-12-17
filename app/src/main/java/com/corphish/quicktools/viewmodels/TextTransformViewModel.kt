@@ -108,6 +108,7 @@ class TextTransformViewModel : ViewModel() {
                 optionsWithSecondaryFunctionText.contains(_selectedPrimaryIndex.value)
 
             _secondaryFunctionTextLabel.value = when (_selectedPrimaryIndex.value) {
+                INDEX_WRAP_TEXT -> R.string.wrap_text
                 INDEX_REPEAT_TEXT -> R.string.repeat_text
                 INDEX_REMOVE_TEXT -> R.string.remove_text
                 INDEX_ADD_PREFIX_SUFFIX -> R.string.add_prefix_suffix
@@ -121,9 +122,13 @@ class TextTransformViewModel : ViewModel() {
                     KeyboardType.Text
                 }
 
+            // RIP indent
             _secondaryFunctionTextEnabled.value =
                     // Disable when remove option is selected for preset characters
-                !(_selectedPrimaryIndex.value == INDEX_REMOVE_TEXT && _selectedSecondaryIndex.value > 2)
+                !((_selectedPrimaryIndex.value == INDEX_REMOVE_TEXT && _selectedSecondaryIndex.value > 2) ||
+
+                        // Disable for custom wrap
+                        _selectedPrimaryIndex.value == INDEX_WRAP_TEXT && _selectedSecondaryIndex.value != 5)
         }
     }
 
@@ -137,7 +142,11 @@ class TextTransformViewModel : ViewModel() {
 
                 INDEX_WRAP_TEXT -> {
                     // Wrap
-                    textTransformer.presetWrap(_mainText.value, _selectedSecondaryIndex.value)
+                    if (_selectedSecondaryIndex.value == 5) {
+                        textTransformer.customWrap(_mainText.value, _secondaryFunctionText.value)
+                    } else {
+                        textTransformer.presetWrap(_mainText.value, _selectedSecondaryIndex.value)
+                    }
                 }
 
                 INDEX_CHANGE_CASE -> {
@@ -269,15 +278,8 @@ class TextTransformViewModel : ViewModel() {
         const val INDEX_REVERSE_LINES = 10
         const val INDEX_DECORATE_TEXT = 11
 
-        val optionsWithSecondaryDropDown = listOf(
-            INDEX_WRAP_TEXT,
-            INDEX_CHANGE_CASE,
-            INDEX_REMOVE_TEXT,
-            INDEX_ADD_PREFIX_SUFFIX,
-            INDEX_DECORATE_TEXT,
-        )
-
         private val optionsWithSecondaryFunctionText = listOf(
+            INDEX_WRAP_TEXT,
             INDEX_REPEAT_TEXT,
             INDEX_REMOVE_TEXT,
             INDEX_ADD_PREFIX_SUFFIX,
