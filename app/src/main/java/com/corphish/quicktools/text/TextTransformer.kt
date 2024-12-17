@@ -58,12 +58,13 @@ class TextTransformer {
     /**
      * Performs custom wrap on str with the given wrap text.
      * str will be prepended with the first 2 characters of wrap and appended with the
-     * last 2 letters of wrap.
-     * Which is why it is important to have the length of wrap as even.
+     * last 2 letters of wrap if the wrap string length is even.
+     * If the wrap string length is odd, the string will be wrapped with wrap text
+     * on both sides.
      */
     fun customWrap(str: String, wrap: String): String {
         if (wrap.length % 2 == 1) {
-            return str
+            return "${wrap}${str}${wrap}"
         }
 
         val first = wrap.substring(0, wrap.length / 2)
