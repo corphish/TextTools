@@ -6,7 +6,10 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,13 +33,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -46,11 +49,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.corphish.quicktools.R
+import com.corphish.quicktools.ui.common.CustomTopAppBar
 import com.corphish.quicktools.ui.theme.BrandFontFamily
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.ui.theme.TypographyV2
@@ -58,6 +63,7 @@ import com.corphish.quicktools.viewmodels.TextTransformViewModel
 
 class TransformActivity : ComponentActivity() {
 
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (intent.hasExtra(Intent.EXTRA_PROCESS_TEXT)) {
@@ -73,14 +79,12 @@ class TransformActivity : ComponentActivity() {
 
             setContent {
                 QuickToolsTheme {
-                    // A surface container using the 'background' color from the theme
-                    Surface(
-                        modifier = Modifier.fillMaxSize(),
-                        color = MaterialTheme.colorScheme.background
+                    Scaffold(
+                        topBar = { CustomTopAppBar(id = R.string.transform_long, onNavigationClick = { finish() }) }
                     ) {
                         TextTransformUI(
                             textToTransform = text,
-                            onCancel = { finish() },
+                            paddingValues = it,
                             onApply = {
                                 resultIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, it)
                                 setResult(RESULT_OK, resultIntent)
@@ -103,7 +107,7 @@ class TransformActivity : ComponentActivity() {
 @Composable
 fun TextTransformUI(
     textToTransform: String,
-    onCancel: () -> Unit = {},
+    paddingValues: PaddingValues,
     onApply: (String) -> Unit = {}
 ) {
     val viewModel = viewModel { TextTransformViewModel() }
@@ -129,42 +133,10 @@ fun TextTransformUI(
         modifier = Modifier.fillMaxHeight()
     ) {
         val (
-            header,
             inputTextField,
             previewTextField,
             functionSheet
         ) = createRefs()
-
-        // Header
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.constrainAs(header) {
-                start.linkTo(parent.start, margin = 16.dp)
-                top.linkTo(parent.top, margin = 16.dp)
-            }
-        ) {
-            IconButton(
-                onClick = { onCancel() },
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primary)
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowLeft,
-                    contentDescription = "",
-                    modifier = Modifier.size(32.dp),
-                    tint = MaterialTheme.colorScheme.onPrimary
-                )
-            }
-
-            Text(
-                text = stringResource(id = R.string.transform_long),
-                style = TypographyV2.headlineMedium,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(start = 16.dp),
-                maxLines = 1
-            )
-        }
 
         OutlinedTextField(
             value = inputText,
@@ -172,10 +144,10 @@ fun TextTransformUI(
                 viewModel.initializeText(it)
             },
             modifier = Modifier.constrainAs(inputTextField) {
-                top.linkTo(header.bottom, margin = 16.dp)
+                top.linkTo(parent.top, margin = paddingValues.calculateTopPadding().plus(16.dp))
                 bottom.linkTo(previewTextField.top, margin = 8.dp)
-                start.linkTo(parent.start, margin = 8.dp)
-                end.linkTo(parent.end, margin = 8.dp)
+                start.linkTo(parent.start, margin = paddingValues.calculateStartPadding(LayoutDirection.Ltr).plus(8.dp))
+                end.linkTo(parent.end, margin = paddingValues.calculateEndPadding(LayoutDirection.Ltr).plus(8.dp))
                 height = Dimension.fillToConstraints
                 width = Dimension.fillToConstraints
             },
@@ -188,8 +160,8 @@ fun TextTransformUI(
             modifier = Modifier.constrainAs(previewTextField) {
                 top.linkTo(inputTextField.bottom, margin = 8.dp)
                 bottom.linkTo(functionSheet.top, margin = 8.dp)
-                start.linkTo(parent.start, margin = 8.dp)
-                end.linkTo(parent.end, margin = 8.dp)
+                start.linkTo(parent.start, margin = paddingValues.calculateStartPadding(LayoutDirection.Ltr).plus(8.dp))
+                end.linkTo(parent.end, margin = paddingValues.calculateEndPadding(LayoutDirection.Ltr).plus(8.dp))
                 height = Dimension.fillToConstraints
                 width = Dimension.fillToConstraints
             },
@@ -351,5 +323,5 @@ fun TextTransformUI(
 @Composable
 @Preview
 fun TextTransformUIPreview() {
-    TextTransformUI(textToTransform = "Text to transform")
+    TextTransformUI(textToTransform = "Text to transform", paddingValues = PaddingValues(all = 0.dp))
 }
