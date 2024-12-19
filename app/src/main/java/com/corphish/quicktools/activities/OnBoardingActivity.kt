@@ -1,5 +1,6 @@
 package com.corphish.quicktools.activities
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -56,6 +57,10 @@ import dagger.hilt.android.AndroidEntryPoint
 class OnBoardingActivity : ComponentActivity() {
     private val viewModel: OnBoardingViewModel by viewModels()
 
+    private fun switchToMain() {
+        startActivity(Intent(this, MainActivity::class.java))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -69,6 +74,7 @@ class OnBoardingActivity : ComponentActivity() {
                         },
                         onFinish = {
                             viewModel.setOnBoardingDone(true)
+                            switchToMain()
                             finish()
                         }
                     )
