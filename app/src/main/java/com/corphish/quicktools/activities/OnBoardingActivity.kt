@@ -10,6 +10,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,7 +21,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
@@ -41,13 +43,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.corphish.quicktools.R
 import com.corphish.quicktools.repository.AppMode
 import com.corphish.quicktools.ui.theme.BrandFontFamily
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.viewmodels.OnBoardingViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class OnBoardingActivity : ComponentActivity() {
     private val viewModel: OnBoardingViewModel by viewModels()
 
@@ -56,8 +61,9 @@ class OnBoardingActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             QuickToolsTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { _ ->
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     OnBoarding(
+                        paddingValues = innerPadding,
                         onAppModeSelected = {
                             viewModel.setAppMode(it)
                         },
@@ -74,14 +80,18 @@ class OnBoardingActivity : ComponentActivity() {
 
 @Composable
 fun OnBoarding(
+    paddingValues: PaddingValues = PaddingValues(),
     onAppModeSelected: (AppMode) -> Unit = {},
     onFinish: () -> Unit = {},
 ) {
-    var page by remember { mutableIntStateOf(1) }
+    var page by remember { mutableIntStateOf(0) }
 
     when (page) {
-        0 -> InitialPage { page = 1 }
+        0 -> InitialPage(
+            paddingValues = paddingValues
+        ) { page = 1 }
         1 -> ModeSelectionScreen(
+            paddingValues = paddingValues,
             onModeSelected = { onAppModeSelected(it) },
             onFinish = { onFinish() }
         )
@@ -90,6 +100,7 @@ fun OnBoarding(
 
 @Composable
 fun InitialPage(
+    paddingValues: PaddingValues = PaddingValues(),
     onNextPressed: () -> Unit = {}
 ) {
     Column(
@@ -107,7 +118,9 @@ fun InitialPage(
         Text(
             text = stringResource(R.string.app_name),
             style = MaterialTheme.typography.headlineMedium,
-            fontFamily = BrandFontFamily
+            fontFamily = BrandFontFamily,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary,
         )
 
         Text(
@@ -120,8 +133,9 @@ fun InitialPage(
         IconButton(
             onClick = { onNextPressed() },
             modifier = Modifier
-                .padding(vertical = 16.dp)
+                .padding(vertical = 32.dp)
                 .clip(CircleShape)
+                .size(64.dp)
                 .background(MaterialTheme.colorScheme.primary)
         ) {
             Icon(
@@ -135,13 +149,19 @@ fun InitialPage(
 
 @Composable
 fun ModeSelectionScreen(
+    paddingValues: PaddingValues = PaddingValues(),
     onModeSelected: (AppMode) -> Unit = {},
     onFinish: () -> Unit = {},
 ) {
     var selectedMode by remember { mutableStateOf(AppMode.SINGLE) }
     Column(
         modifier = Modifier
-            .padding(16.dp)
+            .padding(
+                start = paddingValues.calculateStartPadding(LayoutDirection.Ltr).plus(16.dp),
+                end = paddingValues.calculateEndPadding(LayoutDirection.Ltr).plus(16.dp),
+                top = paddingValues.calculateTopPadding().plus(16.dp),
+                bottom = paddingValues.calculateBottomPadding().plus(16.dp)
+            )
             .fillMaxSize()
     ) {
         Icon(
@@ -154,7 +174,9 @@ fun ModeSelectionScreen(
         Text(
             text = stringResource(R.string.mode_select_title),
             style = MaterialTheme.typography.headlineMedium,
-            fontFamily = BrandFontFamily
+            fontFamily = BrandFontFamily,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary,
         )
 
         Text(
@@ -190,6 +212,7 @@ fun ModeSelectionScreen(
             modifier = Modifier
                 .padding(vertical = 16.dp)
                 .clip(CircleShape)
+                .size(64.dp)
                 .background(MaterialTheme.colorScheme.primary)
                 .align(Alignment.CenterHorizontally)
         ) {
