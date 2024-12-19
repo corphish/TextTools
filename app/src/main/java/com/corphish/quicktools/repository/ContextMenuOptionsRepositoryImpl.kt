@@ -89,7 +89,7 @@ class ContextMenuOptionsRepositoryImpl(private val context: Context) :
     override fun getCurrentlyEnabledFeatures(): List<FeatureIds> {
         val enabledFeatures = mutableListOf<FeatureIds>()
         _multiFeatureAliasMapping.forEach { (featureIds, _) ->
-            if (_sharedPreferenceManager.getBoolean(_featuresKeySuffix + featureIds.name, false)) {
+            if (_sharedPreferenceManager.getBoolean(_featuresKeySuffix + featureIds.name, true)) {
                 enabledFeatures.add(featureIds)
             }
         }
