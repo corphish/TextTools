@@ -35,41 +35,6 @@ android {
         }
     }
 
-    flavorDimensions += "variant"
-
-    productFlavors {
-        /*
-         * This flavor provides all the supported process_text options inside the
-         * text selection context menu. This provides options directly to the user
-         * at the cost of cluttered context menu.
-         */
-        create(variantMultipleOptions) {
-            dimension = "variant"
-        }
-
-        /*
-         * This flavor provides a single option inside the text selection context menu
-         * that reveals all the supported options. This helps to reduce clutter in the
-         * context menu at expense of 1 more step.
-         */
-        create(variantSingleOption) {
-            dimension = "variant"
-            applicationIdSuffix = ".single"
-        }
-    }
-
-    androidComponents {
-        onVariants { variant ->
-            val apkName = if (variant.name.startsWith(variantMultipleOptions)) "app-release.apk" else "app-release-single.apk"
-
-            variant.outputs.forEach { output ->
-                if (output is com.android.build.api.variant.impl.VariantOutputImpl) {
-                    output.outputFileName = apkName
-                }
-            }
-        }
-    }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
