@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Text Tools</string>
     <string name="app_desc">Collection of useful text related functions which can be accessed within many apps inside the Android System by selecting a text within it. The supported options appear in the context menu that appears after selecting a text. You may have to reveal them by pressing the 3 dots icon in the context menu. The list of supported functions will keep on growing.</string>
+    <string name="app_desc_short">Collection of useful text related functions which can be accessed within many apps inside the Android System by selecting a text within it</string>
     <string name="app_single_op">Select the function that you would like to perform. Selected text - %1$s</string>
 
     <string name="features">Features</string>
@@ -153,4 +154,11 @@
     <string name="statistics">Statistics</string>
     <string name="context_menu_text_count">[T\u00B2] Text Count</string>
     <string name="text_count_desc">Get detailed analysis about character count, word count, letter count and more for the selected text.</string>
+    <string name="title_activity_on_boarding">Onboarding</string>
+    <string name="mode_select_title">Context Menu Options</string>
+    <string name="mode_select_desc">Choose how you would like the context menu options to appear when you select text</string>
+    <string name="mode_single_title">Single option</string>
+    <string name="mode_single_desc">Only one context menu option will appear which when clicked will reveal all the supported actions</string>
+    <string name="mode_multi_title">Multiple options</string>
+    <string name="mode_multi_desc">All the actions supported by the app will be shown in the context menu</string>
 </resources>

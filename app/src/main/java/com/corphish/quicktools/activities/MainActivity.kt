@@ -208,7 +208,7 @@ fun FeatureItem(feature: Feature) {
             Text(text = stringResource(id = feature.featureDesc), style = Typography.bodyMedium)
 
             // Don't show context menu option in single option flavor
-            if (BuildConfig.FLAVOR == Constants.FLAVOR_MULTIPLE_OPTIONS) {
+            if (Constants.FLAVOR_MULTIPLE_OPTIONS == Constants.FLAVOR_MULTIPLE_OPTIONS) {
                 Row(
                     modifier = Modifier.padding(top = 4.dp)
                 ) {

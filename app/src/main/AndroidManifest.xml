@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools" >
 
     <application
         android:name=".TextToolsApplication"
@@ -12,21 +12,35 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.QuickTools"
-        tools:targetApi="31">
+        tools:targetApi="31" >
+        <activity
+            android:name=".activities.OnBoardingActivity"
+            android:exported="false"
+            android:label="@string/title_activity_on_boarding"
+            android:theme="@style/Theme.QuickTools" />
+        <activity
+            android:name=".activities.RouterActivity"
+            android:exported="true"
+            android:theme="@style/Theme.QuickTools" >
+            <intent-filter android:label="@string/app_name" >
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activities.OptionsActivity"
             android:excludeFromRecents="true"
             android:exported="true"
-            android:theme="@style/Theme.AppCompat.Translucent">
-
-            <intent-filter android:label="@string/app_name">
+            android:theme="@style/Theme.AppCompat.Translucent" >
+            <intent-filter android:label="@string/app_name" >
                 <action android:name="android.intent.action.PROCESS_TEXT" />
 
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:mimeType="text/plain" />
             </intent-filter>
-            <intent-filter android:label="@string/app_name">
+            <intent-filter android:label="@string/app_name" >
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -51,46 +65,6 @@
             android:exported="false"
             android:label="@string/context_menu_eval"
             android:theme="@style/Theme.AppCompat.Translucent" />
-        <activity
-            android:name=".activities.WUPActivity"
-            android:excludeFromRecents="true"
-            android:exported="false"
-            android:label="@string/context_menu_whatsapp"
-            android:theme="@android:style/Theme.NoDisplay" />
-        <activity
-            android:name=".activities.TransformActivity"
-            android:excludeFromRecents="true"
-            android:exported="false"
-            android:label="@string/context_menu_transform"
-            android:theme="@style/Theme.QuickTools" />
-        <activity
-            android:name=".activities.SaveTextActivity"
-            android:excludeFromRecents="true"
-            android:exported="false"
-            android:label="@string/save_text_title"
-            android:theme="@style/Theme.AppCompat.Translucent" />
-        <activity
-            android:name=".activities.FindAndReplaceActivity"
-            android:excludeFromRecents="true"
-            android:exported="false"
-            android:label="@string/title_activity_find_and_replace"
-            android:theme="@style/Theme.QuickTools" />
-        <activity
-            android:name=".activities.TextCountActivity"
-            android:excludeFromRecents="true"
-            android:exported="false"
-            android:label="@string/text_count"
-            android:theme="@style/Theme.QuickTools" />
-        <activity
-            android:name=".activities.MainActivity"
-            android:exported="true"
-            android:theme="@style/Theme.QuickTools">
-            <intent-filter android:label="@string/app_name">
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
 
         <activity-alias
             android:name=".activities.EvalActivityAlias"
@@ -99,15 +73,15 @@
             android:exported="true"
             android:label="@string/context_menu_eval"
             android:targetActivity=".activities.EvalActivity"
-            android:theme="@style/Theme.AppCompat.Translucent">
-            <intent-filter android:label="@string/context_menu_eval">
+            android:theme="@style/Theme.AppCompat.Translucent" >
+            <intent-filter android:label="@string/context_menu_eval" >
                 <action android:name="android.intent.action.PROCESS_TEXT" />
 
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:mimeType="text/plain" />
             </intent-filter>
-            <intent-filter android:label="@string/context_menu_eval">
+            <intent-filter android:label="@string/context_menu_eval" >
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -116,6 +90,14 @@
                 <data android:scheme="https" />
             </intent-filter>
         </activity-alias>
+
+        <activity
+            android:name=".activities.WUPActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:label="@string/context_menu_whatsapp"
+            android:theme="@android:style/Theme.NoDisplay" />
+
         <activity-alias
             android:name=".activities.WUPActivityAlias"
             android:enabled="false"
@@ -123,15 +105,15 @@
             android:exported="true"
             android:label="@string/context_menu_whatsapp"
             android:targetActivity=".activities.WUPActivity"
-            android:theme="@android:style/Theme.NoDisplay">
-            <intent-filter android:label="@string/context_menu_whatsapp">
+            android:theme="@android:style/Theme.NoDisplay" >
+            <intent-filter android:label="@string/context_menu_whatsapp" >
                 <action android:name="android.intent.action.PROCESS_TEXT" />
 
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:mimeType="text/plain" />
             </intent-filter>
-            <intent-filter android:label="@string/context_menu_whatsapp">
+            <intent-filter android:label="@string/context_menu_whatsapp" >
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -140,6 +122,13 @@
                 <data android:scheme="https" />
             </intent-filter>
         </activity-alias>
+
+        <activity
+            android:name=".activities.TransformActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:label="@string/context_menu_transform"
+            android:theme="@style/Theme.QuickTools" />
 
         <activity-alias
             android:name=".activities.TransformActivityAlias"
@@ -148,15 +137,15 @@
             android:exported="true"
             android:label="@string/context_menu_transform"
             android:targetActivity=".activities.TransformActivity"
-            android:theme="@style/Theme.QuickTools">
-            <intent-filter android:label="@string/context_menu_transform">
+            android:theme="@style/Theme.QuickTools" >
+            <intent-filter android:label="@string/context_menu_transform" >
                 <action android:name="android.intent.action.PROCESS_TEXT" />
 
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:mimeType="text/plain" />
             </intent-filter>
-            <intent-filter android:label="@string/context_menu_transform">
+            <intent-filter android:label="@string/context_menu_transform" >
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -166,55 +155,12 @@
             </intent-filter>
         </activity-alias>
 
-        <activity-alias
-            android:name=".activities.TextCountActivityAlias"
-            android:enabled="false"
+        <activity
+            android:name=".activities.SaveTextActivity"
             android:excludeFromRecents="true"
-            android:exported="true"
-            android:label="@string/context_menu_text_count"
-            android:targetActivity=".activities.TextCountActivity"
-            android:theme="@style/Theme.QuickTools">
-            <intent-filter android:label="@string/context_menu_text_count">
-                <action android:name="android.intent.action.PROCESS_TEXT" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="text/plain" />
-            </intent-filter>
-            <intent-filter android:label="@string/context_menu_text_count">
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="https" />
-            </intent-filter>
-        </activity-alias>
-
-        <activity-alias
-            android:name=".activities.FindAndReplaceActivityAlias"
-            android:enabled="false"
-            android:exported="true"
-            android:label="@string/context_menu_find_and_replace"
-            android:targetActivity=".activities.FindAndReplaceActivity"
-            android:theme="@style/Theme.QuickTools">
-
-            <intent-filter android:label="@string/context_menu_find_and_replace">
-                <action android:name="android.intent.action.PROCESS_TEXT" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="text/plain" />
-            </intent-filter>
-            <intent-filter android:label="@string/context_menu_find_and_replace">
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="https" />
-            </intent-filter>
-        </activity-alias>
+            android:exported="false"
+            android:label="@string/save_text_title"
+            android:theme="@style/Theme.AppCompat.Translucent" />
 
         <activity-alias
             android:name=".activities.SaveTextActivityAlias"
@@ -223,15 +169,15 @@
             android:exported="true"
             android:label="@string/context_menu_save"
             android:targetActivity=".activities.SaveTextActivity"
-            android:theme="@style/Theme.AppCompat.Translucent">
-            <intent-filter android:label="@string/context_menu_save">
+            android:theme="@style/Theme.AppCompat.Translucent" >
+            <intent-filter android:label="@string/context_menu_save" >
                 <action android:name="android.intent.action.PROCESS_TEXT" />
 
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:mimeType="text/plain" />
             </intent-filter>
-            <intent-filter android:label="@string/context_menu_save">
+            <intent-filter android:label="@string/context_menu_save" >
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -240,5 +186,74 @@
                 <data android:scheme="https" />
             </intent-filter>
         </activity-alias>
+
+        <activity
+            android:name=".activities.FindAndReplaceActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:label="@string/title_activity_find_and_replace"
+            android:theme="@style/Theme.QuickTools" />
+
+        <activity-alias
+            android:name=".activities.FindAndReplaceActivityAlias"
+            android:enabled="false"
+            android:exported="true"
+            android:label="@string/context_menu_find_and_replace"
+            android:targetActivity=".activities.FindAndReplaceActivity"
+            android:theme="@style/Theme.QuickTools" >
+            <intent-filter android:label="@string/context_menu_find_and_replace" >
+                <action android:name="android.intent.action.PROCESS_TEXT" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter android:label="@string/context_menu_find_and_replace" >
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="https" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity
+            android:name=".activities.TextCountActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:label="@string/text_count"
+            android:theme="@style/Theme.QuickTools" />
+
+        <activity-alias
+            android:name=".activities.TextCountActivityAlias"
+            android:enabled="false"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:label="@string/context_menu_text_count"
+            android:targetActivity=".activities.TextCountActivity"
+            android:theme="@style/Theme.QuickTools" >
+            <intent-filter android:label="@string/context_menu_text_count" >
+                <action android:name="android.intent.action.PROCESS_TEXT" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter android:label="@string/context_menu_text_count" >
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="https" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity
+            android:name=".activities.MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.QuickTools" />
     </application>
+
 </manifest>

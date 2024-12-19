@@ -12,6 +12,7 @@ class SettingsRepository(
     private val _prependCCKey = "prepend_country_code"
     private val _decimalPoints = "decimal_points"
     private val _evaluateResultMode = "eval_result_mode"
+    private val _onboardingDone = "onboarding_done"
 
     private val _sharedPreferenceManager = PreferenceManager.getDefaultSharedPreferences(context)
 
@@ -48,6 +49,15 @@ class SettingsRepository(
     fun setEvaluateResultMode(mode: Int) {
         _sharedPreferenceManager.edit {
             putInt(_evaluateResultMode, mode)
+        }
+    }
+
+    fun getOnboardingDone() =
+        _sharedPreferenceManager.getBoolean(_onboardingDone, false)
+
+    fun setOnboardingDone(done: Boolean) {
+        _sharedPreferenceManager.edit {
+            putBoolean(_onboardingDone, done)
         }
     }
 }
