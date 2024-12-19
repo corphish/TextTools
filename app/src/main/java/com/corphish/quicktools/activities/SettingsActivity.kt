@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.corphish.quicktools.R
+import com.corphish.quicktools.repository.AppMode
 import com.corphish.quicktools.ui.common.CustomTopAppBar
 import com.corphish.quicktools.ui.theme.BrandFontFamily
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
@@ -102,9 +103,19 @@ fun Settings(settingsViewModel: SettingsViewModel) {
                 .verticalScroll(rememberScrollState())
         ) {
             Text(
-                text = stringResource(id = R.string.messaging),
+                text = stringResource(id = R.string.app),
                 style = TypographyV2.labelSmall,
                 modifier = Modifier.padding(bottom = 4.dp),
+                fontFamily = BrandFontFamily,
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            AppSettings(settingsViewModel)
+
+            Text(
+                text = stringResource(id = R.string.messaging),
+                style = TypographyV2.labelSmall,
+                modifier = Modifier.padding(top = 24.dp, bottom = 4.dp),
                 fontFamily = BrandFontFamily,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -175,6 +186,73 @@ fun Settings(settingsViewModel: SettingsViewModel) {
                     style = TypographyV2.labelMedium,
                     fontWeight = FontWeight.W600
                 )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AppSettings(settingsViewModel: SettingsViewModel) {
+    val appMode by settingsViewModel.appMode.collectAsState()
+    val options = mapOf(
+        AppMode.SINGLE to R.string.mode_single_title,
+        AppMode.MULTI to R.string.mode_multi_title
+    )
+    var expanded by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier.padding(top = 8.dp)
+    ) {
+        Text(
+            text = stringResource(id = R.string.mode_select_title),
+            style = TypographyV2.labelMedium,
+            fontWeight = FontWeight.W600,
+        )
+        Text(
+            text = stringResource(id = R.string.mode_select_desc),
+            style = TypographyV2.bodySmall
+        )
+        Box(modifier = Modifier.padding(vertical = 4.dp))
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = {
+                expanded = !expanded
+            }
+        ) {
+            TextField(
+                readOnly = true,
+                value = stringResource(id = options[appMode]!!),
+                onValueChange = { },
+                label = { Text(stringResource(id = R.string.mode_select_title)) },
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(
+                        expanded = expanded
+                    )
+                },
+                colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable, true)
+                    .fillMaxWidth()
+            )
+
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = {
+                    expanded = false
+                },
+                modifier = Modifier.exposedDropdownSize()
+            ) {
+                options.forEach { (mode, resId) ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(text = stringResource(resId))
+                        },
+                        onClick = {
+                            settingsViewModel.updateAppMode(mode)
+                            expanded = false
+                        }
+                    )
+                }
             }
         }
     }

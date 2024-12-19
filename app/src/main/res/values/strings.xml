@@ -164,4 +164,5 @@
     <string name="edit_modes">It is also possible to choose which options should be available in the context menu.</string>
     <string name="edit">Edit</string>
     <string name="done">Done</string>
+    <string name="app">App</string>
 </resources>
