@@ -4,11 +4,13 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.corphish.quicktools.R
 import com.corphish.quicktools.activities.TryOutActivity
+import com.corphish.quicktools.repository.FeatureIds
 
 /**
  * Data class that defines a feature.
  */
 data class Feature(
+    val id: FeatureIds,
     @DrawableRes val icon: Int,
     @StringRes val featureTitle: Int,
     @StringRes val featureDesc: Int,
@@ -18,6 +20,7 @@ data class Feature(
     companion object {
         val LIST = listOf(
             Feature(
+                id = FeatureIds.WHATSAPP,
                 icon = R.drawable.ic_whatsapp,
                 featureTitle = R.string.wup_title,
                 featureDesc = R.string.wup_desc,
@@ -25,6 +28,7 @@ data class Feature(
                 flow = TryOutActivity.TRY_OUT_FLOW_WUP,
             ),
             Feature(
+                id = FeatureIds.EVAL,
                 icon = R.drawable.ic_numbers,
                 featureTitle = R.string.eval_title,
                 featureDesc = R.string.eval_desc,
@@ -32,6 +36,7 @@ data class Feature(
                 flow = TryOutActivity.TRY_OUT_FLOW_EVAL,
             ),
             Feature(
+                id = FeatureIds.TRANSFORM,
                 icon = R.drawable.ic_text_transform,
                 featureTitle = R.string.transform_long,
                 featureDesc = R.string.transform_desc,
@@ -39,6 +44,7 @@ data class Feature(
                 flow = TryOutActivity.TRY_OUT_FLOW
             ),
             Feature(
+                id = FeatureIds.TEXT_COUNT,
                 icon = R.drawable.ic_text_count,
                 featureTitle = R.string.text_count,
                 featureDesc = R.string.text_count_desc,
@@ -46,6 +52,7 @@ data class Feature(
                 flow = TryOutActivity.TRY_OUT_FLOW
             ),
             Feature(
+                id = FeatureIds.SAVE_TEXT,
                 icon = R.drawable.ic_save,
                 featureTitle = R.string.save_text_title,
                 featureDesc = R.string.save_text_desc,
@@ -53,6 +60,7 @@ data class Feature(
                 flow = TryOutActivity.TRY_OUT_FLOW
             ),
             Feature(
+                id = FeatureIds.FIND_AND_REPLACE,
                 icon = R.drawable.ic_find_and_replace,
                 featureTitle = R.string.title_activity_find_and_replace,
                 featureDesc = R.string.find_and_replace_desc,

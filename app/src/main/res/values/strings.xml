@@ -161,4 +161,7 @@
     <string name="mode_single_desc">Only one context menu option will appear which when clicked will reveal all the supported actions</string>
     <string name="mode_multi_title">Multiple options</string>
     <string name="mode_multi_desc">All the actions supported by the app will be shown in the context menu</string>
+    <string name="edit_modes">It is also possible to choose which options should be available in the context menu.</string>
+    <string name="edit">Edit</string>
+    <string name="done">Done</string>
 </resources>
