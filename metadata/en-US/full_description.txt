@@ -5,8 +5,8 @@ Current Features
 2. Evaluate mathematical expressions inline - We may often find ourselves to mathematically calculate something while texting someone (probably while making plans). Having an option to perform math calculations in line without needing to open calculator could save time.
 3. Transform text - Transform the selected text inline. Supported transformations include changing the case, wrapping it with text etc.
 4. Text count - Get detailed analysis about character count, word count, letter count and more for the selected text.
-4. Save text to a file - Lets you save the selected text into a file so that it can be accessed later.
-5. Find & Replace - Quickly find certain text and replace them with text of your choice within the selected text.
+5. Save text to a file - Lets you save the selected text into a file so that it can be accessed later.
+6. Find & Replace - Quickly find certain text and replace them with text of your choice within the selected text.
 
 Where are screenshots?
 The app adds capabilities to text selection wherever supported in the Android System, there is nothing much to do inside the app, hence very less screenshots.
