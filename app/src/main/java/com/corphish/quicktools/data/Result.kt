@@ -5,8 +5,8 @@ sealed class Result<out T> {
     class Success<out T>(val value: T): Result<T>()
 
     // Called when there is an error while performing an operation
-    object Error : Result<Nothing>()
+    data object Error : Result<Nothing>()
 
     // Initial value
-    object Initial: Result<Nothing>()
+    data object Initial: Result<Nothing>()
 }
