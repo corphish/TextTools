@@ -19,9 +19,6 @@ class OnBoardingViewModel @Inject constructor(
     private val _onBoardingDone = MutableStateFlow(settingsRepository.getOnboardingDone())
     val onBoardingDone = _onBoardingDone.asStateFlow()
 
-    private val _appMode = MutableStateFlow(contextOptionsRepository.getCurrentAppMode())
-    val appMode = _appMode.asStateFlow()
-
     fun setOnBoardingDone(done: Boolean) {
         viewModelScope.launch {
             settingsRepository.setOnboardingDone(done)
@@ -32,7 +29,6 @@ class OnBoardingViewModel @Inject constructor(
     fun setAppMode(mode: AppMode) {
         viewModelScope.launch {
             contextOptionsRepository.setCurrentAppMode(mode)
-            _appMode.value = mode
         }
     }
 }

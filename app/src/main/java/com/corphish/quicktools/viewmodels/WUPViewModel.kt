@@ -61,8 +61,4 @@ class WUPViewModel @Inject constructor(private val settingsRepository: SettingsR
 
         return res
     }
-
-    companion object {
-        const val INITIAL_VALUE = "some initial value"
-    }
 }
