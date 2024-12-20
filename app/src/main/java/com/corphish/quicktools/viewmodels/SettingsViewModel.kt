@@ -3,6 +3,7 @@ package com.corphish.quicktools.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.corphish.quicktools.BuildConfig
+import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.repository.AppMode
 import com.corphish.quicktools.repository.ContextMenuOptionsRepository
 import com.corphish.quicktools.repository.SettingsRepository
@@ -19,6 +20,7 @@ class SettingsViewModel @Inject constructor(
 ): ViewModel() {
     private val _prependCountryCodeEnabled = MutableStateFlow(settingsRepository.getPrependCountryCodeEnabled())
     private val _prependCountryCode = MutableStateFlow(settingsRepository.getPrependCountryCode())
+    private val _prependCountryCodeIsValid = MutableStateFlow(Constants.COUNTRY_CODE_REGEX.matches(_prependCountryCode.value ?: ""))
     private val _decimalPoints = MutableStateFlow(settingsRepository.getDecimalPoints())
     private val _evalResultMode = MutableStateFlow(settingsRepository.getEvaluateResultMode())
     private val _appVersionName = MutableStateFlow(BuildConfig.VERSION_NAME)
@@ -27,6 +29,7 @@ class SettingsViewModel @Inject constructor(
 
     val prependCountryCodeEnabled: StateFlow<Boolean> = _prependCountryCodeEnabled
     val prependCountryCode: StateFlow<String?> = _prependCountryCode
+    val prependCountryCodeIsValid: StateFlow<Boolean> = _prependCountryCodeIsValid
     val decimalPoints: StateFlow<Int> = _decimalPoints
     val evalResultMode: StateFlow<Int> = _evalResultMode
     val appVersionName: StateFlow<String> = _appVersionName
@@ -42,8 +45,29 @@ class SettingsViewModel @Inject constructor(
 
     fun updatePrependCountryCode(code: String) {
         viewModelScope.launch {
-            settingsRepository.setPrependCountryCode(code)
+            val match = Constants.COUNTRY_CODE_REGEX.matches(code)
             _prependCountryCode.value = code
+
+            if (match) {
+                settingsRepository.setPrependCountryCode(code)
+                _prependCountryCodeIsValid.value = true
+            } else {
+                _prependCountryCodeIsValid.value = false
+            }
+        }
+    }
+
+    /**
+     * Should be called when activity is exiting to finalise the country code prepend
+     * enabled setting.
+     * Ideally, we turn off country code prepend enabled if the country code is invalid.
+     */
+    fun invalidateCountryCodePrependSetting() {
+        viewModelScope.launch {
+            if (!_prependCountryCodeIsValid.value) {
+                updatePrependCountryCodeEnabled(false)
+                settingsRepository.setPrependCountryCode("")
+            }
         }
     }
 

@@ -72,6 +72,12 @@ class SettingsActivity : ComponentActivity() {
             QuickToolsTheme { Settings(settingsViewModel) }
         }
     }
+
+    override fun onStop() {
+        super.onStop()
+
+        settingsViewModel.invalidateCountryCodePrependSetting()
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -263,6 +269,7 @@ fun AppSettings(settingsViewModel: SettingsViewModel) {
 fun TextSettings(settingsViewModel: SettingsViewModel) {
     val prependCountryCodeEnabled by settingsViewModel.prependCountryCodeEnabled.collectAsState()
     val prependCountryCode by settingsViewModel.prependCountryCode.collectAsState()
+    val prependCountryCodeIsValid by settingsViewModel.prependCountryCodeIsValid.collectAsState()
 
     Column {
         ConstraintLayout(
@@ -312,7 +319,14 @@ fun TextSettings(settingsViewModel: SettingsViewModel) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp),
-            enabled = prependCountryCodeEnabled
+            enabled = prependCountryCodeEnabled,
+            isError = prependCountryCodeEnabled && !prependCountryCodeIsValid,
+            singleLine = true,
+            supportingText = {
+                if (prependCountryCodeEnabled && !prependCountryCodeIsValid) {
+                    Text(text = stringResource(id = R.string.invalid_country_code))
+                }
+            }
         )
     }
 }

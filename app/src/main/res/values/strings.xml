@@ -165,4 +165,5 @@
     <string name="edit">Edit</string>
     <string name="done">Done</string>
     <string name="app">App</string>
+    <string name="invalid_country_code">Invalid country code</string>
 </resources>
