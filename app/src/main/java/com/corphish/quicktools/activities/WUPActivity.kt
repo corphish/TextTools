@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.corphish.quicktools.R
+import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.data.Result
 import com.corphish.quicktools.viewmodels.WUPViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -49,7 +50,7 @@ class WUPActivity : NoUIActivity() {
     }
 
     private fun openInWeb(phoneNumber: String) {
-        val url = "https://wa.me/$phoneNumber"
+        val url = "${Constants.WHATSAPP_API_LINK}$phoneNumber"
         val browserIntent = Intent(Intent.ACTION_VIEW)
         browserIntent.data = Uri.parse(url)
         startActivity(browserIntent)

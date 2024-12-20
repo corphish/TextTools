@@ -37,6 +37,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.corphish.quicktools.R
+import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.ui.theme.Typography
 
@@ -157,7 +158,7 @@ fun TryOut(flow: String) {
                 onConfirmation = {
                     openErrorDialog.value = false
                     activity?.finish()
-                    uriHandler.openUri("https://github.com/corphish/TextTools/issues")
+                    uriHandler.openUri(Constants.ISSUES_PAGE_LINK)
                 },
                 dialogTitle = stringResource(id = R.string.trial_error),
                 dialogText = stringResource(id = R.string.trial_error_msg),

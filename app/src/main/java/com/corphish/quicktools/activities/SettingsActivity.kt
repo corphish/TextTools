@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.corphish.quicktools.R
+import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.repository.AppMode
 import com.corphish.quicktools.ui.common.CustomTopAppBar
 import com.corphish.quicktools.ui.theme.BrandFontFamily
@@ -150,7 +151,7 @@ fun Settings(settingsViewModel: SettingsViewModel) {
             )
 
             Button(
-                onClick = { uriHandler.openUri("https://github.com/corphish/TextTools/releases") },
+                onClick = { uriHandler.openUri(Constants.RELEASES_PAGE_LINK) },
                 modifier = Modifier.padding(top = 8.dp)
             ) {
                 Icon(painterResource(id = R.drawable.ic_open_in_new), contentDescription = "")
@@ -176,7 +177,7 @@ fun Settings(settingsViewModel: SettingsViewModel) {
             )
 
             Button(
-                onClick = { uriHandler.openUri("https://www.paypal.com/paypalme/corphish") },
+                onClick = { uriHandler.openUri(Constants.DONATE_LINK) },
                 modifier = Modifier.padding(top = 8.dp)
             ) {
                 Icon(Icons.Default.ThumbUp, contentDescription = "")

@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.R
+import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.features.Feature
 import com.corphish.quicktools.repository.AppMode
 import com.corphish.quicktools.repository.ContextMenuOptionsRepositoryImpl
@@ -195,7 +196,7 @@ fun Greeting(
                     .horizontalScroll(contributorScrollState)
             ) {
                 Button(
-                    onClick = { uriHandler.openUri("https://github.com/corphish/TextTools/") },
+                    onClick = { uriHandler.openUri(Constants.SOURCE_LINK) },
                 ) {
                     Icon(painterResource(id = R.drawable.ic_open_in_new), contentDescription = "")
                     Text(
@@ -207,7 +208,7 @@ fun Greeting(
                 }
 
                 Button(
-                    onClick = { uriHandler.openUri("https://github.com/corphish/TextTools/blob/main/CONTRIBUTORS.md") },
+                    onClick = { uriHandler.openUri(Constants.CONTRIBUTORS_LINK) },
                     modifier = Modifier.padding(start = 16.dp)
                 ) {
                     Icon(painterResource(id = R.drawable.ic_open_in_new), contentDescription = "")
