@@ -155,8 +155,8 @@
     <string name="context_menu_text_count">[T\u00B2] Text Count</string>
     <string name="text_count_desc">Get detailed analysis about character count, word count, letter count and more for the selected text.</string>
     <string name="title_activity_on_boarding">Onboarding</string>
-    <string name="mode_select_title">Context Menu Options</string>
-    <string name="mode_select_desc">Choose how you would like the context menu options to appear when you select text</string>
+    <string name="mode_select_title">Context menu options</string>
+    <string name="mode_select_desc">Choose how you would like the context menu options to appear when you select text. It can also be changed later in the settings.</string>
     <string name="mode_single_title">Single option</string>
     <string name="mode_single_desc">Only one context menu option will appear which when clicked will reveal all the supported actions</string>
     <string name="mode_multi_title">Multiple options</string>
