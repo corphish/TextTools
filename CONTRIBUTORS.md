@@ -10,3 +10,9 @@ People who have suggested cool ideas that have been added to the app are mention
 - [AjayRahul1](https://github.com/AjayRahul1)
 - [Solovertical](https://github.com/Solovertical)
 - [sming](https://github.com/sming)
+
+### Translators
+People who have suggested translations for various languages that have been added in the app are mentioned below. Big thanks to them and if you want to contribute translations, you can do it [here](https://crowdin.com/project/text-tools).
+
+- [elimirien](https://crowdin.com/profile/elimirien)
+- [Pvnk](https://crowdin.com/profile/pvnk)
