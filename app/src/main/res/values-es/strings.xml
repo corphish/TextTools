@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Herramientas de texto</string>
+    <string name="app_desc">Colección de funciones útiles relacionadas con texto a las que se puede acceder desde muchas aplicaciones dentro del sistema Android seleccionando un texto dentro de ellas. Las opciones admitidas aparecen en el menú contextual que aparece después de seleccionar un texto. Es posible que tengas que revelarlos presionando el ícono de 3 puntos en el menú contextual. La lista de funciones compatibles seguirá creciendo.</string>
+    <string name="app_single_op">Seleccione la función que le gustaría realizar. Texto seleccionado - %1$s</string>
+    <string name="features">Caracteristicas</string>
+</resources>
