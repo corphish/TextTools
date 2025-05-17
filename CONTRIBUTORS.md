@@ -16,3 +16,4 @@ People who have suggested translations for various languages that have been adde
 
 - [elimirien](https://crowdin.com/profile/elimirien)
 - [Pvnk](https://crowdin.com/profile/pvnk)
+- [Marcio Andrade](https://crowdin.com/profile/marciozomb13)
