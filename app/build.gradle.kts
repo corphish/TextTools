@@ -73,13 +73,13 @@ android {
 
 dependencies {
     // Core
-    implementation("androidx.core:core-ktx:1.15.0")
+    implementation("androidx.core:core-ktx:1.16.0")
     implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
 
     // Compose
-    implementation(platform("androidx.compose:compose-bom:2025.02.00"))
+    implementation(platform("androidx.compose:compose-bom:2025.05.00"))
     implementation("androidx.activity:activity-compose:1.10.1")
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
@@ -98,7 +98,7 @@ dependencies {
 
 
     // Testing
-    androidTestImplementation(platform("androidx.compose:compose-bom:2025.02.00"))
+    androidTestImplementation(platform("androidx.compose:compose-bom:2025.05.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
 
     // Compose debug
