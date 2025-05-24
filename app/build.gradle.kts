@@ -78,13 +78,15 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
 
+    // Material 3 expressive
+    implementation("androidx.compose.material3:material3-android:1.4.0-alpha15")
+
     // Compose
-    implementation(platform("androidx.compose:compose-bom:2025.05.00"))
+    implementation(platform("androidx.compose:compose-bom:2025.05.01"))
     implementation("androidx.activity:activity-compose:1.10.1")
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.ui:ui-text-google-fonts")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose")
     implementation ("androidx.constraintlayout:constraintlayout-compose:1.1.1")
@@ -98,7 +100,7 @@ dependencies {
 
 
     // Testing
-    androidTestImplementation(platform("androidx.compose:compose-bom:2025.05.00"))
+    androidTestImplementation(platform("androidx.compose:compose-bom:2025.05.01"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
 
     // Compose debug
