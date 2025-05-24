@@ -8,20 +8,33 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Title
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingToolbarColors
+import androidx.compose.material3.FloatingToolbarDefaults
+import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SplitButtonDefaults
+import androidx.compose.material3.SplitButtonLayout
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -100,6 +113,7 @@ class FindAndReplaceActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun FindAndReplace(
     defaultPadding: PaddingValues,
@@ -137,201 +151,151 @@ fun FindAndReplace(
             mainTextField,
             findTextField,
             replaceTextField,
-            findNextButton,
-            findPreviousButton,
-            replaceThisButton,
-            replaceAllButton,
-            undoButton,
-            redoButton,
-            resetButton,
-            saveButton,
-            caseCheckBox
-        ) =
-            createRefs()
+            findButtons,
+            replaceButtons,
+            floatingToolbar,
+        ) = createRefs()
 
-        // Action buttons in the bottom row
-        // Undo
-        CircularButtonWithText(
-            onClick = { viewModel.undo() },
-            text = stringResource(id = R.string.undo),
-            painterResource = painterResource(id = R.drawable.ic_undo),
-            enabled = undoState,
-            modifier = Modifier
-                .constrainAs(undoButton) {
-                    start.linkTo(
-                        parent.start,
-                        margin = defaultPadding.calculateStartPadding(LayoutDirection.Ltr)
-                            .plus(16.dp)
-                    )
-                    end.linkTo(redoButton.start, margin = 16.dp)
-                    bottom.linkTo(
-                        parent.bottom,
-                        margin = defaultPadding.calculateBottomPadding().plus(16.dp)
-                    )
-                }
-        )
-
-        // Redo
-        CircularButtonWithText(
-            onClick = { viewModel.redo() },
-            painterResource = painterResource(id = R.drawable.ic_redo),
-            text = stringResource(id = R.string.redo),
-            enabled = redoState,
-            modifier = Modifier
-                .constrainAs(redoButton) {
-                    start.linkTo(undoButton.end, margin = 16.dp)
-                    end.linkTo(resetButton.start, margin = 16.dp)
-                    bottom.linkTo(
-                        parent.bottom,
-                        margin = defaultPadding.calculateBottomPadding().plus(16.dp)
-                    )
-                }
-        )
-
-        // Reset
-        CircularButtonWithText(
-            onClick = { viewModel.reset() },
-            text = stringResource(id = R.string.reset),
-            painterResource = painterResource(id = R.drawable.ic_reset),
-            modifier = Modifier
-                .constrainAs(resetButton) {
-                    start.linkTo(redoButton.end, margin = 16.dp)
-                    end.linkTo(saveButton.start, margin = 16.dp)
-                    bottom.linkTo(
-                        parent.bottom,
-                        margin = defaultPadding.calculateBottomPadding().plus(16.dp)
-                    )
-                }
-        )
-
-        // Save
-        CircularButtonWithText(
-            onClick = { onComplete(mainTextState) },
-            painterResource = painterResource(id = R.drawable.ic_save),
-            text = stringResource(id = R.string.apply),
-            modifier = Modifier
-                .constrainAs(saveButton) {
-                    start.linkTo(resetButton.end, margin = 16.dp)
-                    end.linkTo(
-                        parent.end,
-                        margin = defaultPadding.calculateEndPadding(LayoutDirection.Ltr).plus(16.dp)
-                    )
-                    bottom.linkTo(
-                        parent.bottom,
-                        margin = defaultPadding.calculateBottomPadding().plus(16.dp)
-                    )
-                }
-        )
-
-        // Replace current
-        IconButton(
-            onClick = { viewModel.replaceFirst() },
-            colors = IconButtonDefaults.iconButtonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary,
-                disabledContainerColor = Color.Gray
-            ),
-            enabled = replaceText.isNotEmpty() && counterTotal > 0,
-            modifier = Modifier
-                .constrainAs(replaceThisButton) {
-                    start.linkTo(replaceTextField.end, margin = 8.dp)
-                    top.linkTo(replaceTextField.top)
-                    bottom.linkTo(replaceTextField.bottom)
-                    end.linkTo(replaceAllButton.start, margin = 4.dp)
-                }
-                .clip(CircleShape)
+        Row(
+            modifier = Modifier.constrainAs(floatingToolbar) {
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+                bottom.linkTo(parent.bottom, margin = 16.dp)
+            },
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_done),
-                contentDescription = "",
-                modifier = Modifier.size(16.dp),
-            )
+            HorizontalFloatingToolbar(
+                expanded = true,
+                //colors = FloatingToolbarDefaults.vibrantFloatingToolbarColors(),
+            ) {
+                // Not the best approach I would say, to show different buttons
+                FilledIconButton(
+                    onClick = {
+                        viewModel.setIgnoreCase(!ignoreCase)
+                    },
+                    colors = if (ignoreCase) IconButtonDefaults.outlinedIconButtonColors() else IconButtonDefaults.filledIconButtonColors()
+                ) {
+                    Icon(Icons.Filled.Title, contentDescription = null)
+                }
+                // Action buttons in the bottom row
+                // Undo
+                IconButton(
+                    onClick = { viewModel.undo() },
+                    enabled = undoState,
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_undo),
+                        contentDescription = null
+                    )
+                }
+
+                // Redo
+                IconButton(
+                    onClick = { viewModel.redo() },
+                    enabled = redoState,
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_redo),
+                        contentDescription = null
+                    )
+                }
+
+                // Reset
+                IconButton(
+                    onClick = { viewModel.reset() },
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_reset),
+                        contentDescription = null
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.width(4.dp))
+
+            // Save
+            FloatingActionButton(
+                onClick = { onComplete(mainTextState) },
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_save),
+                    contentDescription = null
+                )
+            }
         }
 
-        // Replace all
-        IconButton(
-            onClick = { viewModel.replaceAll() },
-            enabled = replaceText.isNotEmpty() && counterTotal > 0,
-            colors = IconButtonDefaults.iconButtonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary,
-                disabledContainerColor = Color.Gray
-            ),
-            modifier = Modifier
-                .constrainAs(replaceAllButton) {
-                    start.linkTo(replaceThisButton.end, margin = 4.dp)
-                    top.linkTo(replaceTextField.top)
-                    bottom.linkTo(replaceTextField.bottom)
-                    end.linkTo(
-                        parent.end,
-                        margin = defaultPadding
-                            .calculateEndPadding(LayoutDirection.Ltr)
-                            .plus(16.dp)
+        SplitButtonLayout(
+            // Replace current
+            leadingButton = {
+                SplitButtonDefaults.LeadingButton(
+                    onClick = { viewModel.replaceFirst() },
+                    enabled = replaceText.isNotEmpty() && counterTotal > 0,
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_done),
+                        contentDescription = null,
                     )
                 }
-                .clip(CircleShape)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_done_all),
-                contentDescription = "",
-                modifier = Modifier.size(16.dp)
-            )
-        }
+            },
 
-        // Find previous
-        IconButton(
-            onClick = { viewModel.decrementCounter() },
-            enabled = findText.isNotEmpty(),
-            colors = IconButtonDefaults.iconButtonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary,
-                disabledContainerColor = Color.Gray
-            ),
-            modifier = Modifier
-                .constrainAs(findPreviousButton) {
-                    start.linkTo(findTextField.end, margin = 8.dp)
-                    top.linkTo(findTextField.top)
-                    bottom.linkTo(findTextField.bottom)
-                    end.linkTo(findNextButton.start, margin = 4.dp)
-                }
-                .clip(CircleShape)
-        ) {
-            Icon(
-                painterResource(id = R.drawable.ic_previous),
-                contentDescription = "",
-                modifier = Modifier.size(16.dp)
-            )
-        }
-
-        // Find next
-        IconButton(
-            onClick = { viewModel.incrementCounter() },
-            colors = IconButtonDefaults.iconButtonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary,
-                disabledContainerColor = Color.Gray
-            ),
-            enabled = findText.isNotEmpty(),
-            modifier = Modifier
-                .constrainAs(findNextButton) {
-                    start.linkTo(findPreviousButton.end, margin = 4.dp)
-                    top.linkTo(findTextField.top)
-                    bottom.linkTo(findTextField.bottom)
-                    end.linkTo(
-                        parent.end,
-                        margin = defaultPadding
-                            .calculateEndPadding(LayoutDirection.Ltr)
-                            .plus(16.dp)
+            // Replace all
+            trailingButton = {
+                SplitButtonDefaults.TrailingButton(
+                    onClick = { viewModel.replaceAll() },
+                    enabled = replaceText.isNotEmpty() && counterTotal > 0,
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_done_all),
+                        contentDescription = null
                     )
                 }
-                .clip(CircleShape)
-        ) {
-            Icon(
-                painterResource(id = R.drawable.ic_next),
-                contentDescription = "",
-                modifier = Modifier.size(16.dp)
-            )
-        }
+            },
+            modifier = Modifier.constrainAs(replaceButtons) {
+                start.linkTo(replaceTextField.end, margin = 8.dp)
+                top.linkTo(replaceTextField.top)
+                bottom.linkTo(replaceTextField.bottom)
+                end.linkTo(
+                    parent.end, margin = defaultPadding
+                        .calculateEndPadding(LayoutDirection.Ltr)
+                        .plus(16.dp)
+                )
+            }
+        )
+
+        SplitButtonLayout(
+            leadingButton = {
+                SplitButtonDefaults.LeadingButton(
+                    onClick = { viewModel.decrementCounter() },
+                    enabled = findText.isNotEmpty(),
+                ) {
+                    Icon(
+                        painterResource(id = R.drawable.ic_previous),
+                        contentDescription = null
+                    )
+                }
+            },
+            trailingButton = {
+                SplitButtonDefaults.TrailingButton(
+                    onClick = { viewModel.incrementCounter() },
+                    enabled = findText.isNotEmpty(),
+                ) {
+                    Icon(
+                        painterResource(id = R.drawable.ic_next),
+                        contentDescription = null
+                    )
+                }
+            },
+            modifier = Modifier.constrainAs(findButtons) {
+                start.linkTo(findTextField.end, margin = 8.dp)
+                top.linkTo(findTextField.top)
+                bottom.linkTo(findTextField.bottom)
+                end.linkTo(
+                    parent.end, margin = defaultPadding
+                        .calculateEndPadding(LayoutDirection.Ltr)
+                        .plus(16.dp)
+                )
+            }
+        )
 
         OutlinedTextField(
             value = replaceText,
@@ -343,8 +307,8 @@ fun FindAndReplace(
                         margin = defaultPadding.calculateStartPadding(LayoutDirection.Ltr)
                             .plus(16.dp)
                     )
-                    bottom.linkTo(undoButton.top, margin = 16.dp)
-                    end.linkTo(replaceThisButton.start, margin = 8.dp)
+                    bottom.linkTo(floatingToolbar.top, margin = 16.dp)
+                    end.linkTo(replaceButtons.start, margin = 8.dp)
                     width = Dimension.fillToConstraints
                 },
             label = {
@@ -374,8 +338,8 @@ fun FindAndReplace(
                             .calculateStartPadding(LayoutDirection.Ltr)
                             .plus(16.dp)
                     )
-                    bottom.linkTo(caseCheckBox.top, margin = 4.dp)
-                    end.linkTo(findPreviousButton.start, margin = 8.dp)
+                    bottom.linkTo(replaceTextField.top, margin = 4.dp)
+                    end.linkTo(findButtons.start, margin = 8.dp)
                     width = Dimension.fillToConstraints
                 },
             label = {
@@ -385,28 +349,6 @@ fun FindAndReplace(
                     )
                 )
             })
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.constrainAs(caseCheckBox) {
-                start.linkTo(
-                    parent.start,
-                    margin = defaultPadding.calculateStartPadding(LayoutDirection.Ltr).plus(16.dp)
-                )
-                end.linkTo(
-                    parent.end,
-                    margin = defaultPadding.calculateEndPadding(LayoutDirection.Ltr).plus(16.dp)
-                )
-                bottom.linkTo(replaceTextField.top, margin = 4.dp)
-                width = Dimension.fillToConstraints
-            }
-        ) {
-            Checkbox(
-                checked = ignoreCase,
-                onCheckedChange = { viewModel.setIgnoreCase(it) }
-            )
-            Text(text = stringResource(id = R.string.ignore_case))
-        }
 
         OutlinedTextField(
             value = mainTextState,
