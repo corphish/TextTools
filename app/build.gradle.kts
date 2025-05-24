@@ -80,6 +80,7 @@ dependencies {
 
     // Material 3 expressive
     implementation("androidx.compose.material3:material3-android:1.4.0-alpha15")
+    implementation("androidx.compose.material:material-icons-extended:1.7.8")
 
     // Compose
     implementation(platform("androidx.compose:compose-bom:2025.05.01"))
