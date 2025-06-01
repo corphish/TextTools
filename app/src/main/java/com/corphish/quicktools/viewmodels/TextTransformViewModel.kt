@@ -51,6 +51,7 @@ class TextTransformViewModel : ViewModel() {
                 INDEX_REMOVE_TEXT -> removeOptions
                 INDEX_ADD_PREFIX_SUFFIX -> prefixSuffixOptions
                 INDEX_DECORATE_TEXT -> decorateOptions
+                INDEX_LINE_BREAK -> lineBreakOptions
                 else -> listOf()
             }
         }
@@ -70,7 +71,7 @@ class TextTransformViewModel : ViewModel() {
 
             // Select the appropriate choice for those supporting secondary functions
             when (index) {
-                INDEX_WRAP_TEXT, INDEX_CHANGE_CASE, INDEX_REMOVE_TEXT, INDEX_ADD_PREFIX_SUFFIX, INDEX_DECORATE_TEXT -> {
+                INDEX_WRAP_TEXT, INDEX_CHANGE_CASE, INDEX_REMOVE_TEXT, INDEX_ADD_PREFIX_SUFFIX, INDEX_DECORATE_TEXT, INDEX_REPLACE_WHITESPACE -> {
                     _selectedSecondaryIndex.value = 0
                     _secondaryFunctionText.value = ""
                 }
@@ -78,6 +79,11 @@ class TextTransformViewModel : ViewModel() {
                 INDEX_REPEAT_TEXT -> {
                     // Default for repeat
                     _secondaryFunctionText.value = "1"
+                }
+
+                INDEX_LINE_BREAK -> {
+                    _selectedSecondaryIndex.value = 0
+                    _secondaryFunctionText.value = _mainText.value.length.toString()
                 }
             }
 
@@ -112,11 +118,13 @@ class TextTransformViewModel : ViewModel() {
                 INDEX_REPEAT_TEXT -> R.string.repeat_text
                 INDEX_REMOVE_TEXT -> R.string.remove_text
                 INDEX_ADD_PREFIX_SUFFIX -> R.string.add_prefix_suffix
+                INDEX_LINE_BREAK -> listOf(R.string.after_certain_characters, R.string.after_certain_words)[_selectedSecondaryIndex.value.coerceIn(0..1)]
+                INDEX_REPLACE_WHITESPACE -> R.string.replace_whitespace
                 else -> R.string.transform
             }
 
             _secondaryFunctionTextInputType.value =
-                if (_selectedPrimaryIndex.value == INDEX_REPEAT_TEXT) {
+                if (_selectedPrimaryIndex.value == INDEX_REPEAT_TEXT ||_selectedPrimaryIndex.value == INDEX_LINE_BREAK) {
                     KeyboardType.Number
                 } else {
                     KeyboardType.Text
@@ -256,6 +264,18 @@ class TextTransformViewModel : ViewModel() {
                     }
                 }
 
+                INDEX_LINE_BREAK -> {
+                    when (_selectedSecondaryIndex.value) {
+                        0 -> textTransformer.lineBreakByCharacter(_mainText.value, _secondaryFunctionText.value.toIntOrNull() ?: 0)
+                        1 -> textTransformer.lineBreakByWords(_mainText.value, _secondaryFunctionText.value.toIntOrNull() ?: 0)
+                        else -> _mainText.value
+                    }
+                }
+
+                INDEX_REPLACE_WHITESPACE -> {
+                    _mainText.value.replace(" ", _secondaryFunctionText.value)
+                }
+
                 else -> {
                     _mainText.value
                 }
@@ -277,12 +297,16 @@ class TextTransformViewModel : ViewModel() {
         const val INDEX_REVERSE_WORDS = 9
         const val INDEX_REVERSE_LINES = 10
         const val INDEX_DECORATE_TEXT = 11
+        const val INDEX_LINE_BREAK = 12
+        const val INDEX_REPLACE_WHITESPACE = 13
 
         private val optionsWithSecondaryFunctionText = listOf(
             INDEX_WRAP_TEXT,
             INDEX_REPEAT_TEXT,
             INDEX_REMOVE_TEXT,
             INDEX_ADD_PREFIX_SUFFIX,
+            INDEX_LINE_BREAK,
+            INDEX_REPLACE_WHITESPACE,
         )
 
         val transformOptions = listOf(
@@ -297,7 +321,9 @@ class TextTransformViewModel : ViewModel() {
             R.string.reverse_text,
             R.string.reverse_words,
             R.string.reverse_lines,
-            R.string.text_decorate
+            R.string.text_decorate,
+            R.string.line_break,
+            R.string.replace_whitespace
         )
 
         private val wrapOptions = listOf(
@@ -345,6 +371,11 @@ class TextTransformViewModel : ViewModel() {
             R.string.strikethrough_short,
             R.string.strikethrough_long,
             R.string.cursive,
+        )
+
+        private val lineBreakOptions = listOf(
+            R.string.after_certain_characters,
+            R.string.after_certain_words
         )
     }
 }

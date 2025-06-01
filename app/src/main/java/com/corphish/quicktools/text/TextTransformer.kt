@@ -701,4 +701,52 @@ class TextTransformer {
         s.codePoints().filter { codePoint ->
             (codePoint in 65..90) || (codePoint in 97..122)
         }.count().toInt()
+
+    /**
+     * Line break by characters
+     */
+    fun lineBreakByCharacter(s: String, count: Int): String {
+        if (count == 0) {
+            return s
+        }
+
+        val sb = StringBuilder()
+        var x = 0
+
+        for (i in s.indices) {
+            if (x == count) {
+                sb.append("\n")
+                x = 0
+            }
+
+            sb.append(s[i])
+            x += 1
+        }
+
+        return sb.toString()
+    }
+
+    /**
+     * Line break by characters
+     */
+    fun lineBreakByWords(s: String, count: Int): String {
+        if (count == 0) {
+            return s
+        }
+
+        val sb = StringBuilder()
+        var x = 0
+
+        for (str in s.split(" ")) {
+            if (x == count) {
+                sb.append("\n")
+                x = 0
+            }
+
+            sb.append(str).append(" ")
+            x += 1
+        }
+
+        return sb.toString().trim()
+    }
 }
