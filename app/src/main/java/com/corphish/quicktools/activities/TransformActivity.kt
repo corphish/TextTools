@@ -20,11 +20,11 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -216,7 +216,7 @@ fun TextTransformUI(
                     },
                     colors = ExposedDropdownMenuDefaults.textFieldColors(),
                     modifier = Modifier
-                        .menuAnchor(MenuAnchorType.PrimaryNotEditable, true)
+                        .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true)
                         .fillMaxWidth()
                 )
 
@@ -241,20 +241,6 @@ fun TextTransformUI(
                 }
             }
 
-            // Text input for repeat/remove/add prefix or suffix
-            if (secondaryFunctionTextVisible) {
-                OutlinedTextField(
-                    value = secondaryFunctionText,
-                    enabled = secondaryFunctionTextEnabled,
-                    onValueChange = { viewModel.setSecondaryText(it) },
-                    keyboardOptions = KeyboardOptions(keyboardType = secondaryFunctionTextInputType),
-                    label = { Text(stringResource(id = secondaryFunctionTextLabel)) },
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                        .fillMaxWidth()
-                )
-            }
-
             if (secondaryList.isNotEmpty()) {
                 // Function 2
                 ExposedDropdownMenuBox(
@@ -273,7 +259,7 @@ fun TextTransformUI(
                         },
                         colors = ExposedDropdownMenuDefaults.textFieldColors(),
                         modifier = Modifier
-                            .menuAnchor(MenuAnchorType.PrimaryNotEditable, true)
+                            .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true)
                             .fillMaxWidth()
                     )
 
@@ -297,6 +283,22 @@ fun TextTransformUI(
                         }
                     }
                 }
+            }
+
+
+
+            // Text input for repeat/remove/add prefix or suffix
+            if (secondaryFunctionTextVisible) {
+                OutlinedTextField(
+                    value = secondaryFunctionText,
+                    enabled = secondaryFunctionTextEnabled,
+                    onValueChange = { viewModel.setSecondaryText(it) },
+                    keyboardOptions = KeyboardOptions(keyboardType = secondaryFunctionTextInputType),
+                    label = { Text(stringResource(id = secondaryFunctionTextLabel)) },
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .fillMaxWidth()
+                )
             }
 
             Button(
