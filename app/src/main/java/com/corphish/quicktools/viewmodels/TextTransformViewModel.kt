@@ -81,7 +81,7 @@ class TextTransformViewModel : ViewModel() {
                     _secondaryFunctionText.value = "1"
                 }
 
-                INDEX_LINE_BREAK -> {
+                INDEX_LINE_BREAK, INDEX_SQUEEZE -> {
                     _selectedSecondaryIndex.value = 0
                     _secondaryFunctionText.value = _mainText.value.length.toString()
                 }
@@ -118,13 +118,23 @@ class TextTransformViewModel : ViewModel() {
                 INDEX_REPEAT_TEXT -> R.string.repeat_text
                 INDEX_REMOVE_TEXT -> R.string.remove_text
                 INDEX_ADD_PREFIX_SUFFIX -> R.string.add_prefix_suffix
-                INDEX_LINE_BREAK -> listOf(R.string.after_certain_characters, R.string.after_certain_words)[_selectedSecondaryIndex.value.coerceIn(0..1)]
+                INDEX_LINE_BREAK -> listOf(
+                    R.string.after_certain_characters,
+                    R.string.after_certain_words
+                )[_selectedSecondaryIndex.value.coerceIn(0..1)]
+
+                INDEX_SQUEEZE -> R.string.max_char_per_line
                 INDEX_REPLACE_WHITESPACE -> R.string.replace_whitespace
                 else -> R.string.transform
             }
 
             _secondaryFunctionTextInputType.value =
-                if (_selectedPrimaryIndex.value == INDEX_REPEAT_TEXT ||_selectedPrimaryIndex.value == INDEX_LINE_BREAK) {
+                if (_selectedPrimaryIndex.value in listOf(
+                        INDEX_REPEAT_TEXT,
+                        INDEX_LINE_BREAK,
+                        INDEX_SQUEEZE
+                    )
+                ) {
                     KeyboardType.Number
                 } else {
                     KeyboardType.Text
@@ -266,10 +276,22 @@ class TextTransformViewModel : ViewModel() {
 
                 INDEX_LINE_BREAK -> {
                     when (_selectedSecondaryIndex.value) {
-                        0 -> textTransformer.lineBreakByCharacter(_mainText.value, _secondaryFunctionText.value.toIntOrNull() ?: 0)
-                        1 -> textTransformer.lineBreakByWords(_mainText.value, _secondaryFunctionText.value.toIntOrNull() ?: 0)
+                        0 -> textTransformer.lineBreakByCharacter(
+                            _mainText.value,
+                            _secondaryFunctionText.value.toIntOrNull() ?: 0
+                        )
+
+                        1 -> textTransformer.lineBreakByWords(
+                            _mainText.value,
+                            _secondaryFunctionText.value.toIntOrNull() ?: 0
+                        )
+
                         else -> _mainText.value
                     }
+                }
+
+                INDEX_SQUEEZE -> {
+                    textTransformer.squeeze(_mainText.value, _secondaryFunctionText.value.toIntOrNull() ?: 0)
                 }
 
                 INDEX_REPLACE_WHITESPACE -> {
@@ -298,7 +320,8 @@ class TextTransformViewModel : ViewModel() {
         const val INDEX_REVERSE_LINES = 10
         const val INDEX_DECORATE_TEXT = 11
         const val INDEX_LINE_BREAK = 12
-        const val INDEX_REPLACE_WHITESPACE = 13
+        const val INDEX_SQUEEZE = 13
+        const val INDEX_REPLACE_WHITESPACE = 14
 
         private val optionsWithSecondaryFunctionText = listOf(
             INDEX_WRAP_TEXT,
@@ -306,6 +329,7 @@ class TextTransformViewModel : ViewModel() {
             INDEX_REMOVE_TEXT,
             INDEX_ADD_PREFIX_SUFFIX,
             INDEX_LINE_BREAK,
+            INDEX_SQUEEZE,
             INDEX_REPLACE_WHITESPACE,
         )
 
@@ -323,6 +347,7 @@ class TextTransformViewModel : ViewModel() {
             R.string.reverse_lines,
             R.string.text_decorate,
             R.string.line_break,
+            R.string.squeeze,
             R.string.replace_whitespace
         )
 

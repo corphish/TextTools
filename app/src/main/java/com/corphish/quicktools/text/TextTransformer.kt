@@ -749,4 +749,12 @@ class TextTransformer {
 
         return sb.toString().trim()
     }
+
+    /**
+     * Squeezes multi-line string into lesser lines such that each line
+     * has at most maxCharsPerLine characters.
+     * If an input line consists of chars more than it behaves as line break.
+     */
+    fun squeeze(s: String, maxCharsPerLine: Int) =
+        lineBreakByCharacter(s.split("\n").joinToString(""), maxCharsPerLine)
 }
