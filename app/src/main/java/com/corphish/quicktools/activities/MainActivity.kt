@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
@@ -25,10 +26,14 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -97,14 +102,14 @@ fun Greeting(
 
     Scaffold(
         floatingActionButton = {
-        FloatingActionButton(
-            onClick = {
-                context.startActivity(Intent(context, SettingsActivity::class.java))
-            },
-        ) {
-            Icon(Icons.Filled.Settings, "Settings")
-        }
-    }) {
+            FloatingActionButton(
+                onClick = {
+                    context.startActivity(Intent(context, SettingsActivity::class.java))
+                },
+            ) {
+                Icon(Icons.Filled.Settings, "Settings")
+            }
+        }) {
         Column(
             modifier = Modifier
                 .padding(
@@ -144,16 +149,31 @@ fun Greeting(
                 color = MaterialTheme.colorScheme.primary
             )
 
-            for (feature in Feature.LIST) {
-                FeatureItem(
-                    feature = feature,
-                    appMode = appMode.value,
-                    enabledFeatures = enabledFeatures.value,
-                    shouldEdit = shouldEdit,
-                    onFeatureEnabledOrDisabled = { featureId, enabled ->
-                        viewModel.enableOrDisableFeature(featureId, enabled)
+            Surface(
+                tonalElevation = 2.dp,
+                shape = RoundedCornerShape(16.dp),
+                color = MaterialTheme.colorScheme.surface
+            ) {
+                Column {
+                    for ((index, feature) in Feature.LIST.withIndex()) {
+                        FeatureItem(
+                            feature = feature,
+                            appMode = appMode.value,
+                            enabledFeatures = enabledFeatures.value,
+                            shouldEdit = shouldEdit,
+                            onFeatureEnabledOrDisabled = { featureId, enabled ->
+                                viewModel.enableOrDisableFeature(featureId, enabled)
+                            }
+                        )
+
+                        if (index < Feature.LIST.size - 1) {
+                            HorizontalDivider(
+                                thickness = 2.dp,
+                                color = MaterialTheme.colorScheme.background
+                            )
+                        }
                     }
-                )
+                }
             }
 
             Text(
@@ -235,66 +255,64 @@ fun FeatureItem(
     enabledFeatures: List<FeatureIds> = emptyList(),
     onFeatureEnabledOrDisabled: (FeatureIds, Boolean) -> Unit = { _, _ -> }
 ) {
-    Row(
-        modifier = Modifier.padding(vertical = 8.dp)/*.clickable {
-            val intent = Intent(context, TryOutActivity::class.java)
-            intent.putExtra(TryOutActivity.TRY_OUT_FLOW, feature.flow)
-            context.startActivity(intent)
-        }*/
-    ) {
-        if (shouldEdit) {
-            Checkbox(
-                checked = enabledFeatures.contains(feature.id),
-                onCheckedChange = {
-                    onFeatureEnabledOrDisabled(feature.id, it)
-                },
-                modifier = Modifier.padding(end = 4.dp)
-            )
-        }
-
-        Box(
-            modifier = Modifier
-                .size(48.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primary), contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painterResource(id = feature.icon),
-                contentDescription = "",
-                modifier = Modifier.size(32.dp),
-                colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onPrimary)
-            )
-        }
-
-        Column(
-            modifier = Modifier.padding(start = 16.dp)
-        ) {
+    ListItem(
+        headlineContent = {
             Text(
                 text = stringResource(id = feature.featureTitle),
                 style = TypographyV2.labelMedium,
                 fontFamily = BrandFontFamily,
                 fontWeight = FontWeight.W600
             )
-            Text(text = stringResource(id = feature.featureDesc), style = Typography.bodyMedium)
+        },
+        supportingContent = {
+            Column {
+                Text(text = stringResource(id = feature.featureDesc), style = Typography.bodyMedium)
 
-            // Don't show context menu option in single option flavor
-            if (appMode == AppMode.MULTI) {
-                Row(
-                    modifier = Modifier.padding(top = 4.dp)
+                // Don't show context menu option in single option flavor
+                if (appMode == AppMode.MULTI) {
+                    Row(
+                        modifier = Modifier.padding(top = 4.dp)
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.context_menu_option),
+                            style = Typography.labelMedium,
+                        )
+                        Text(
+                            text = stringResource(id = feature.contextMenuText),
+                            style = Typography.bodyMedium,
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                    }
+                }
+            }
+
+        },
+        leadingContent = {
+            if (shouldEdit) {
+                Checkbox(
+                    checked = enabledFeatures.contains(feature.id),
+                    onCheckedChange = {
+                        onFeatureEnabledOrDisabled(feature.id, it)
+                    },
+                    modifier = Modifier.padding(end = 4.dp)
+                )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primary), contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = stringResource(id = R.string.context_menu_option),
-                        style = Typography.labelMedium,
-                    )
-                    Text(
-                        text = stringResource(id = feature.contextMenuText),
-                        style = Typography.bodyMedium,
-                        modifier = Modifier.padding(start = 8.dp)
+                    Image(
+                        painterResource(id = feature.icon),
+                        contentDescription = "",
+                        modifier = Modifier.size(32.dp),
+                        colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onPrimary)
                     )
                 }
             }
         }
-    }
+    )
 }
 
 @Preview(showBackground = true)
