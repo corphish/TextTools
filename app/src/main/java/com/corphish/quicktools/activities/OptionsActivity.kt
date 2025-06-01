@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
 import com.corphish.quicktools.R
+import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.extensions.truncate
 import com.corphish.quicktools.repository.FeatureIds
 import com.corphish.quicktools.ui.common.ListDialog
@@ -45,6 +46,7 @@ class OptionsActivity : NoUIActivity() {
         if (intent.hasExtra(Intent.EXTRA_PROCESS_TEXT)) {
             val text = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT).toString()
             val readonly = intent.getBooleanExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, false)
+            val forceCopy = intent.getBooleanExtra(Constants.INTENT_FORCE_COPY, false)
             setContent {
                 QuickToolsTheme {
                     val enabledFeatures by viewModel.enabledFeatures.collectAsState()
@@ -64,6 +66,7 @@ class OptionsActivity : NoUIActivity() {
                                 val routeIntent = Intent(this, list[it].handlingClass)
                                 routeIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, text)
                                 routeIntent.putExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, readonly)
+                                routeIntent.putExtra(Constants.INTENT_FORCE_COPY, forceCopy)
                                 router.launch(routeIntent)
                                 optionDialog.value = false
                             }) {

@@ -109,8 +109,9 @@ class FindAndReplaceActivity : ComponentActivity() {
                                     val resultIntent = Intent()
                                     resultIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, finalText)
                                     setResult(RESULT_OK, resultIntent)
-                                    finish()
                                 }
+
+                                finish()
                             }
                         )
                     }

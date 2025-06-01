@@ -35,6 +35,7 @@ class EvalViewModel @Inject constructor(private val settingsRepository: Settings
 
     suspend fun shouldForceCopy(choice: Boolean) {
         if (choice) {
+            _userSelectedMode = EVAL_RESULT_COPY_TO_CLIPBOARD
             _evalMode.emit(EVAL_RESULT_COPY_TO_CLIPBOARD)
         }
     }

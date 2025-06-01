@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowRight
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
@@ -192,6 +193,32 @@ fun Greeting(
                 )
                 Text(
                     text = stringResource(id = if (shouldEdit) R.string.done else R.string.edit),
+                    modifier = Modifier.padding(start = 16.dp),
+                    style = TypographyV2.labelMedium,
+                    fontWeight = FontWeight.W600
+                )
+            }
+
+            Text(
+                text = stringResource(id = R.string.simulate),
+                style = TypographyV2.labelSmall,
+                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
+                fontFamily = BrandFontFamily,
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            Text(
+                text = stringResource(id = R.string.simulate_desc),
+                style = Typography.bodyMedium,
+            )
+
+            Button(
+                onClick = { context.startActivity(Intent(context, SimulationActivity::class.java)) },
+                modifier = Modifier.padding(top = 8.dp)
+            ) {
+                Icon(Icons.AutoMirrored.Filled.ArrowRight, contentDescription = "")
+                Text(
+                    text = stringResource(id = R.string.simulate),
                     modifier = Modifier.padding(start = 16.dp),
                     style = TypographyV2.labelMedium,
                     fontWeight = FontWeight.W600

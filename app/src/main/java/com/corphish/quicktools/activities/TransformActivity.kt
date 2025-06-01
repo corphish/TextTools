@@ -87,8 +87,9 @@ class TransformActivity : ComponentActivity() {
                                 } else {
                                     resultIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, applyText)
                                     setResult(RESULT_OK, resultIntent)
-                                    finish()
                                 }
+
+                                finish()
                             }
                         )
                     }
