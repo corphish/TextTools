@@ -33,6 +33,12 @@ class EvalViewModel @Inject constructor(private val settingsRepository: Settings
         }
     }
 
+    suspend fun shouldForceCopy(choice: Boolean) {
+        if (choice) {
+            _evalMode.emit(EVAL_RESULT_COPY_TO_CLIPBOARD)
+        }
+    }
+
     private val _evalResult = MutableStateFlow<Result<EvaluateResult>>(Result.Initial)
     val evalResult: StateFlow<Result<EvaluateResult>> = _evalResult
 

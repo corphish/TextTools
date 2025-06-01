@@ -46,10 +46,12 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.corphish.quicktools.R
+import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.ui.common.CustomTopAppBar
 import com.corphish.quicktools.ui.theme.BrandFontFamily
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.ui.theme.TypographyV2
+import com.corphish.quicktools.utils.ClipboardHelper
 import com.corphish.quicktools.viewmodels.TextTransformViewModel
 
 class TransformActivity : ComponentActivity() {
@@ -59,6 +61,8 @@ class TransformActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         if (intent.hasExtra(Intent.EXTRA_PROCESS_TEXT)) {
             val readonly = intent.getBooleanExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, false)
+            val forceCopy = intent.getBooleanExtra(Constants.INTENT_FORCE_COPY, false)
+
             if (readonly) {
                 // We are only interested in editable text
                 Toast.makeText(this, R.string.editable_error, Toast.LENGTH_LONG).show()
@@ -76,10 +80,15 @@ class TransformActivity : ComponentActivity() {
                         TextTransformUI(
                             textToTransform = text,
                             paddingValues = it,
+                            forceCopy = forceCopy,
                             onApply = { applyText ->
-                                resultIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, applyText)
-                                setResult(RESULT_OK, resultIntent)
-                                finish()
+                                if (forceCopy) {
+                                    ClipboardHelper.copyToClipboard(this, applyText)
+                                } else {
+                                    resultIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, applyText)
+                                    setResult(RESULT_OK, resultIntent)
+                                    finish()
+                                }
                             }
                         )
                     }
@@ -99,6 +108,7 @@ class TransformActivity : ComponentActivity() {
 fun TextTransformUI(
     textToTransform: String,
     paddingValues: PaddingValues,
+    forceCopy: Boolean,
     onApply: (String) -> Unit = {}
 ) {
     val viewModel = viewModel { TextTransformViewModel() }
@@ -307,7 +317,7 @@ fun TextTransformUI(
                     .fillMaxWidth()
                     .padding(start = 16.dp, end = 16.dp, bottom = 8.dp, top = 8.dp)
             ) {
-                Text(text = stringResource(id = R.string.apply), fontFamily = BrandFontFamily)
+                Text(text = stringResource(id = if (forceCopy) R.string.copy_to_clipboard else R.string.apply), fontFamily = BrandFontFamily)
             }
         }
     }
@@ -316,5 +326,5 @@ fun TextTransformUI(
 @Composable
 @Preview
 fun TextTransformUIPreview() {
-    TextTransformUI(textToTransform = "Text to transform", paddingValues = PaddingValues(all = 0.dp))
+    TextTransformUI(textToTransform = "Text to transform", forceCopy = false, paddingValues = PaddingValues(all = 0.dp))
 }

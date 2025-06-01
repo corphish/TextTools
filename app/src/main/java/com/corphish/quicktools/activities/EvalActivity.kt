@@ -21,10 +21,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import com.corphish.quicktools.R
+import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.data.Result
 import com.corphish.quicktools.ui.common.ListDialog
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.ui.theme.TypographyV2
+import com.corphish.quicktools.utils.ClipboardHelper
 import com.corphish.quicktools.viewmodels.EvalViewModel
 import com.corphish.quicktools.viewmodels.EvalViewModel.Companion.EVAL_RESULT_APPEND
 import com.corphish.quicktools.viewmodels.EvalViewModel.Companion.EVAL_RESULT_COPY_TO_CLIPBOARD
@@ -46,6 +48,8 @@ class EvalActivity : NoUIActivity() {
     override fun handleIntent(intent: Intent): Boolean {
         if (intent.hasExtra(Intent.EXTRA_PROCESS_TEXT)) {
             val readonly = intent.getBooleanExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, false)
+            val forceCopy = intent.getBooleanExtra(Constants.INTENT_FORCE_COPY, false)
+
             if (readonly) {
                 // We are only interested in editable text
                 Toast.makeText(this, R.string.editable_error, Toast.LENGTH_LONG).show()
@@ -53,6 +57,10 @@ class EvalActivity : NoUIActivity() {
             }
 
             val text = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT).toString()
+
+            lifecycleScope.launch {
+                evalViewModel.shouldForceCopy(forceCopy)
+            }
 
             lifecycleScope.launch {
                 evalViewModel.evalMode.collect { mode ->
@@ -88,7 +96,7 @@ class EvalActivity : NoUIActivity() {
                                 }
 
                                 EVAL_RESULT_COPY_TO_CLIPBOARD -> {
-                                    handleEvaluationCopy(str)
+                                    ClipboardHelper.copyToClipboard(this@EvalActivity, str)
                                 }
                             }
 
@@ -123,13 +131,6 @@ class EvalActivity : NoUIActivity() {
         val resultIntent = Intent()
         resultIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, resultGenerator(text, result))
         setResult(RESULT_OK, resultIntent)
-    }
-
-    private fun handleEvaluationCopy(text: String) {
-        val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-        val clip = ClipData.newPlainText("evaluation_result", text)
-        clipboard.setPrimaryClip(clip)
-        Toast.makeText(this, R.string.copied_to_clipboard, Toast.LENGTH_LONG).show()
     }
 }
 

@@ -170,4 +170,5 @@
     <string name="replace_whitespace">Replace whitespace</string>
     <string name="after_certain_characters">After certain characters</string>
     <string name="after_certain_words">After certain words</string>
+    <string name="copy_to_clipboard">Copy to clipboard</string>
 </resources>

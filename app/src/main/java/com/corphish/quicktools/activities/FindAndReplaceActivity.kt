@@ -59,9 +59,11 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.corphish.quicktools.R
+import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.ui.common.CircularButtonWithText
 import com.corphish.quicktools.ui.common.CustomTopAppBar
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
+import com.corphish.quicktools.utils.ClipboardHelper
 import com.corphish.quicktools.viewmodels.TextReplacementViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -75,6 +77,8 @@ class FindAndReplaceActivity : ComponentActivity() {
 
         if (intent.hasExtra(Intent.EXTRA_PROCESS_TEXT)) {
             val readonly = intent.getBooleanExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, false)
+            val forceCopy = intent.getBooleanExtra(Constants.INTENT_FORCE_COPY, false)
+
             if (readonly) {
                 // We are only interested in editable text
                 Toast.makeText(this, R.string.editable_error, Toast.LENGTH_LONG).show()
@@ -97,11 +101,16 @@ class FindAndReplaceActivity : ComponentActivity() {
                         FindAndReplace(
                             defaultPadding = it,
                             viewModel = viewModel,
+                            forceCopy = forceCopy,
                             onComplete = { finalText ->
-                                val resultIntent = Intent()
-                                resultIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, finalText)
-                                setResult(RESULT_OK, resultIntent)
-                                finish()
+                                if (forceCopy) {
+                                    ClipboardHelper.copyToClipboard(this, finalText)
+                                } else {
+                                    val resultIntent = Intent()
+                                    resultIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, finalText)
+                                    setResult(RESULT_OK, resultIntent)
+                                    finish()
+                                }
                             }
                         )
                     }
@@ -118,6 +127,7 @@ class FindAndReplaceActivity : ComponentActivity() {
 fun FindAndReplace(
     defaultPadding: PaddingValues,
     viewModel: TextReplacementViewModel,
+    forceCopy: Boolean,
     onComplete: (String) -> Unit,
 ) {
     val highlightColor = MaterialTheme.colorScheme.secondary
@@ -213,12 +223,12 @@ fun FindAndReplace(
 
             Spacer(modifier = Modifier.width(4.dp))
 
-            // Save
+            // Save or copy
             FloatingActionButton(
                 onClick = { onComplete(mainTextState) },
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_save),
+                    painter = painterResource(id = if (forceCopy) R.drawable.ic_copy else R.drawable.ic_save),
                     contentDescription = null
                 )
             }

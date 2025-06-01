@@ -18,4 +18,7 @@ object Constants {
     const val ISSUES_PAGE_LINK = "${SOURCE_LINK}issues"
     const val DONATE_LINK = "https://www.paypal.com/paypalme/corphish"
     const val WHATSAPP_API_LINK = "https://wa.me/"
+
+    // Intent to force copy instead of applying
+    const val INTENT_FORCE_COPY = "force_copy"
 }
