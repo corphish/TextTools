@@ -155,4 +155,15 @@
     <string name="done">Feito</string>
     <string name="app">App</string>
     <string name="invalid_country_code">Código de país inválido</string>
+    <string name="line_break">Quebra de linha</string>
+    <string name="replace_whitespace">Substituir espaço em branco</string>
+    <string name="after_certain_characters">Após certos caracteres</string>
+    <string name="after_certain_words">Após certas palavras</string>
+    <string name="copy_to_clipboard">Copiar para a área de transferência</string>
+    <string name="title_activity_simulation">Simulação</string>
+    <string name="simulate">Simular</string>
+    <string name="simulate_desc">Se as opções do Ferramentas de Texto não forem vistas para o texto selecionado em um outro aplicativo, esse texto pode ser copiado e colado aqui para simulação de funções de ferramentas de texto.</string>
+    <string name="simulate_details">Digite ou cole o texto aqui e então clique no botão abaixo para simular várias funções do Ferramentas de Texto. Qualquer texto produzido por uma função do Ferramentas de Texto (como Transformação de Texto) não será refletido aqui, mas será copiado para a área de transferência.</string>
+    <string name="max_char_per_line">Máximo de caracteres por linha</string>
+    <string name="squeeze">Comprimir</string>
 </resources>
