@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -59,6 +60,7 @@ class TransformActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         if (intent.hasExtra(Intent.EXTRA_PROCESS_TEXT)) {
             val readonly = intent.getBooleanExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, false)
             val forceCopy = intent.getBooleanExtra(Constants.INTENT_FORCE_COPY, false)
@@ -132,7 +134,7 @@ fun TextTransformUI(
     LaunchedEffect(true) { viewModel.initializeText(textToTransform) }
 
     ConstraintLayout(
-        modifier = Modifier.fillMaxHeight()
+        modifier = Modifier.fillMaxHeight().padding(paddingValues)
     ) {
         val (
             inputTextField,
@@ -146,10 +148,10 @@ fun TextTransformUI(
                 viewModel.initializeText(it)
             },
             modifier = Modifier.constrainAs(inputTextField) {
-                top.linkTo(parent.top, margin = paddingValues.calculateTopPadding().plus(16.dp))
+                top.linkTo(parent.top, margin = 16.dp)
                 bottom.linkTo(previewTextField.top, margin = 8.dp)
-                start.linkTo(parent.start, margin = paddingValues.calculateStartPadding(LayoutDirection.Ltr).plus(8.dp))
-                end.linkTo(parent.end, margin = paddingValues.calculateEndPadding(LayoutDirection.Ltr).plus(8.dp))
+                start.linkTo(parent.start, margin = 8.dp)
+                end.linkTo(parent.end, margin = 8.dp)
                 height = Dimension.fillToConstraints
                 width = Dimension.fillToConstraints
             },
@@ -162,8 +164,8 @@ fun TextTransformUI(
             modifier = Modifier.constrainAs(previewTextField) {
                 top.linkTo(inputTextField.bottom, margin = 8.dp)
                 bottom.linkTo(functionSheet.top, margin = 8.dp)
-                start.linkTo(parent.start, margin = paddingValues.calculateStartPadding(LayoutDirection.Ltr).plus(8.dp))
-                end.linkTo(parent.end, margin = paddingValues.calculateEndPadding(LayoutDirection.Ltr).plus(8.dp))
+                start.linkTo(parent.start, margin = 8.dp)
+                end.linkTo(parent.end, margin = 8.dp)
                 height = Dimension.fillToConstraints
                 width = Dimension.fillToConstraints
             },

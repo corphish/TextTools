@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
@@ -157,7 +158,7 @@ fun FindAndReplace(
         )
     }
 
-    ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+    ConstraintLayout(modifier = Modifier.fillMaxSize().padding(defaultPadding)) {
         val (
             mainTextField,
             findTextField,
@@ -266,9 +267,7 @@ fun FindAndReplace(
                 top.linkTo(replaceTextField.top)
                 bottom.linkTo(replaceTextField.bottom)
                 end.linkTo(
-                    parent.end, margin = defaultPadding
-                        .calculateEndPadding(LayoutDirection.Ltr)
-                        .plus(16.dp)
+                    parent.end, margin = 16.dp
                 )
             }
         )
@@ -301,9 +300,7 @@ fun FindAndReplace(
                 top.linkTo(findTextField.top)
                 bottom.linkTo(findTextField.bottom)
                 end.linkTo(
-                    parent.end, margin = defaultPadding
-                        .calculateEndPadding(LayoutDirection.Ltr)
-                        .plus(16.dp)
+                    parent.end, margin = 16.dp
                 )
             }
         )
@@ -315,8 +312,7 @@ fun FindAndReplace(
                 .constrainAs(replaceTextField) {
                     start.linkTo(
                         parent.start,
-                        margin = defaultPadding.calculateStartPadding(LayoutDirection.Ltr)
-                            .plus(16.dp)
+                        margin = 16.dp
                     )
                     bottom.linkTo(floatingToolbar.top, margin = 16.dp)
                     end.linkTo(replaceButtons.start, margin = 8.dp)
@@ -345,9 +341,7 @@ fun FindAndReplace(
                 .constrainAs(findTextField) {
                     start.linkTo(
                         parent.start,
-                        margin = defaultPadding
-                            .calculateStartPadding(LayoutDirection.Ltr)
-                            .plus(16.dp)
+                        margin = 16.dp
                     )
                     bottom.linkTo(replaceTextField.top, margin = 4.dp)
                     end.linkTo(findButtons.start, margin = 8.dp)
@@ -367,14 +361,14 @@ fun FindAndReplace(
             modifier = Modifier.constrainAs(mainTextField) {
                 start.linkTo(
                     parent.start,
-                    margin = defaultPadding.calculateStartPadding(LayoutDirection.Ltr).plus(16.dp)
+                    margin = 16.dp
                 )
                 bottom.linkTo(findTextField.top, margin = 8.dp)
                 end.linkTo(
                     parent.end,
-                    margin = defaultPadding.calculateEndPadding(LayoutDirection.Ltr).plus(16.dp)
+                    margin = 16.dp
                 )
-                top.linkTo(parent.top, margin = defaultPadding.calculateTopPadding().plus(16.dp))
+                top.linkTo(parent.top, margin = 16.dp)
                 width = Dimension.fillToConstraints
                 height = Dimension.fillToConstraints
             },
