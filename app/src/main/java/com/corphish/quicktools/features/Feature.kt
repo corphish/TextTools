@@ -3,7 +3,6 @@ package com.corphish.quicktools.features
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.corphish.quicktools.R
-import com.corphish.quicktools.activities.TryOutActivity
 import com.corphish.quicktools.repository.FeatureIds
 
 /**
@@ -15,7 +14,6 @@ data class Feature(
     @StringRes val featureTitle: Int,
     @StringRes val featureDesc: Int,
     @StringRes val contextMenuText: Int,
-    val flow: String,
 ) {
     companion object {
         val LIST = listOf(
@@ -25,7 +23,6 @@ data class Feature(
                 featureTitle = R.string.wup_title,
                 featureDesc = R.string.wup_desc,
                 contextMenuText = R.string.context_menu_whatsapp,
-                flow = TryOutActivity.TRY_OUT_FLOW_WUP,
             ),
             Feature(
                 id = FeatureIds.EVAL,
@@ -33,7 +30,6 @@ data class Feature(
                 featureTitle = R.string.eval_title,
                 featureDesc = R.string.eval_desc,
                 contextMenuText = R.string.context_menu_eval,
-                flow = TryOutActivity.TRY_OUT_FLOW_EVAL,
             ),
             Feature(
                 id = FeatureIds.TRANSFORM,
@@ -41,7 +37,6 @@ data class Feature(
                 featureTitle = R.string.transform_long,
                 featureDesc = R.string.transform_desc,
                 contextMenuText = R.string.context_menu_transform,
-                flow = TryOutActivity.TRY_OUT_FLOW
             ),
             Feature(
                 id = FeatureIds.TEXT_COUNT,
@@ -49,7 +44,6 @@ data class Feature(
                 featureTitle = R.string.text_count,
                 featureDesc = R.string.text_count_desc,
                 contextMenuText = R.string.context_menu_text_count,
-                flow = TryOutActivity.TRY_OUT_FLOW
             ),
             Feature(
                 id = FeatureIds.SAVE_TEXT,
@@ -57,7 +51,6 @@ data class Feature(
                 featureTitle = R.string.save_text_title,
                 featureDesc = R.string.save_text_desc,
                 contextMenuText = R.string.context_menu_save,
-                flow = TryOutActivity.TRY_OUT_FLOW
             ),
             Feature(
                 id = FeatureIds.FIND_AND_REPLACE,
@@ -65,7 +58,6 @@ data class Feature(
                 featureTitle = R.string.title_activity_find_and_replace,
                 featureDesc = R.string.find_and_replace_desc,
                 contextMenuText = R.string.context_menu_find_and_replace,
-                flow = TryOutActivity.TRY_OUT_FLOW
             )
         )
     }
