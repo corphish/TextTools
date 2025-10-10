@@ -61,11 +61,7 @@
             android:exported="false"
             android:label="@string/title_activity_settings"
             android:theme="@style/Theme.QuickTools" />
-        <activity
-            android:name=".activities.TryOutActivity"
-            android:exported="false"
-            android:label="@string/title_activity_try_out"
-            android:theme="@style/Theme.QuickTools" />
+
         <activity
             android:name=".activities.EvalActivity"
             android:excludeFromRecents="true"
