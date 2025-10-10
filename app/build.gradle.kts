@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -6,17 +8,14 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-val variantMultipleOptions = "multipleOptions"
-val variantSingleOption = "singleOption"
-
 android {
     namespace = "com.corphish.quicktools"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.corphish.quicktools"
         minSdk = 30
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 23
         versionName = "2.1.1"
 
@@ -40,19 +39,24 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
-    }
+
     kotlin {
         jvmToolchain(17)
+
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
+        }
     }
+
     buildFeatures {
         compose = true
         buildConfig = true
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
     }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -73,18 +77,18 @@ android {
 
 dependencies {
     // Core
-    implementation("androidx.core:core-ktx:1.16.0")
-    implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.0")
+    implementation("androidx.core:core-ktx:1.17.0")
+    implementation("androidx.appcompat:appcompat:1.7.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.4")
     implementation("androidx.preference:preference-ktx:1.2.1")
 
     // Material 3 expressive
-    implementation("androidx.compose.material3:material3-android:1.4.0-alpha15")
+    implementation("androidx.compose.material3:material3-android:1.5.0-alpha06")
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
 
     // Compose
-    implementation(platform("androidx.compose:compose-bom:2025.05.01"))
-    implementation("androidx.activity:activity-compose:1.10.1")
+    implementation(platform("androidx.compose:compose-bom:2025.10.00"))
+    implementation("androidx.activity:activity-compose:1.11.0")
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
@@ -96,13 +100,13 @@ dependencies {
     implementation("net.objecthunter:exp4j:0.4.8")
 
     // Dagger
-    implementation("com.google.dagger:hilt-android:2.51.1")
+    implementation("com.google.dagger:hilt-android:2.57.2")
     implementation("androidx.compose.material3:material3")
-    kapt("com.google.dagger:hilt-compiler:2.51.1")
+    kapt("com.google.dagger:hilt-compiler:2.57.2")
 
 
     // Testing
-    androidTestImplementation(platform("androidx.compose:compose-bom:2025.05.01"))
+    androidTestImplementation(platform("androidx.compose:compose-bom:2025.10.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
 
     // Compose debug
