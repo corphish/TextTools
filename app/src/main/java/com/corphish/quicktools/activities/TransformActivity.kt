@@ -2,10 +2,10 @@ package com.corphish.quicktools.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -46,6 +46,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.corphish.quicktools.R
 import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.ui.common.CustomTopAppBar
+import com.corphish.quicktools.ui.common.InputAndPreviewTextField
 import com.corphish.quicktools.ui.theme.BrandFontFamily
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.ui.theme.TypographyV2
@@ -59,14 +60,8 @@ class TransformActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         if (intent.hasExtra(Intent.EXTRA_PROCESS_TEXT)) {
-            val readonly = intent.getBooleanExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, false)
+            val readonly = intent.getBooleanExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, true)
             val forceCopy = intent.getBooleanExtra(Constants.INTENT_FORCE_COPY, false)
-
-            if (readonly) {
-                // We are only interested in editable text
-                Toast.makeText(this, R.string.editable_error, Toast.LENGTH_LONG).show()
-                finish()
-            }
 
             val text = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT).toString()
             val resultIntent = Intent()
@@ -74,20 +69,24 @@ class TransformActivity : ComponentActivity() {
             setContent {
                 QuickToolsTheme {
                     Scaffold(
-                        topBar = { CustomTopAppBar(id = R.string.transform_long, onNavigationClick = { finish() }) }
+                        topBar = {
+                            CustomTopAppBar(
+                                id = R.string.transform_long,
+                                onNavigationClick = { finish() })
+                        }
                     ) {
                         TextTransformUI(
                             textToTransform = text,
                             paddingValues = it,
-                            forceCopy = forceCopy,
+                            allowApply = if (forceCopy) false else !readonly,
+                            allowCopy = true,
                             onApply = { applyText ->
-                                if (forceCopy) {
-                                    ClipboardHelper.copyToClipboard(this, applyText)
-                                } else {
-                                    resultIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, applyText)
-                                    setResult(RESULT_OK, resultIntent)
-                                }
-
+                                resultIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, applyText)
+                                setResult(RESULT_OK, resultIntent)
+                                finish()
+                            },
+                            onCopy = {
+                                ClipboardHelper.copyToClipboard(this, it)
                                 finish()
                             }
                         )
@@ -108,8 +107,10 @@ class TransformActivity : ComponentActivity() {
 fun TextTransformUI(
     textToTransform: String,
     paddingValues: PaddingValues,
-    forceCopy: Boolean,
-    onApply: (String) -> Unit = {}
+    allowApply: Boolean,
+    allowCopy: Boolean,
+    onApply: (String) -> Unit = {},
+    onCopy: (String) -> Unit = {},
 ) {
     val viewModel = viewModel { TextTransformViewModel() }
     val inputText by viewModel.mainText.collectAsState()
@@ -131,43 +132,27 @@ fun TextTransformUI(
     LaunchedEffect(true) { viewModel.initializeText(textToTransform) }
 
     ConstraintLayout(
-        modifier = Modifier.fillMaxHeight().padding(paddingValues)
+        modifier = Modifier
+            .fillMaxHeight()
+            .padding(paddingValues)
     ) {
         val (
-            inputTextField,
-            previewTextField,
+            inputAndPreviewTextField,
             functionSheet
         ) = createRefs()
 
-        OutlinedTextField(
-            value = inputText,
-            onValueChange = {
-                viewModel.initializeText(it)
-            },
-            modifier = Modifier.constrainAs(inputTextField) {
+        InputAndPreviewTextField(
+            inputText = inputText,
+            onInputTextChanged = { viewModel.initializeText(it) },
+            previewText = previewText,
+            modifier = Modifier.constrainAs(inputAndPreviewTextField) {
                 top.linkTo(parent.top, margin = 16.dp)
-                bottom.linkTo(previewTextField.top, margin = 8.dp)
-                start.linkTo(parent.start, margin = 8.dp)
-                end.linkTo(parent.end, margin = 8.dp)
-                height = Dimension.fillToConstraints
-                width = Dimension.fillToConstraints
-            },
-            label = { Text(text = stringResource(id = R.string.input)) },
-        )
-
-        OutlinedTextField(
-            value = previewText,
-            onValueChange = { },
-            modifier = Modifier.constrainAs(previewTextField) {
-                top.linkTo(inputTextField.bottom, margin = 8.dp)
                 bottom.linkTo(functionSheet.top, margin = 8.dp)
                 start.linkTo(parent.start, margin = 8.dp)
                 end.linkTo(parent.end, margin = 8.dp)
                 height = Dimension.fillToConstraints
                 width = Dimension.fillToConstraints
-            },
-            label = { Text(text = stringResource(id = R.string.preview)) },
-            readOnly = true
+            }
         )
 
         Card(
@@ -181,13 +166,15 @@ fun TextTransformUI(
                 containerColor = MaterialTheme.colorScheme.surfaceVariant,
             ),
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-            modifier = Modifier.constrainAs(functionSheet) {
-                top.linkTo(previewTextField.bottom, margin = 8.dp)
-                bottom.linkTo(parent.bottom)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-                width = Dimension.matchParent
-            }
+            modifier = Modifier
+                .animateContentSize()
+                .constrainAs(functionSheet) {
+                    //top.linkTo(previewTextField.bottom, margin = 8.dp)
+                    bottom.linkTo(parent.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    width = Dimension.matchParent
+                }
         ) {
             Row(
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp),
@@ -296,7 +283,6 @@ fun TextTransformUI(
             }
 
 
-
             // Text input for repeat/remove/add prefix or suffix
             if (secondaryFunctionTextVisible) {
                 OutlinedTextField(
@@ -311,13 +297,37 @@ fun TextTransformUI(
                 )
             }
 
-            Button(
-                onClick = { onApply(previewText) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp, bottom = 8.dp, top = 8.dp)
+            Row(
+                modifier = Modifier.padding(
+                    horizontal = 16.dp,
+                    vertical = 8.dp
+                )
             ) {
-                Text(text = stringResource(id = if (forceCopy) R.string.copy_to_clipboard else R.string.apply), fontFamily = BrandFontFamily)
+                Button(
+                    onClick = { onApply(previewText) },
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 8.dp),
+                    enabled = allowApply
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.apply),
+                        fontFamily = BrandFontFamily
+                    )
+                }
+
+                Button(
+                    onClick = { onCopy(previewText) },
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 8.dp),
+                    enabled = allowCopy
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.copy_to_clipboard),
+                        fontFamily = BrandFontFamily
+                    )
+                }
             }
         }
     }
@@ -326,5 +336,10 @@ fun TextTransformUI(
 @Composable
 @Preview
 fun TextTransformUIPreview() {
-    TextTransformUI(textToTransform = "Text to transform", forceCopy = false, paddingValues = PaddingValues(all = 0.dp))
+    TextTransformUI(
+        textToTransform = "Text to transform",
+        allowCopy = true,
+        allowApply = true,
+        paddingValues = PaddingValues(all = 0.dp)
+    )
 }
