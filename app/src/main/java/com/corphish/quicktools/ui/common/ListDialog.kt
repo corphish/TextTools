@@ -11,8 +11,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
 import androidx.compose.material3.Card
@@ -95,19 +98,28 @@ fun <T> ListDialog(
                         style = TypographyV2.headlineMedium,
                         fontFamily = BrandFontFamily,
                         color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.padding(start = if (supportBack) 16.dp else 0.dp)
+                        modifier = Modifier.padding(
+                            start = if (supportBack) 16.dp else 0.dp,
+                            bottom = if (message.isEmpty()) 16.dp else 0.dp
+                        )
                     )
                 }
 
-                Text(
-                    text = message,
-                    style = TypographyV2.bodyMedium,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
+                if (!message.isEmpty()) {
+                    Text(
+                        text = message,
+                        style = TypographyV2.bodyMedium,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                }
 
-                for ((index, item) in list.withIndex()) {
-                    ListDialogItem(text = stringSelector(item), icon = iconSelector(item)) {
-                        onItemSelected(index)
+                Column(
+                    modifier = Modifier.verticalScroll(rememberScrollState())
+                ) {
+                    for ((index, item) in list.withIndex()) {
+                        ListDialogItem(text = stringSelector(item), icon = iconSelector(item)) {
+                            onItemSelected(index)
+                        }
                     }
                 }
 
