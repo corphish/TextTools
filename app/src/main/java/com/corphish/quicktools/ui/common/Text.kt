@@ -2,6 +2,7 @@ package com.corphish.quicktools.ui.common
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -52,13 +53,23 @@ fun InputAndPreviewTextField(
         )
         Spacer(modifier = Modifier.height(4.dp))
 
-        BasicTextField(
-            value = inputText,
-            onValueChange = onInputTextChanged,
-            textStyle = LocalTextStyle.current.copy(fontSize = fontSize),
-            maxLines = 4,
-            modifier = Modifier.fillMaxWidth()
-        )
+        Box(modifier = modifier) {
+            if (inputText.isEmpty()) {
+                Text(
+                    stringResource(R.string.enter_text_here),
+                    style = LocalTextStyle.current.copy(fontSize = fontSize),
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
+                )
+            }
+
+            BasicTextField(
+                value = inputText,
+                onValueChange = onInputTextChanged,
+                textStyle = LocalTextStyle.current.copy(fontSize = fontSize),
+                maxLines = 4,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
 
         Spacer(modifier = Modifier.weight(1f))
         HorizontalDivider(
@@ -78,15 +89,28 @@ fun InputAndPreviewTextField(
         )
         Spacer(modifier = Modifier.height(4.dp))
 
-        Text(
-            previewText,
-            style = LocalTextStyle.current.copy(fontSize = fontSize),
-            modifier = Modifier
-                .verticalScroll(
-                    rememberScrollState()
-                )
-                .fillMaxWidth()
-        )
+        if (previewText.isEmpty()) {
+            Text(
+                stringResource(R.string.preview_text_placeholder),
+                style = LocalTextStyle.current.copy(fontSize = fontSize),
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+                modifier = Modifier
+                    .verticalScroll(
+                        rememberScrollState()
+                    )
+                    .fillMaxWidth()
+            )
+        } else {
+            Text(
+                previewText,
+                style = LocalTextStyle.current.copy(fontSize = fontSize),
+                modifier = Modifier
+                    .verticalScroll(
+                        rememberScrollState()
+                    )
+                    .fillMaxWidth()
+            )
+        }
 
         Spacer(modifier = Modifier.weight(1f))
     }
