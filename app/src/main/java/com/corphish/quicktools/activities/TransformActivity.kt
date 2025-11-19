@@ -6,23 +6,26 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.AutoFixHigh
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuAnchorType
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -40,6 +43,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -47,6 +51,7 @@ import com.corphish.quicktools.R
 import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.ui.common.CustomTopAppBar
 import com.corphish.quicktools.ui.common.InputAndPreviewTextField
+import com.corphish.quicktools.ui.common.ListDialog
 import com.corphish.quicktools.ui.theme.BrandFontFamily
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.ui.theme.TypographyV2
@@ -183,105 +188,91 @@ fun TextTransformUI(
                 Icon(
                     painter = painterResource(R.drawable.ic_text_transform),
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(end = 4.dp)
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.primary, CircleShape)
                 )
                 Text(
                     text = stringResource(id = R.string.transform),
                     style = TypographyV2.labelSmall,
                     color = MaterialTheme.colorScheme.primary,
-                    fontFamily = BrandFontFamily
+                    fontFamily = BrandFontFamily,
+                    modifier = Modifier.padding(start = 8.dp)
                 )
             }
 
             // Function 1
-            ExposedDropdownMenuBox(
-                expanded = primaryFunctionExpanded,
-                onExpandedChange = {
-                    primaryFunctionExpanded = !primaryFunctionExpanded
-                },
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-            ) {
-                OutlinedTextField(
-                    readOnly = true,
-                    value = stringResource(id = TextTransformViewModel.transformOptions[selectedPrimaryIndex]),
-                    onValueChange = { },
-                    trailingIcon = {
-                        ExposedDropdownMenuDefaults.TrailingIcon(
-                            expanded = primaryFunctionExpanded
-                        )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 4.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                        shape = RoundedCornerShape(size = 4.dp)
+                    )
+                    .clickable {
+                        primaryFunctionExpanded = !primaryFunctionExpanded
                     },
-                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    Icons.Default.AutoFixHigh,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
-                        .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true)
-                        .fillMaxWidth()
+                        .padding(start = 16.dp, top = 16.dp, bottom = 16.dp)
+                        .size(24.dp)
                 )
 
-                DropdownMenu(
-                    expanded = primaryFunctionExpanded,
-                    onDismissRequest = {
-                        primaryFunctionExpanded = false
-                    },
-                    modifier = Modifier.exposedDropdownSize()
-                ) {
-                    TextTransformViewModel.transformOptions.forEachIndexed { index, selectionOption ->
-                        DropdownMenuItem(
-                            text = {
-                                Text(text = stringResource(id = selectionOption))
-                            },
-                            onClick = {
-                                primaryFunctionExpanded = false
-                                viewModel.selectPrimaryIndex(index)
-                            }
-                        )
-                    }
-                }
+                Text(
+                    stringResource(TextTransformViewModel.transformOptions[selectedPrimaryIndex]),
+                    style = LocalTextStyle.current.copy(
+                        fontSize = 16.sp,
+                        color = MaterialTheme.colorScheme.onSurface
+                    ),
+                    modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 16.dp)
+                )
             }
 
             if (secondaryList.isNotEmpty()) {
                 // Function 2
-                ExposedDropdownMenuBox(
-                    expanded = secondaryFunctionExpanded,
-                    onExpandedChange = { secondaryFunctionExpanded = !secondaryFunctionExpanded },
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                ) {
-                    OutlinedTextField(
-                        readOnly = true,
-                        value = stringResource(id = secondaryList[selectedSecondaryIndex]),
-                        onValueChange = { },
-                        trailingIcon = {
-                            ExposedDropdownMenuDefaults.TrailingIcon(
-                                expanded = secondaryFunctionExpanded
-                            )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = 4.dp,
+                            bottom = 4.dp
+                        )
+                        .background(
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                            shape = RoundedCornerShape(size = 4.dp)
+                        )
+                        .clickable {
+                            secondaryFunctionExpanded = !secondaryFunctionExpanded
                         },
-                        colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        Icons.Default.AutoAwesome,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier
-                            .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true)
-                            .fillMaxWidth()
+                            .padding(start = 16.dp, top = 16.dp, bottom = 16.dp)
+                            .size(24.dp)
                     )
 
-                    DropdownMenu(
-                        expanded = secondaryFunctionExpanded,
-                        onDismissRequest = {
-                            secondaryFunctionExpanded = false
-                        },
-                        modifier = Modifier.exposedDropdownSize()
-                    ) {
-                        secondaryList.forEachIndexed { index, selectionOption ->
-                            DropdownMenuItem(
-                                text = {
-                                    Text(text = stringResource(id = selectionOption))
-                                },
-                                onClick = {
-                                    secondaryFunctionExpanded = false
-                                    viewModel.selectSecondaryIndex(index)
-                                }
-                            )
-                        }
-                    }
+                    Text(
+                        stringResource(secondaryList[selectedSecondaryIndex]),
+                        style = LocalTextStyle.current.copy(
+                            fontSize = 16.sp,
+                            color = MaterialTheme.colorScheme.onSurface
+                        ),
+                        modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 16.dp)
+                    )
                 }
             }
-
 
             // Text input for repeat/remove/add prefix or suffix
             if (secondaryFunctionTextVisible) {
@@ -330,6 +321,52 @@ fun TextTransformUI(
                 }
             }
         }
+    }
+
+    if (primaryFunctionExpanded) {
+        ListDialog(
+            title = stringResource(R.string.transform_long),
+            message = "",
+            list = TextTransformViewModel.transformOptions,
+            onItemSelected = {
+                viewModel.selectPrimaryIndex(it)
+                primaryFunctionExpanded = false
+            },
+            stringSelector = {
+                stringResource(it)
+            },
+            iconSelector = { R.drawable.ic_text_transform },
+            onBackPressed = {
+                primaryFunctionExpanded = !primaryFunctionExpanded
+            },
+            dismissible = true,
+            onDismissRequest = {
+                primaryFunctionExpanded = !primaryFunctionExpanded
+            }
+        )
+    }
+
+    if (secondaryFunctionExpanded) {
+        ListDialog(
+            title = stringResource(TextTransformViewModel.transformOptions[selectedPrimaryIndex]),
+            message = "",
+            list = secondaryList,
+            onItemSelected = {
+                viewModel.selectSecondaryIndex(it)
+                secondaryFunctionExpanded = false
+            },
+            stringSelector = {
+                stringResource(it)
+            },
+            iconSelector = { R.drawable.ic_text_transform },
+            onBackPressed = {
+                secondaryFunctionExpanded = !secondaryFunctionExpanded
+            },
+            dismissible = true,
+            onDismissRequest = {
+                secondaryFunctionExpanded = !secondaryFunctionExpanded
+            }
+        )
     }
 }
 

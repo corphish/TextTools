@@ -177,4 +177,6 @@
     <string name="simulate_details">Enter or paste the text here and then click the button below to simulate various functions of Text Tools. Any text produced by a function of Text Tools (like Text Transform) will not be reflected here but rather be copied to the clipboard.</string>
     <string name="max_char_per_line">Max characters per line</string>
     <string name="squeeze">Squeeze</string>
+    <string name="enter_text_here">Enter text here</string>
+    <string name="preview_text_placeholder">Previewed text appears here</string>
 </resources>
