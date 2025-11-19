@@ -71,7 +71,7 @@ class TextTransformViewModel : ViewModel() {
 
             // Select the appropriate choice for those supporting secondary functions
             when (index) {
-                INDEX_WRAP_TEXT, INDEX_CHANGE_CASE, INDEX_REMOVE_TEXT, INDEX_ADD_PREFIX_SUFFIX, INDEX_DECORATE_TEXT, INDEX_REPLACE_WHITESPACE -> {
+                INDEX_WRAP_TEXT, INDEX_CHANGE_CASE, INDEX_REMOVE_TEXT, INDEX_ADD_PREFIX_SUFFIX, INDEX_DECORATE_TEXT, INDEX_REPLACE_WHITESPACE, INDEX_PREPEND_LINES, INDEX_APPEND_LINES -> {
                     _selectedSecondaryIndex.value = 0
                     _secondaryFunctionText.value = ""
                 }
@@ -125,6 +125,8 @@ class TextTransformViewModel : ViewModel() {
 
                 INDEX_SQUEEZE -> R.string.max_char_per_line
                 INDEX_REPLACE_WHITESPACE -> R.string.replace_whitespace
+                INDEX_PREPEND_LINES -> R.string.prepend_lines
+                INDEX_APPEND_LINES -> R.string.append_lines
                 else -> R.string.transform
             }
 
@@ -254,6 +256,16 @@ class TextTransformViewModel : ViewModel() {
                     textTransformer.reverseWords(_mainText.value)
                 }
 
+                INDEX_PREPEND_LINES -> {
+                    // Prepend text
+                    textTransformer.prependLines(_mainText.value, _secondaryFunctionText.value)
+                }
+
+                INDEX_APPEND_LINES -> {
+                    // Prepend text
+                    textTransformer.appendLines(_mainText.value, _secondaryFunctionText.value)
+                }
+
                 INDEX_REVERSE_LINES -> {
                     // Reverse lines
                     textTransformer.reverseLines(_mainText.value)
@@ -315,13 +327,15 @@ class TextTransformViewModel : ViewModel() {
         const val INDEX_REMOVE_TEXT = 5
         const val INDEX_ADD_PREFIX_SUFFIX = 6
         const val INDEX_NUMBER_LINES = 7
-        const val INDEX_REVERSE_TEXT = 8
-        const val INDEX_REVERSE_WORDS = 9
-        const val INDEX_REVERSE_LINES = 10
-        const val INDEX_DECORATE_TEXT = 11
-        const val INDEX_LINE_BREAK = 12
-        const val INDEX_SQUEEZE = 13
-        const val INDEX_REPLACE_WHITESPACE = 14
+        const val INDEX_PREPEND_LINES = 8
+        const val INDEX_APPEND_LINES = 9
+        const val INDEX_REVERSE_TEXT = 10
+        const val INDEX_REVERSE_WORDS = 11
+        const val INDEX_REVERSE_LINES = 12
+        const val INDEX_DECORATE_TEXT = 13
+        const val INDEX_LINE_BREAK = 14
+        const val INDEX_SQUEEZE = 15
+        const val INDEX_REPLACE_WHITESPACE = 16
 
         private val optionsWithSecondaryFunctionText = listOf(
             INDEX_WRAP_TEXT,
@@ -331,6 +345,8 @@ class TextTransformViewModel : ViewModel() {
             INDEX_LINE_BREAK,
             INDEX_SQUEEZE,
             INDEX_REPLACE_WHITESPACE,
+            INDEX_PREPEND_LINES,
+            INDEX_APPEND_LINES,
         )
 
         val transformOptions = listOf(
@@ -342,6 +358,8 @@ class TextTransformViewModel : ViewModel() {
             R.string.remove_text,
             R.string.add_prefix_suffix,
             R.string.number_lines,
+            R.string.prepend_lines,
+            R.string.append_lines,
             R.string.reverse_text,
             R.string.reverse_words,
             R.string.reverse_lines,
