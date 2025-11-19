@@ -24,17 +24,20 @@ import com.corphish.quicktools.ui.theme.TypographyV2
 @Composable
 fun CustomTopAppBar(
     @StringRes id: Int,
+    hideTitle: Boolean = false,
     onNavigationClick: () -> Unit = {},
     scrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(),
 ) {
     MediumTopAppBar(
         title = {
-            Text(
-                text = stringResource(id = id),
-                style = TypographyV2.headlineMedium,
-                color = MaterialTheme.colorScheme.primary,
-                fontFamily = BrandFontFamily,
-            )
+            if (!hideTitle) {
+                Text(
+                    text = stringResource(id = id),
+                    style = TypographyV2.headlineMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontFamily = BrandFontFamily,
+                )
+            }
         },
         navigationIcon = {
             IconButton(onClick = { onNavigationClick() }) {
