@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -65,7 +66,8 @@ fun InputAndPreviewTextField(
             BasicTextField(
                 value = inputText,
                 onValueChange = onInputTextChanged,
-                textStyle = LocalTextStyle.current.copy(fontSize = fontSize),
+                textStyle = LocalTextStyle.current.copy(fontSize = fontSize, color = MaterialTheme.colorScheme.onSurface),
+                cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
                 maxLines = 4,
                 modifier = Modifier.fillMaxWidth()
             )
