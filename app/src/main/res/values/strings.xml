@@ -17,15 +17,6 @@
     <string name="eval_title_small">Evaluate</string>
     <string name="eval_desc">Evaluate mathematical expressions inline and replace the expression with its result. Works only on text selected that can be edited.</string>
     <string name="invalid_expression">Invalid mathematical expression</string>
-    <string name="title_activity_try_out">Try It Out</string>
-
-    <string name="try_wup">- In the below text field, type any phone number.\n- Tap and hold on the phone number you just typed.\n- Tap on the [T\u00B2] WhatsApp option. If the option is not visible, tap on the 3 dots to reveal it.\n- If the phone number is available on WhatsApp (and if WhatsApp is installed) it should open the chat in WhatsApp.</string>
-    <string name="try_eval">- In the below text field, type any mathematical expression (for example, 1 + 2 + 3).\n- Tap and hold on the expression you just typed.\n- Tap on the [T\u00B2] Evaluate option. If the option is not visible, tap on the 3 dots to reveal it.\n- If the mathematical expression typed was valid, you should see its result.</string>
-    <string name="try_flow_error">Unexpected error occurred</string>
-    <string name="trial_success_msg">Great! You can do the same inside any app as long as you can select a text.</string>
-    <string name="trial_error_msg">If it did not work, you can raise an issue in the Github repo. Would you like to do that now?</string>
-    <string name="trial_success">It worked</string>
-    <string name="trial_error">It did not work</string>
 
     <string name="app_info">App Info</string>
     <string name="app_version">Version - %1$s (%2$d)</string>
