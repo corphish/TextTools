@@ -15,14 +15,6 @@
     <string name="eval_title_small">Vyhodnotit</string>
     <string name="eval_desc">Vyhodnoťte vložené matematické výrazy a nahradte výraz jeho výsledkem. Funguje pouze na vybraném textu, který lze upravit.</string>
     <string name="invalid_expression">Neplatný matematický výraz</string>
-    <string name="title_activity_try_out">Vyzkoušet</string>
-    <string name="try_wup">- Do textového pole níže zadejte jakékoli telefonní číslo.\n- Klepněte na telefonní číslo, které jste právě zadali.\n- Klepněte na [T\u00B2] možnost WhatsApp. Pokud tato možnost není viditelná, klepněte na 3 tečky pro její zobrazení.\n- Pokud je telefonní číslo k dispozici na WhatsApp (a pokud je WhatsApp nainstalován), měla by otevřít chat ve WhatsApp.</string>
-    <string name="try_eval">- Do textového pole níže zadejte jakýkoliv matematický výraz (například 1 + 2 + 3).\n- Klepněte a přidržte na výrazu, který jste právě zadali.\n- Klepněte na [T\u00B2] Možnost hodnocení. Pokud tato možnost není viditelná, klepněte na 3 tečky pro její zobrazení.\n- Pokud byl zadaný matematický výraz platný, měli byste vidět jeho výsledek.</string>
-    <string name="try_flow_error">Došlo k neočekávané chybě</string>
-    <string name="trial_success_msg">Skvělé! Můžete udělat to samé uvnitř jakékoli aplikace, pokud lze vybrat text.</string>
-    <string name="trial_error_msg">Pokud to nefungovalo, můžete ohlásit problém v repozitáři Githubu. Chcete to udělat nyní?</string>
-    <string name="trial_success">Fungovalo to</string>
-    <string name="trial_error">Nefungovalo to</string>
     <string name="app_info">Informace o aplikaci</string>
     <string name="app_version">Verze - %1$s (%2$d)</string>
     <string name="oss_info">Open Source</string>
