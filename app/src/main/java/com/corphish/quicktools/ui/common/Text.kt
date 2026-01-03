@@ -1,6 +1,7 @@
 package com.corphish.quicktools.ui.common
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -23,6 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -128,4 +131,15 @@ fun determineFontSizeForWordCount(
         wordCount <= 10 -> 16.sp
         else -> 14.sp
     }
+}
+
+@Composable
+fun MarqueeText(text: String, fontFamily: FontFamily) {
+    Text(
+        text = text,
+        maxLines = 1,
+        overflow = TextOverflow.Clip,
+        modifier = Modifier.basicMarquee(),
+        fontFamily = fontFamily,
+    )
 }

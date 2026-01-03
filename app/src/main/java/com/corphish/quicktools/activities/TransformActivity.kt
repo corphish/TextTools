@@ -52,6 +52,7 @@ import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.ui.common.CustomTopAppBar
 import com.corphish.quicktools.ui.common.InputAndPreviewTextField
 import com.corphish.quicktools.ui.common.ListDialog
+import com.corphish.quicktools.ui.common.MarqueeText
 import com.corphish.quicktools.ui.theme.BrandFontFamily
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.ui.theme.TypographyV2
@@ -301,7 +302,7 @@ fun TextTransformUI(
                         .padding(end = 8.dp),
                     enabled = allowApply
                 ) {
-                    Text(
+                    MarqueeText(
                         text = stringResource(id = R.string.apply),
                         fontFamily = BrandFontFamily
                     )
@@ -314,7 +315,7 @@ fun TextTransformUI(
                         .padding(start = 8.dp),
                     enabled = allowCopy
                 ) {
-                    Text(
+                    MarqueeText(
                         text = stringResource(id = R.string.copy_to_clipboard),
                         fontFamily = BrandFontFamily
                     )
