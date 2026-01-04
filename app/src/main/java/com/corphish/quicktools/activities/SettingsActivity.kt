@@ -37,7 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -205,7 +205,7 @@ fun AppSettings(settingsViewModel: SettingsViewModel) {
         AppMode.SINGLE to R.string.mode_single_title,
         AppMode.MULTI to R.string.mode_multi_title
     )
-    var expanded by remember { mutableStateOf(false) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
 
     Column(
         modifier = Modifier.padding(top = 8.dp)
@@ -341,7 +341,7 @@ fun EvaluateSettings(settingsViewModel: SettingsViewModel) {
         stringResource(id = R.string.eval_mode_append),
         stringResource(id = R.string.eval_mode_copy)
     )
-    var expanded by remember { mutableStateOf(false) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
     val selectedOptionText by settingsViewModel.evalResultMode.collectAsState()
 
     Column {
