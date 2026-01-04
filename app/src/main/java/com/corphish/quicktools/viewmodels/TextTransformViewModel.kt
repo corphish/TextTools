@@ -6,7 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.corphish.quicktools.R
 import com.corphish.quicktools.text.TextTransformer
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
@@ -42,6 +44,9 @@ class TextTransformViewModel : ViewModel() {
 
     private val _secondaryFunctionTextVisible = MutableStateFlow(false)
     val secondaryFunctionTextVisible = _secondaryFunctionTextVisible.asStateFlow()
+
+    private val _decorateTextErrorFlow = MutableSharedFlow<Boolean>()
+    val decorateTextErrorFlow: SharedFlow<Boolean> = _decorateTextErrorFlow
 
     private fun determineSecondaryOptions() {
         viewModelScope.launch {
@@ -272,17 +277,23 @@ class TextTransformViewModel : ViewModel() {
                 }
 
                 INDEX_DECORATE_TEXT -> {
-                    when (_selectedSecondaryIndex.value) {
-                        0 -> textTransformer.boldSerif(_mainText.value)
-                        1 -> textTransformer.italicSerif(_mainText.value)
-                        2 -> textTransformer.boldItalicSerif(_mainText.value)
-                        3 -> textTransformer.boldSans(_mainText.value)
-                        4 -> textTransformer.italicSans(_mainText.value)
-                        5 -> textTransformer.boldItalicSans(_mainText.value)
-                        6 -> textTransformer.shortStrikethrough(_mainText.value)
-                        7 -> textTransformer.longStrikethrough(_mainText.value)
-                        8 -> textTransformer.cursive(_mainText.value)
-                        else -> _mainText.value
+                    try {
+                        when (_selectedSecondaryIndex.value) {
+                            // TODO: We need to identify the exact formatting, strip and reformat
+                            0 -> textTransformer.boldSerif(_mainText.value)
+                            1 -> textTransformer.italicSerif(_mainText.value)
+                            2 -> textTransformer.boldItalicSerif(_mainText.value)
+                            3 -> textTransformer.boldSans(_mainText.value)
+                            4 -> textTransformer.italicSans(_mainText.value)
+                            5 -> textTransformer.boldItalicSans(_mainText.value)
+                            6 -> textTransformer.shortStrikethrough(_mainText.value)
+                            7 -> textTransformer.longStrikethrough(_mainText.value)
+                            8 -> textTransformer.cursive(_mainText.value)
+                            else -> _mainText.value
+                        }
+                    } catch (e: ArrayIndexOutOfBoundsException) {
+                        _decorateTextErrorFlow.emit(true)
+                        _mainText.value
                     }
                 }
 

@@ -172,4 +172,5 @@
     <string name="preview_text_placeholder">Previewed text appears here</string>
     <string name="prepend_lines">Prepend lines</string>
     <string name="append_lines">Append lines</string>
+    <string name="generic_error">Unexpected error occurred</string>
 </resources>

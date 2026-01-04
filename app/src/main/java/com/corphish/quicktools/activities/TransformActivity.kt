@@ -2,6 +2,7 @@ package com.corphish.quicktools.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -39,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -135,7 +137,17 @@ fun TextTransformUI(
     val secondaryFunctionTextEnabled by viewModel.secondaryFunctionTextEnabled.collectAsState()
     val secondaryFunctionTextVisible by viewModel.secondaryFunctionTextVisible.collectAsState()
 
-    LaunchedEffect(true) { viewModel.initializeText(textToTransform) }
+    val context = LocalContext.current
+
+    LaunchedEffect(true) {
+        viewModel.initializeText(textToTransform)
+
+        viewModel.decorateTextErrorFlow.collect {
+            if (it) {
+                Toast.makeText(context, R.string.generic_error, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     ConstraintLayout(
         modifier = Modifier
