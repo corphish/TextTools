@@ -1,6 +1,7 @@
 package com.corphish.quicktools.activities
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,17 +9,23 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Done
@@ -35,10 +42,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -90,12 +99,10 @@ fun OnBoarding(
     onAppModeSelected: (AppMode) -> Unit = {},
     onFinish: () -> Unit = {},
 ) {
-    var page by remember { mutableIntStateOf(0) }
+    var page by rememberSaveable { mutableIntStateOf(0) }
 
     when (page) {
-        0 -> InitialPage(
-            paddingValues = paddingValues
-        ) { page = 1 }
+        0 -> InitialPage { page = 1 }
         1 -> ModeSelectionScreen(
             paddingValues = paddingValues,
             onModeSelected = { onAppModeSelected(it) },
@@ -106,7 +113,19 @@ fun OnBoarding(
 
 @Composable
 fun InitialPage(
-    paddingValues: PaddingValues = PaddingValues(),
+    onNextPressed: () -> Unit = {}
+) {
+    val config = LocalConfiguration.current
+
+    if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
+        InitialPagePortrait(onNextPressed)
+    } else {
+        InitialPageLandscape(onNextPressed)
+    }
+}
+
+@Composable
+fun InitialPagePortrait(
     onNextPressed: () -> Unit = {}
 ) {
     Column(
@@ -154,12 +173,93 @@ fun InitialPage(
 }
 
 @Composable
+fun InitialPageLandscape(
+    onNextPressed: () -> Unit = {}
+) {
+    Row(
+        modifier = Modifier.fillMaxSize(),
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.ic_launcher_foreground),
+            contentDescription = "",
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier
+                .size(256.dp)
+                .weight(1f)
+                .padding(start = 32.dp)
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(all = 32.dp)
+                .weight(2f),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = stringResource(R.string.app_name),
+                style = MaterialTheme.typography.headlineMedium,
+                fontFamily = BrandFontFamily,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+            )
+
+            Text(
+                text = stringResource(R.string.app_desc_short),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .weight(1f),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            IconButton(
+                onClick = { onNextPressed() },
+                modifier = Modifier
+                    .padding(vertical = 32.dp)
+                    .clip(CircleShape)
+                    .size(64.dp)
+                    .background(MaterialTheme.colorScheme.primary)
+            ) {
+                Icon(
+                    Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    contentDescription = "",
+                    tint = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+        }
+    }
+}
+
+@Composable
 fun ModeSelectionScreen(
     paddingValues: PaddingValues = PaddingValues(),
     onModeSelected: (AppMode) -> Unit = {},
     onFinish: () -> Unit = {},
 ) {
-    var selectedMode by remember { mutableStateOf(AppMode.SINGLE) }
+    val config = LocalConfiguration.current
+
+    if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
+        ModeSelectionScreenPortrait(paddingValues, onModeSelected, onFinish)
+    } else {
+        ModeSelectionScreenLandscape(paddingValues, onModeSelected, onFinish)
+    }
+}
+
+@Composable
+fun ModeSelectionScreenPortrait(
+    paddingValues: PaddingValues = PaddingValues(),
+    onModeSelected: (AppMode) -> Unit = {},
+    onFinish: () -> Unit = {},
+) {
+    var selectedMode by rememberSaveable { mutableStateOf(AppMode.SINGLE) }
     Column(
         modifier = Modifier
             .padding(
@@ -227,6 +327,100 @@ fun ModeSelectionScreen(
                 contentDescription = "",
                 tint = MaterialTheme.colorScheme.onPrimary
             )
+        }
+    }
+}
+
+@Composable
+fun ModeSelectionScreenLandscape(
+    paddingValues: PaddingValues = PaddingValues(),
+    onModeSelected: (AppMode) -> Unit = {},
+    onFinish: () -> Unit = {},
+) {
+    var selectedMode by rememberSaveable { mutableStateOf(AppMode.SINGLE) }
+    Row(
+        modifier = Modifier
+            .padding(
+                start = paddingValues.calculateStartPadding(LayoutDirection.Ltr).plus(32.dp),
+                end = paddingValues.calculateEndPadding(LayoutDirection.Ltr).plus(32.dp),
+                top = paddingValues.calculateTopPadding().plus(16.dp),
+                bottom = paddingValues.calculateBottomPadding().plus(16.dp)
+            )
+            .fillMaxSize()
+    ) {
+        Column(
+            modifier = Modifier.weight(1f).padding(end = 16.dp),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                Icons.Filled.Settings,
+                contentDescription = "",
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(64.dp)
+            )
+
+            Text(
+                text = stringResource(R.string.mode_select_title),
+                style = MaterialTheme.typography.headlineMedium,
+                fontFamily = BrandFontFamily,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+            )
+
+            Text(
+                text = stringResource(R.string.mode_select_desc),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(bottom = 32.dp)
+            )
+        }
+
+        Column(
+            modifier = Modifier.fillMaxSize().weight(2f).padding(horizontal = 16.dp).verticalScroll(
+                rememberScrollState()
+            ),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            ModeCard(
+                title = R.string.mode_single_title,
+                desc = R.string.mode_single_desc,
+                isSelected = selectedMode == AppMode.SINGLE,
+                onClick = {
+                    selectedMode = AppMode.SINGLE
+                    onModeSelected(AppMode.SINGLE)
+                }
+            )
+
+            ModeCard(
+                title = R.string.mode_multi_title,
+                desc = R.string.mode_multi_desc,
+                isSelected = selectedMode == AppMode.MULTI,
+                onClick = {
+                    selectedMode = AppMode.MULTI
+                    onModeSelected(AppMode.MULTI)
+                }
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Row(modifier = Modifier.fillMaxWidth()) {
+                Spacer(modifier = Modifier.weight(1f))
+                IconButton(
+                    onClick = { onFinish() },
+                    modifier = Modifier
+                        .padding(vertical = 16.dp)
+                        .clip(CircleShape)
+                        .size(64.dp)
+                        .background(MaterialTheme.colorScheme.primary)
+                ) {
+                    Icon(
+                        Icons.Default.Done,
+                        contentDescription = "",
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            }
         }
     }
 }

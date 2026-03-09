@@ -80,7 +80,7 @@ class SaveTextActivity : NoUIActivity() {
     // P.S - Passing via intent.putExtra() and then retrieving in intent.getExtra() does not work.
     private var mSelectedText = ""
     private val mResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
+        if (result.resultCode == RESULT_OK) {
             // There are no request codes
             val data: Intent? = result.data
             if (data != null) {
@@ -92,7 +92,7 @@ class SaveTextActivity : NoUIActivity() {
 
     private fun processTextFile(text: String) {
         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
-        intent.setType("text/plain")
+        intent.type = "text/plain"
         mSelectedText = text
         mResultLauncher.launch(intent)
     }

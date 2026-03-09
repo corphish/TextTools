@@ -15,14 +15,6 @@
     <string name="eval_title_small">Avaliar</string>
     <string name="eval_desc">Avalie expressões matemáticas no ato e substitua a expressão por seu resultado. Funciona apenas no texto selecionado que possa ser editado.</string>
     <string name="invalid_expression">Expressão matemática inválida</string>
-    <string name="title_activity_try_out">Experimentar</string>
-    <string name="try_wup">- No campo de texto abaixo, digite qualquer número de telefone.\n- Toque e mantenha pressionado o número de telefone que acabou de digitar.\n- Toque na opção [T\u00B2] WhatsApp. Se a opção não estiver visível, toque nos três pontos para revelá-la.\n- Se o número de telefone estiver disponível no WhatsApp (e se o WhatsApp estiver instalado), ele deverá abrir o bate-papo no WhatsApp.</string>
-    <string name="try_eval">- No campo de texto abaixo, digite qualquer expressão matemática (por exemplo, 1 + 2 + 3).\n- Toque e mantenha pressionada a expressão que acabou de digitar.\n- Toque na opção [T\u00B2] Avaliar. Se a opção não estiver visível, toque nos 3 pontos para revelá-la.\n- Se a expressão matemática digitada for válida, você verá o resultado.</string>
-    <string name="try_flow_error">Ocorreu um erro inesperado</string>
-    <string name="trial_success_msg">Ótimo! Você pode fazer o mesmo dentro de qualquer aplicativo, contanto que você possa selecionar um texto.</string>
-    <string name="trial_error_msg">Se não funcionou, você pode levantar uma questão no repositório do Github. Gostaria de fazer isso agora?</string>
-    <string name="trial_success">Funcionou</string>
-    <string name="trial_error">Não funcionou</string>
     <string name="app_info">Informação do app</string>
     <string name="app_version">Versão - %1$s (%2$d)</string>
     <string name="oss_info">Código Aberto</string>

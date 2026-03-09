@@ -14,14 +14,6 @@
     <string name="eval_title_small">계산하기</string>
     <string name="eval_desc">선택한 수식을 계산해 결과로 대체합니다. 편집 가능한 텍스트 영역에서만 동작합니다.</string>
     <string name="invalid_expression">계산 가능한 올바른 수식 표현이 아닙니다.</string>
-    <string name="title_activity_try_out">기능 시험해보기</string>
-    <string name="try_wup">- 텍스트 필드에 임의의 전화번호를 입력해보세요.\n- 길게 누르고 블록 영역을 조절해, 입력한 전화번호를 선택하세요.\n- [T\u00B2] 의 왓츠앱을 선택하세요. 보이지 않는 경우, 3개의 점을 눌러 해당 버튼이 나타나게 해야 합니다.\n- 기기에 왓츠앱이 설치되어 있고, 전화번호의 사용자가 왓츠앱을 사용중인 경우 입력한 번호 상대방과의 대화창이 열립니다.</string>
-    <string name="try_eval">- 텍스트 필드에 (1+2^3+4*5)의 괄호 안과 같은 간단한 수식을 입력해보세요.\n- 길게 누르고 블록 영역을 조절해, 입력한 수식을 선택하세요.\n- [T\u00B2] 의 계산하기를 선택하세요. 보이지 않는 경우, 3개의 점을 눌러 해당 버튼이 나타나게 해야 합니다.\n- 인식 가능한 형태로 입력한 수식의 결과를 확인 가능합니다.</string>
-    <string name="try_flow_error">예상치 못한 에러가 발생했습니다.</string>
-    <string name="trial_success_msg">잘 따라오셨습니다! 이제 어느 앱에서도 텍스트를 선택할 수 있다면 같은 작업을 하실 수 있습니다.</string>
-    <string name="trial_error_msg">제대로 동작하지 않는 경우, GitHub의 Issue에 해당 문제를 등록해 다음 버전에서 문제를 해결하도록 할 수 있습니다. 지금 진행하시겠습니까?</string>
-    <string name="trial_success">작동했습니다.</string>
-    <string name="trial_error">작동에 문제가 발생했습니다.</string>
     <string name="app_info">앱 정보</string>
     <string name="app_version">버전: %1$s (%2$d)</string>
     <string name="oss_info">오픈 소스</string>

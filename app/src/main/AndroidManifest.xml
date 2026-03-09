@@ -72,11 +72,9 @@
         <activity-alias
             android:name=".activities.EvalActivityAlias"
             android:enabled="false"
-            android:excludeFromRecents="true"
             android:exported="true"
             android:label="@string/context_menu_eval"
-            android:targetActivity=".activities.EvalActivity"
-            android:theme="@style/Theme.AppCompat.Translucent">
+            android:targetActivity=".activities.EvalActivity">
             <intent-filter android:label="@string/context_menu_eval">
                 <action android:name="android.intent.action.PROCESS_TEXT" />
 
@@ -104,11 +102,9 @@
         <activity-alias
             android:name=".activities.WUPActivityAlias"
             android:enabled="false"
-            android:excludeFromRecents="true"
             android:exported="true"
             android:label="@string/context_menu_whatsapp"
-            android:targetActivity=".activities.WUPActivity"
-            android:theme="@android:style/Theme.NoDisplay">
+            android:targetActivity=".activities.WUPActivity">
             <intent-filter android:label="@string/context_menu_whatsapp">
                 <action android:name="android.intent.action.PROCESS_TEXT" />
 
@@ -136,11 +132,9 @@
         <activity-alias
             android:name=".activities.TransformActivityAlias"
             android:enabled="false"
-            android:excludeFromRecents="true"
             android:exported="true"
             android:label="@string/context_menu_transform"
-            android:targetActivity=".activities.TransformActivity"
-            android:theme="@style/Theme.QuickTools">
+            android:targetActivity=".activities.TransformActivity">
             <intent-filter android:label="@string/context_menu_transform">
                 <action android:name="android.intent.action.PROCESS_TEXT" />
 
@@ -168,11 +162,9 @@
         <activity-alias
             android:name=".activities.SaveTextActivityAlias"
             android:enabled="false"
-            android:excludeFromRecents="true"
             android:exported="true"
             android:label="@string/context_menu_save"
-            android:targetActivity=".activities.SaveTextActivity"
-            android:theme="@style/Theme.AppCompat.Translucent">
+            android:targetActivity=".activities.SaveTextActivity">
             <intent-filter android:label="@string/context_menu_save">
                 <action android:name="android.intent.action.PROCESS_TEXT" />
 
@@ -202,8 +194,7 @@
             android:enabled="false"
             android:exported="true"
             android:label="@string/context_menu_find_and_replace"
-            android:targetActivity=".activities.FindAndReplaceActivity"
-            android:theme="@style/Theme.QuickTools">
+            android:targetActivity=".activities.FindAndReplaceActivity">
             <intent-filter android:label="@string/context_menu_find_and_replace">
                 <action android:name="android.intent.action.PROCESS_TEXT" />
 
@@ -231,11 +222,9 @@
         <activity-alias
             android:name=".activities.TextCountActivityAlias"
             android:enabled="false"
-            android:excludeFromRecents="true"
             android:exported="true"
             android:label="@string/context_menu_text_count"
-            android:targetActivity=".activities.TextCountActivity"
-            android:theme="@style/Theme.QuickTools">
+            android:targetActivity=".activities.TextCountActivity">
             <intent-filter android:label="@string/context_menu_text_count">
                 <action android:name="android.intent.action.PROCESS_TEXT" />
 

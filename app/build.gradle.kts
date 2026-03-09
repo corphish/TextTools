@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -14,8 +16,8 @@ android {
         applicationId = "com.corphish.quicktools"
         minSdk = 30
         targetSdk = 36
-        versionCode = 23
-        versionName = "2.1.1"
+        versionCode = 26
+        versionName = "2.1.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -37,19 +39,24 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
-    }
+
     kotlin {
         jvmToolchain(17)
+
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
+        }
     }
+
     buildFeatures {
         compose = true
         buildConfig = true
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
     }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -72,16 +79,16 @@ dependencies {
     // Core
     implementation("androidx.core:core-ktx:1.17.0")
     implementation("androidx.appcompat:appcompat:1.7.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.3")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.10.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
 
     // Material 3 expressive
-    implementation("androidx.compose.material3:material3-android:1.4.0-alpha15")
+    implementation("androidx.compose.material3:material3-android:1.5.0-alpha11")
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
 
     // Compose
-    implementation(platform("androidx.compose:compose-bom:2025.09.00"))
-    implementation("androidx.activity:activity-compose:1.11.0")
+    implementation(platform("androidx.compose:compose-bom:2025.12.01"))
+    implementation("androidx.activity:activity-compose:1.12.2")
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
@@ -93,13 +100,13 @@ dependencies {
     implementation("net.objecthunter:exp4j:0.4.8")
 
     // Dagger
-    implementation("com.google.dagger:hilt-android:2.57.1")
+    implementation("com.google.dagger:hilt-android:2.57.2")
     implementation("androidx.compose.material3:material3")
-    kapt("com.google.dagger:hilt-compiler:2.57.1")
+    kapt("com.google.dagger:hilt-compiler:2.57.2")
 
 
     // Testing
-    androidTestImplementation(platform("androidx.compose:compose-bom:2025.09.00"))
+    androidTestImplementation(platform("androidx.compose:compose-bom:2025.12.01"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
 
     // Compose debug

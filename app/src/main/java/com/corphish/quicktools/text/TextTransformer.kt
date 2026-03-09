@@ -757,4 +757,18 @@ class TextTransformer {
      */
     fun squeeze(s: String, maxCharsPerLine: Int) =
         lineBreakByCharacter(s.split("\n").joinToString(""), maxCharsPerLine)
+
+    fun prependLines(s: String, prependText: String): String {
+        val lines = s.split("\n")
+        return lines.joinToString("\n") {
+            "$prependText$it"
+        }
+    }
+
+    fun appendLines(s: String, appendText: String): String {
+        val lines = s.split("\n")
+        return lines.joinToString("\n") {
+            "$it$appendText"
+        }
+    }
 }

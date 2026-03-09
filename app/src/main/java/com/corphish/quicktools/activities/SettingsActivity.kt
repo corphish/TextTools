@@ -1,8 +1,8 @@
 package com.corphish.quicktools.activities
 
-import android.app.Activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.clickable
@@ -20,11 +20,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
@@ -37,11 +37,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -84,7 +83,7 @@ class SettingsActivity : ComponentActivity() {
 @Composable
 fun Settings(settingsViewModel: SettingsViewModel) {
     val uriHandler = LocalUriHandler.current
-    val activity = (LocalContext.current as? Activity)
+    val activity = LocalActivity.current
     val versionName by settingsViewModel.appVersionName.collectAsState()
     val versionCode by settingsViewModel.appVersionCode.collectAsState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
@@ -206,7 +205,7 @@ fun AppSettings(settingsViewModel: SettingsViewModel) {
         AppMode.SINGLE to R.string.mode_single_title,
         AppMode.MULTI to R.string.mode_multi_title
     )
-    var expanded by remember { mutableStateOf(false) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
 
     Column(
         modifier = Modifier.padding(top = 8.dp)
@@ -238,7 +237,7 @@ fun AppSettings(settingsViewModel: SettingsViewModel) {
                     )
                 },
                 colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable, true)
+                modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true)
                     .fillMaxWidth()
             )
 
@@ -342,7 +341,7 @@ fun EvaluateSettings(settingsViewModel: SettingsViewModel) {
         stringResource(id = R.string.eval_mode_append),
         stringResource(id = R.string.eval_mode_copy)
     )
-    var expanded by remember { mutableStateOf(false) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
     val selectedOptionText by settingsViewModel.evalResultMode.collectAsState()
 
     Column {
@@ -401,7 +400,7 @@ fun EvaluateSettings(settingsViewModel: SettingsViewModel) {
                     )
                 },
                 colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable, true).fillMaxWidth()
+                modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true).fillMaxWidth()
             )
 
             DropdownMenu(
