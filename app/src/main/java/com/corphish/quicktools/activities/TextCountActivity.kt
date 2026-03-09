@@ -1,9 +1,17 @@
 package com.corphish.quicktools.activities
 
+import android.app.PictureInPictureParams
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import android.util.Rational
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -39,8 +47,53 @@ import com.corphish.quicktools.ui.theme.BrandFontFamily
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.ui.theme.TypographyV2
 import com.corphish.quicktools.viewmodels.TextCountViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 
+@AndroidEntryPoint
 class TextCountActivity : ComponentActivity() {
+    private val textCountViewModel: TextCountViewModel by viewModels()
+
+    override fun onStart() {
+        super.onStart()
+
+        Log.d("PIP", "Build.VERSION.SDK_INT = ${Build.VERSION.SDK_INT}")
+        Log.d("PIP", "supportsPiP = ${packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)}")
+        Log.d("PIP", "isInMultiWindowMode = $isInMultiWindowMode")
+        Log.d("PIP", "shouldLaunchInPip = ${supportsPiP()}")
+        Log.d("PIP", "Activity component: ${componentName.className}")
+
+        textCountViewModel.shouldLaunchInPIP {
+            //launchInPIP(it)
+        }
+    }
+
+    private fun supportsPiP(): Boolean {
+        return packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
+    }
+
+    fun launchInPIP(shouldLaunch: Boolean) {
+        Log.d("PIP", "Launching in PIP")
+        if (shouldLaunch && supportsPiP()) {
+            window.decorView.post {
+                val aspectRatio = Rational(16, 9)
+                val pipParams = PictureInPictureParams.Builder()
+                    .setAspectRatio(aspectRatio)
+                    // Optional: Set a sourceRectHint for smoother transitions.
+                    // This would typically be the bounds of your video player.
+                    // .setSourceRectHint(sourceRect)
+                    .build()
+                enterPictureInPictureMode(pipParams)
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        enterPictureInPictureMode(PictureInPictureParams.Builder().build())
+    }
+
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,18 +113,26 @@ class TextCountActivity : ComponentActivity() {
                     ) { innerPadding ->
                         TextCount(
                             text = text,
-                            innerPadding = innerPadding
+                            innerPadding = innerPadding,
+                            viewModel = textCountViewModel
                         )
                     }
                 }
+            }
+
+            window.decorView.setOnClickListener {
+                launchInPIP(true)
             }
         }
     }
 }
 
 @Composable
-fun TextCount(text: String, innerPadding: PaddingValues = PaddingValues()) {
-    val viewModel = viewModel { TextCountViewModel() }
+fun TextCount(
+    text: String,
+    innerPadding: PaddingValues = PaddingValues(),
+    viewModel: TextCountViewModel
+) {
     val inputText by viewModel.text.collectAsState()
     val characterCount by viewModel.characterCount.collectAsState()
     val wordCount by viewModel.wordCount.collectAsState()
@@ -328,14 +389,6 @@ fun TextCount(text: String, innerPadding: PaddingValues = PaddingValues()) {
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun TextCountPreview() {
-    QuickToolsTheme {
-        TextCount("Hello Android")
     }
 }
 

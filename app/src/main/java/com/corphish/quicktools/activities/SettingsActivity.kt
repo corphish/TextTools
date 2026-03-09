@@ -8,9 +8,11 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -207,6 +209,8 @@ fun AppSettings(settingsViewModel: SettingsViewModel) {
     )
     var expanded by rememberSaveable { mutableStateOf(false) }
 
+    val launchInPIP by settingsViewModel.launchInPIP.collectAsState()
+
     Column(
         modifier = Modifier.padding(top = 8.dp)
     ) {
@@ -259,6 +263,46 @@ fun AppSettings(settingsViewModel: SettingsViewModel) {
                         }
                     )
                 }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        ConstraintLayout(
+            modifier = Modifier
+                .clickable {
+                    settingsViewModel.updateLaunchInPIP(!launchInPIP)
+                }
+                .fillMaxWidth()
+        ) {
+            val (switch, texts) = createRefs()
+
+            Switch(
+                checked = launchInPIP,
+                onCheckedChange = {
+                    settingsViewModel.updateLaunchInPIP(it)
+                },
+                modifier = Modifier.constrainAs(switch) {
+                    end.linkTo(parent.end)
+                }
+            )
+
+            Column(
+                modifier = Modifier.constrainAs(texts) {
+                    start.linkTo(parent.start)
+                    end.linkTo(switch.start, margin = 16.dp)
+                    width = Dimension.fillToConstraints
+                }
+            ) {
+                Text(
+                    text = stringResource(id = R.string.floating_window_title),
+                    style = TypographyV2.labelMedium,
+                    fontWeight = FontWeight.W600,
+                )
+                Text(
+                    text = stringResource(id = R.string.floating_window_desc),
+                    style = TypographyV2.bodySmall
+                )
             }
         }
     }

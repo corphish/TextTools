@@ -26,6 +26,7 @@ class SettingsViewModel @Inject constructor(
     private val _appVersionName = MutableStateFlow(BuildConfig.VERSION_NAME)
     private val _appVersionCode = MutableStateFlow(BuildConfig.VERSION_CODE)
     private val _appMode = MutableStateFlow(contextMenuOptionsRepository.getCurrentAppMode())
+    private val _launchInPIP = MutableStateFlow(settingsRepository.getLaunchInPIP())
 
     val prependCountryCodeEnabled: StateFlow<Boolean> = _prependCountryCodeEnabled
     val prependCountryCode: StateFlow<String?> = _prependCountryCode
@@ -35,6 +36,7 @@ class SettingsViewModel @Inject constructor(
     val appVersionName: StateFlow<String> = _appVersionName
     val appVersionCode: StateFlow<Int> = _appVersionCode
     val appMode: StateFlow<AppMode> = _appMode
+    val launchInPIP: StateFlow<Boolean> = _launchInPIP
 
     fun updatePrependCountryCodeEnabled(enabled: Boolean) {
         viewModelScope.launch {
@@ -89,6 +91,13 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             contextMenuOptionsRepository.setCurrentAppMode(mode)
             _appMode.value = mode
+        }
+    }
+
+    fun updateLaunchInPIP(choice: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.setLaunchInPIP(choice)
+            _launchInPIP.value = choice
         }
     }
 }

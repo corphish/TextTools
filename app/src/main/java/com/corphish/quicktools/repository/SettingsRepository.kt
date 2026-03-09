@@ -13,6 +13,7 @@ class SettingsRepository(
     private val _decimalPoints = "decimal_points"
     private val _evaluateResultMode = "eval_result_mode"
     private val _onboardingDone = "onboarding_done"
+    private val _launchInPIP = "launch_in_pip"
 
     private val _sharedPreferenceManager = PreferenceManager.getDefaultSharedPreferences(context)
 
@@ -58,6 +59,15 @@ class SettingsRepository(
     fun setOnboardingDone(done: Boolean) {
         _sharedPreferenceManager.edit {
             putBoolean(_onboardingDone, done)
+        }
+    }
+
+    fun getLaunchInPIP() =
+        _sharedPreferenceManager.getBoolean(_launchInPIP, false)
+
+    fun setLaunchInPIP(choice: Boolean) {
+        _sharedPreferenceManager.edit {
+            putBoolean(_launchInPIP, choice)
         }
     }
 }
