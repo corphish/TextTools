@@ -1,0 +1,30 @@
+name: Android CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4 # Action for checking out the repository code
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4 # Action to set up the Java Development Kit
+      with:
+        distribution: 'zulu'
+        java-version: '17'
+        cache: 'gradle' # Caches Gradle dependencies to speed up subsequent runs
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew # Makes the Gradle wrapper script executable
+
+    - name: Build with Gradle
+      run: ./gradlew build # Runs the default Gradle build task
+
+    #- name: Run unit tests
+    #  run: ./gradlew test # Runs the project's unit tests
+
+    - name: Build debug APK
+      run: ./gradlew assembleDebug # Generates a debug APK
