@@ -59,7 +59,6 @@ import com.corphish.quicktools.ui.theme.BrandFontFamily
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.ui.theme.TypographyV2
 import com.corphish.quicktools.usecases.ClipboardUseCase
-import com.corphish.quicktools.utils.ClipboardHelper
 import com.corphish.quicktools.viewmodels.TextTransformViewModel
 import javax.inject.Inject
 
@@ -98,8 +97,9 @@ class TransformActivity : ComponentActivity() {
                                 setResult(RESULT_OK, resultIntent)
                                 finish()
                             },
-                            onCopy = {
-                                clipboardUseCase.copyToClipboard(it)
+                            onCopy = { text ->
+                                clipboardUseCase.copyToClipboard(text)
+                                Toast.makeText(this, R.string.copied_to_clipboard, Toast.LENGTH_LONG).show()
                                 finish()
                             }
                         )

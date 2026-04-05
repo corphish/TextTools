@@ -1,21 +1,17 @@
 package com.corphish.quicktools.usecases
 
-import android.app.Activity
-import android.content.Intent
-import androidx.core.net.toUri
 import com.corphish.quicktools.data.Constants
+import com.corphish.quicktools.functions.ContextFunctions
 import com.corphish.quicktools.repository.SettingsRepository
 import javax.inject.Inject
 
 class WhatsappUseCase @Inject constructor(
-    private val activity: Activity,
+    private val contextFunctions: ContextFunctions,
     private val settingsRepository: SettingsRepository,
 ) {
     fun openInWeb(phoneNumber: String) {
         val url = "${Constants.WHATSAPP_API_LINK}$phoneNumber"
-        val browserIntent = Intent(Intent.ACTION_VIEW)
-        browserIntent.data = url.toUri()
-        activity.startActivity(browserIntent)
+        contextFunctions.openInWeb(url)
     }
 
     fun determinePhoneNumber(data: String?): String? {

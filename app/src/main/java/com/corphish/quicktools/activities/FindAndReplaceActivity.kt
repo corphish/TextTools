@@ -54,7 +54,6 @@ import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.ui.common.CustomTopAppBar
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.usecases.ClipboardUseCase
-import com.corphish.quicktools.utils.ClipboardHelper
 import com.corphish.quicktools.viewmodels.TextReplacementViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -99,6 +98,7 @@ class FindAndReplaceActivity : ComponentActivity() {
                             onComplete = { finalText ->
                                 if (forceCopy) {
                                     clipboardUseCase.copyToClipboard(finalText)
+                                    Toast.makeText(this, R.string.copied_to_clipboard, Toast.LENGTH_LONG).show()
                                 } else {
                                     val resultIntent = Intent()
                                     resultIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, finalText)
