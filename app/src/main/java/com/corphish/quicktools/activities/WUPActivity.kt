@@ -11,6 +11,8 @@ import com.corphish.quicktools.viewmodels.WUPViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import androidx.core.net.toUri
+import com.corphish.quicktools.usecases.WhatsappUseCase
+import javax.inject.Inject
 
 /**
  * WUP (WhatsApp Unknown Phone number) activity handles messaging to
@@ -21,6 +23,9 @@ import androidx.core.net.toUri
 class WUPActivity : NoUIActivity() {
     private val wupViewModel: WUPViewModel by viewModels()
 
+    @Inject
+    lateinit var whatsappUseCase: WhatsappUseCase
+
     override fun handleIntent(intent: Intent): Boolean {
         if (intent.hasExtra(Intent.EXTRA_PROCESS_TEXT)) {
             val text = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT)?.toString() ?: ""
@@ -29,7 +34,7 @@ class WUPActivity : NoUIActivity() {
                 wupViewModel.processedPhoneNumber.collect {
                     when (it) {
                         is Result.Success -> {
-                            openInWeb(phoneNumber = it.value)
+                            whatsappUseCase.openInWeb(phoneNumber = it.value)
                         }
 
                         is Result.Error -> {
@@ -47,12 +52,5 @@ class WUPActivity : NoUIActivity() {
         }
 
         return true
-    }
-
-    private fun openInWeb(phoneNumber: String) {
-        val url = "${Constants.WHATSAPP_API_LINK}$phoneNumber"
-        val browserIntent = Intent(Intent.ACTION_VIEW)
-        browserIntent.data = url.toUri()
-        startActivity(browserIntent)
     }
 }
