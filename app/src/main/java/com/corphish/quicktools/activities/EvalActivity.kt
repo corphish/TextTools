@@ -24,6 +24,7 @@ import com.corphish.quicktools.data.Result
 import com.corphish.quicktools.ui.common.ListDialog
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.ui.theme.TypographyV2
+import com.corphish.quicktools.usecases.ClipboardUseCase
 import com.corphish.quicktools.utils.ClipboardHelper
 import com.corphish.quicktools.viewmodels.EvalViewModel
 import com.corphish.quicktools.viewmodels.EvalViewModel.Companion.EVAL_RESULT_APPEND
@@ -33,6 +34,7 @@ import com.corphish.quicktools.viewmodels.EvalViewModel.Companion.EVAL_RESULT_RE
 import com.corphish.quicktools.viewmodels.EvaluateResult
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class EvalActivity : NoUIActivity() {
@@ -42,6 +44,9 @@ class EvalActivity : NoUIActivity() {
         { input, result -> "$input = $result" }
 
     private val evalViewModel: EvalViewModel by viewModels()
+
+    @Inject
+    lateinit var clipboardUseCase: ClipboardUseCase
 
     override fun handleIntent(intent: Intent): Boolean {
         if (intent.hasExtra(Intent.EXTRA_PROCESS_TEXT)) {
@@ -94,7 +99,7 @@ class EvalActivity : NoUIActivity() {
                                 }
 
                                 EVAL_RESULT_COPY_TO_CLIPBOARD -> {
-                                    ClipboardHelper.copyToClipboard(this@EvalActivity, str)
+                                    clipboardUseCase.copyToClipboard(str)
                                 }
                             }
 

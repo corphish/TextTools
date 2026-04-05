@@ -58,10 +58,15 @@ import com.corphish.quicktools.ui.common.MarqueeText
 import com.corphish.quicktools.ui.theme.BrandFontFamily
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.ui.theme.TypographyV2
+import com.corphish.quicktools.usecases.ClipboardUseCase
 import com.corphish.quicktools.utils.ClipboardHelper
 import com.corphish.quicktools.viewmodels.TextTransformViewModel
+import javax.inject.Inject
 
 class TransformActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var clipboardUseCase: ClipboardUseCase
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,7 +99,7 @@ class TransformActivity : ComponentActivity() {
                                 finish()
                             },
                             onCopy = {
-                                ClipboardHelper.copyToClipboard(this, it)
+                                clipboardUseCase.copyToClipboard(it)
                                 finish()
                             }
                         )

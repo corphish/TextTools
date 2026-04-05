@@ -1,17 +1,18 @@
-package com.corphish.quicktools.utils
+package com.corphish.quicktools.usecases
 
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Context.CLIPBOARD_SERVICE
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity.CLIPBOARD_SERVICE
 import com.corphish.quicktools.R
+import dagger.hilt.android.qualifiers.ActivityContext
+import javax.inject.Inject
 
-/**
- * Helper to copy to clipboard
- */
-object ClipboardHelper {
-    fun copyToClipboard(context: Context, text: String) {
+class ClipboardUseCase @Inject constructor(
+    @ActivityContext private val context: Context
+) {
+    fun copyToClipboard(text: String) {
         val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText("text_tools_result", text)
         clipboard.setPrimaryClip(clip)

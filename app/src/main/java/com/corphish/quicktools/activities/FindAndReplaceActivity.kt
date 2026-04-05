@@ -53,13 +53,17 @@ import com.corphish.quicktools.R
 import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.ui.common.CustomTopAppBar
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
+import com.corphish.quicktools.usecases.ClipboardUseCase
 import com.corphish.quicktools.utils.ClipboardHelper
 import com.corphish.quicktools.viewmodels.TextReplacementViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class FindAndReplaceActivity : ComponentActivity() {
     private val viewModel by viewModels<TextReplacementViewModel>()
+
+    @Inject lateinit var clipboardUseCase: ClipboardUseCase
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,7 +98,7 @@ class FindAndReplaceActivity : ComponentActivity() {
                             forceCopy = forceCopy,
                             onComplete = { finalText ->
                                 if (forceCopy) {
-                                    ClipboardHelper.copyToClipboard(this, finalText)
+                                    clipboardUseCase.copyToClipboard(finalText)
                                 } else {
                                     val resultIntent = Intent()
                                     resultIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, finalText)
