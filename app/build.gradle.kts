@@ -10,12 +10,12 @@ plugins {
 
 android {
     namespace = "com.corphish.quicktools"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.corphish.quicktools"
         minSdk = 30
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 26
         versionName = "2.1.4"
 
@@ -77,18 +77,18 @@ android {
 
 dependencies {
     // Core
-    implementation("androidx.core:core-ktx:1.17.0")
+    implementation("androidx.core:core-ktx:1.18.0")
     implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.10.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
 
     // Material 3 expressive
-    implementation("androidx.compose.material3:material3-android:1.5.0-alpha11")
+    implementation("androidx.compose.material3:material3-android:1.5.0-alpha18")
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
 
     // Compose
-    implementation(platform("androidx.compose:compose-bom:2025.12.01"))
-    implementation("androidx.activity:activity-compose:1.12.2")
+    implementation(platform("androidx.compose:compose-bom:2026.04.01"))
+    implementation("androidx.activity:activity-compose:1.13.0")
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
@@ -100,13 +100,13 @@ dependencies {
     implementation("net.objecthunter:exp4j:0.4.8")
 
     // Dagger
-    implementation("com.google.dagger:hilt-android:2.57.2")
+    implementation("com.google.dagger:hilt-android:2.59.2")
     implementation("androidx.compose.material3:material3")
-    kapt("com.google.dagger:hilt-compiler:2.57.2")
+    kapt("com.google.dagger:hilt-compiler:2.59.2")
 
 
     // Testing
-    androidTestImplementation(platform("androidx.compose:compose-bom:2025.12.01"))
+    androidTestImplementation(platform("androidx.compose:compose-bom:2026.04.01"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
 
     // Compose debug
