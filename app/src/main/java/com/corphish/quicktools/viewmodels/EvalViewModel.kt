@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.corphish.quicktools.data.Result
 import com.corphish.quicktools.repository.SettingsRepository
+import com.corphish.quicktools.usecases.ClipboardUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,8 +16,10 @@ import kotlin.math.ceil
 import kotlin.math.floor
 
 @HiltViewModel
-class EvalViewModel @Inject constructor(private val settingsRepository: SettingsRepository) :
-    ViewModel() {
+class EvalViewModel @Inject constructor(
+    private val settingsRepository: SettingsRepository,
+    private val clipboardUseCase: ClipboardUseCase,
+) : ViewModel() {
     private val _evalMode = MutableStateFlow(settingsRepository.getEvaluateResultMode())
     val evalMode: StateFlow<Int> = _evalMode
 
@@ -50,17 +53,21 @@ class EvalViewModel @Inject constructor(private val settingsRepository: Settings
                 val expression = ExpressionBuilder(text).build()
                 val result = expression.evaluate()
 
-                _evalResult.value = Result.Success(
-                    EvaluateResult(
-                        resultString = if (ceil(result) == floor(result)) {
-                            result.toInt().toString()
-                        } else {
-                            val decimalFormat = DecimalFormat("0.${"#".repeat(decimalPoints)}")
-                            decimalFormat.format(result)
-                        },
-                        finalMode = _userSelectedMode
-                    )
+                val evalResult = EvaluateResult(
+                    resultString = if (ceil(result) == floor(result)) {
+                        result.toInt().toString()
+                    } else {
+                        val decimalFormat = DecimalFormat("0.${"#".repeat(decimalPoints)}")
+                        decimalFormat.format(result)
+                    },
+                    finalMode = _userSelectedMode
                 )
+
+                if (_userSelectedMode == EVAL_RESULT_COPY_TO_CLIPBOARD) {
+                    clipboardUseCase.copyToClipboard(evalResult.resultString)
+                }
+
+                _evalResult.value = Result.Success(evalResult)
             } catch (e: Exception) {
                 _evalResult.value = Result.Error
             }
