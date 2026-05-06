@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowRight
+import androidx.compose.material.icons.filled.CoPresent
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
@@ -218,6 +219,33 @@ fun Greeting(
                 Icon(Icons.AutoMirrored.Filled.ArrowRight, contentDescription = "")
                 Text(
                     text = stringResource(id = R.string.simulate),
+                    modifier = Modifier.padding(start = 16.dp),
+                    style = TypographyV2.labelMedium,
+                    fontWeight = FontWeight.W600
+                )
+            }
+
+            Text(
+                text = stringResource(id = R.string.chauffeur_title),
+                style = TypographyV2.labelSmall,
+                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
+                fontFamily = BrandFontFamily,
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            Text(
+                text = stringResource(id = R.string.chauffeur_desc), style = Typography.bodyMedium
+            )
+
+            Button(
+                onClick = {
+                    context.startActivity(Intent(context, ChauffeurActivity::class.java))
+                },
+                modifier = Modifier.padding(top = 8.dp)
+            ) {
+                Icon(Icons.Filled.CoPresent, contentDescription = "")
+                Text(
+                    text = stringResource(id = R.string.chauffeur_title),
                     modifier = Modifier.padding(start = 16.dp),
                     style = TypographyV2.labelMedium,
                     fontWeight = FontWeight.W600

@@ -16,6 +16,11 @@
         tools:ignore="UnusedAttribute"
         tools:targetApi="31">
         <activity
+            android:name=".activities.ChauffeurActivity"
+            android:exported="false"
+            android:label="@string/title_activity_chauffeur"
+            android:theme="@style/Theme.QuickTools" />
+        <activity
             android:name=".activities.SimulationActivity"
             android:exported="false"
             android:label="@string/title_activity_simulation"
@@ -61,7 +66,6 @@
             android:exported="false"
             android:label="@string/title_activity_settings"
             android:theme="@style/Theme.QuickTools" />
-
         <activity
             android:name=".activities.EvalActivity"
             android:excludeFromRecents="true"

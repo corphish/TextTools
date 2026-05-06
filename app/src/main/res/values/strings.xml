@@ -1,5 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="MissingTranslation">
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="app_name">Text Tools</string>
     <string name="app_desc">Collection of useful text related functions which can be accessed within many apps inside the Android System by selecting a text within it. The supported options appear in the context menu that appears after selecting a text. You may have to reveal them by pressing the 3 dots icon in the context menu. The list of supported functions will keep on growing.</string>
     <string name="app_desc_short">Collection of useful text related functions which can be accessed within many apps inside the Android System by selecting a text within it</string>
@@ -174,4 +173,7 @@
     <string name="prepend_lines">Prepend lines</string>
     <string name="append_lines">Append lines</string>
     <string name="generic_error">Unexpected error occurred</string>
+    <string name="title_activity_chauffeur">ChauffeurActivity</string>
+    <string name="chauffeur_title">Chauffeur</string>
+    <string name="chauffeur_desc">Get things done by chatting with a chauffeur.</string>
 </resources>

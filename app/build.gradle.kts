@@ -104,6 +104,8 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     kapt("com.google.dagger:hilt-compiler:2.57.2")
 
+    // ML Kit
+    implementation("com.google.mlkit:genai-prompt:1.0.0-beta2")
 
     // Testing
     androidTestImplementation(platform("androidx.compose:compose-bom:2025.12.01"))
