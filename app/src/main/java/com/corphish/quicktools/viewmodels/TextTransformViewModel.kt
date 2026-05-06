@@ -6,13 +6,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.corphish.quicktools.R
 import com.corphish.quicktools.text.TextTransformer
+import com.corphish.quicktools.usecases.ClipboardUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class TextTransformViewModel : ViewModel() {
+@HiltViewModel
+class TextTransformViewModel @Inject constructor (
+    clipboardUseCase: ClipboardUseCase
+) : ClipboardCopyViewModel(clipboardUseCase) {
     private val textTransformer = TextTransformer()
 
     private val _mainText = MutableStateFlow("")

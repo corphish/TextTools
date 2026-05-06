@@ -96,8 +96,9 @@ dependencies {
     // To evaluate mathematical expressions
     implementation(libs.exp4j)
 
-    // Dagger
+    // Hilt
     implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)
     ksp(libs.hilt.compiler)
 
 

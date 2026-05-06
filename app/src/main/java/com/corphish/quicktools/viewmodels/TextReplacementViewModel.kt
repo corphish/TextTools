@@ -4,11 +4,17 @@ import androidx.compose.ui.text.TextRange
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.corphish.quicktools.text.TextReplacementManager
+import com.corphish.quicktools.usecases.ClipboardUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class TextReplacementViewModel : ViewModel() {
+@HiltViewModel
+class TextReplacementViewModel @Inject constructor(
+    clipboardUseCase: ClipboardUseCase
+) : ClipboardCopyViewModel(clipboardUseCase) {
     private lateinit var _textReplacementManager: TextReplacementManager
 
     // Selected text can be edited further by the user

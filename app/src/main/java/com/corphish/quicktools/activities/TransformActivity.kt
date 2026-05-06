@@ -48,7 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.corphish.quicktools.R
 import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.ui.common.CustomTopAppBar
@@ -58,14 +58,11 @@ import com.corphish.quicktools.ui.common.MarqueeText
 import com.corphish.quicktools.ui.theme.BrandFontFamily
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.ui.theme.TypographyV2
-import com.corphish.quicktools.usecases.ClipboardUseCase
 import com.corphish.quicktools.viewmodels.TextTransformViewModel
-import javax.inject.Inject
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class TransformActivity : ComponentActivity() {
-
-    @Inject
-    lateinit var clipboardUseCase: ClipboardUseCase
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -98,8 +95,11 @@ class TransformActivity : ComponentActivity() {
                                 finish()
                             },
                             onCopy = { text ->
-                                clipboardUseCase.copyToClipboard(text)
-                                Toast.makeText(this, R.string.copied_to_clipboard, Toast.LENGTH_LONG).show()
+                                Toast.makeText(
+                                    this,
+                                    R.string.copied_to_clipboard,
+                                    Toast.LENGTH_LONG
+                                ).show()
                                 finish()
                             }
                         )
@@ -125,7 +125,7 @@ fun TextTransformUI(
     onApply: (String) -> Unit = {},
     onCopy: (String) -> Unit = {},
 ) {
-    val viewModel = viewModel { TextTransformViewModel() }
+    val viewModel: TextTransformViewModel = hiltViewModel()
     val inputText by viewModel.mainText.collectAsState()
     val previewText by viewModel.previewText.collectAsState()
 
@@ -326,7 +326,10 @@ fun TextTransformUI(
                 }
 
                 Button(
-                    onClick = { onCopy(previewText) },
+                    onClick = {
+                        viewModel.copyToClipboard(previewText)
+                        onCopy(previewText)
+                    },
                     modifier = Modifier
                         .weight(1f)
                         .padding(start = 8.dp),
