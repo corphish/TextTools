@@ -1,7 +1,6 @@
 package com.corphish.quicktools.text
 
 import java.util.Locale
-import kotlin.text.StringBuilder
 
 /**
  * Helper class to help with text transformation.
@@ -770,5 +769,29 @@ class TextTransformer {
         return lines.joinToString("\n") {
             "$it$appendText"
         }
+    }
+
+    fun monospaceFont(s: String): String {
+        val sb = StringBuilder()
+
+        for (i in 0..<s.length) {
+            val codePoint = s.codePointAt(i)
+
+            if (codePoint >= 'A'.code && codePoint <= 'Z'.code) {
+                // Math Monospace Capital A is U+1D670
+                sb.appendCodePoint(codePoint - 'A'.code + 0x1D670)
+            } else if (codePoint >= 'a'.code && codePoint <= 'z'.code) {
+                // Math Monospace Small a is U+1D68A
+                sb.appendCodePoint(codePoint - 'a'.code + 0x1D68A)
+            } else if (codePoint >= '0'.code && codePoint <= '9'.code) {
+                // Math Monospace Digit 0 is U+1D7F6
+                sb.appendCodePoint(codePoint - '0'.code + 0x1D7F6)
+            } else {
+                // Keep spaces, punctuation, and other symbols as they are
+                sb.appendCodePoint(codePoint)
+            }
+        }
+
+        return sb.toString()
     }
 }

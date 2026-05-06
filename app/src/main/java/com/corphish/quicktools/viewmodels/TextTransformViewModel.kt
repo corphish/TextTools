@@ -295,6 +295,7 @@ class TextTransformViewModel @Inject constructor (
                             6 -> textTransformer.shortStrikethrough(_mainText.value)
                             7 -> textTransformer.longStrikethrough(_mainText.value)
                             8 -> textTransformer.cursive(_mainText.value)
+                            9 -> textTransformer.monospaceFont(_mainText.value)
                             else -> _mainText.value
                         }
                     } catch (e: ArrayIndexOutOfBoundsException) {
@@ -431,6 +432,7 @@ class TextTransformViewModel @Inject constructor (
             R.string.strikethrough_short,
             R.string.strikethrough_long,
             R.string.cursive,
+            R.string.monospace,
         )
 
         private val lineBreakOptions = listOf(
