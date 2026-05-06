@@ -1,7 +1,6 @@
 package com.corphish.quicktools.viewmodels
 
 import androidx.compose.ui.text.TextRange
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.corphish.quicktools.text.TextReplacementManager
 import com.corphish.quicktools.usecases.ClipboardUseCase

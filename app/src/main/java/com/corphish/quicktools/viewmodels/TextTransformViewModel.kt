@@ -2,7 +2,6 @@ package com.corphish.quicktools.viewmodels
 
 import android.content.res.Resources
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.corphish.quicktools.R
 import com.corphish.quicktools.text.TextTransformer
