@@ -23,8 +23,10 @@ class ContextFunctions @Inject constructor(
     }
 
     fun openInWeb(url: String) {
-        val browserIntent = Intent(Intent.ACTION_VIEW)
-        browserIntent.data = url.toUri()
+        val browserIntent = Intent(Intent.ACTION_VIEW).apply {
+            data = url.toUri()
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) // Required for ApplicationContext
+        }
         context.startActivity(browserIntent)
     }
 }
