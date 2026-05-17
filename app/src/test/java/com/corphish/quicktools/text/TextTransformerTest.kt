@@ -203,4 +203,22 @@ class TextTransformerTest {
         assertEquals(">a\n>b", textTransformer.prependLines(text, ">"))
         assertEquals("a<\nb<", textTransformer.appendLines(text, "<"))
     }
+
+    @Test
+    fun testClearUnicodeFormatting() {
+        // Test clearUnicodeFormatting with various formats
+        val plainText = "QuickTools 123"
+
+        // These methods produce Unicode formatted text
+        val boldSerif = textTransformer.boldSerif(plainText)
+        val italicSerif = textTransformer.italicSerif(plainText)
+        val boldSans = textTransformer.boldSans(plainText)
+        val monospace = textTransformer.monospaceFont(plainText)
+
+        // Verify that clearUnicodeFormatting returns the original plain text
+        assertEquals(plainText, textTransformer.clearUnicodeFormatting(boldSerif))
+        assertEquals(plainText, textTransformer.clearUnicodeFormatting(italicSerif))
+        assertEquals(plainText, textTransformer.clearUnicodeFormatting(boldSans))
+        assertEquals(plainText, textTransformer.clearUnicodeFormatting(monospace))
+    }
 }

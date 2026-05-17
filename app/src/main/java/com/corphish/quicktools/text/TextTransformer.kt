@@ -1,5 +1,7 @@
 package com.corphish.quicktools.text
 
+import android.icu.text.Transliterator
+import java.text.Normalizer
 import java.util.Locale
 
 /**
@@ -793,5 +795,15 @@ class TextTransformer {
         }
 
         return sb.toString()
+    }
+
+    fun clearUnicodeFormatting(input: String): String {
+        return try {
+            val transliterator = Transliterator.getInstance("Any-Publishing; Any-Name; Name-Any")
+            val cleaned = transliterator.transliterate(input)
+            Normalizer.normalize(cleaned, Normalizer.Form.NFKD)
+        } catch (e: Exception) {
+            Normalizer.normalize(input, Normalizer.Form.NFKD)
+        }
     }
 }
