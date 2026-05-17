@@ -16,8 +16,8 @@ android {
         applicationId = "com.corphish.quicktools"
         minSdk = 30
         targetSdk = 37
-        versionCode = 28
-        versionName = "2.1.6"
+        versionCode = 29
+        versionName = "2.1.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -78,14 +78,11 @@ android {
 dependencies {
     // Core
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.preference.ktx)
 
     // Material 3 expressive
     implementation(libs.androidx.material3.android)
-    implementation(libs.androidx.compose.icons.extended)
-    implementation(libs.androidx.material3)
 
     // Compose
     implementation(platform(libs.androidx.compose.bom))
