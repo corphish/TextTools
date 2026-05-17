@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -297,7 +298,8 @@ fun FeatureItem(
                 // Don't show context menu option in single option flavor
                 if (appMode == AppMode.MULTI) {
                     Row(
-                        modifier = Modifier.padding(top = 4.dp)
+                        modifier = Modifier.padding(top = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
                             text = stringResource(id = R.string.context_menu_option),
@@ -305,8 +307,10 @@ fun FeatureItem(
                         )
                         Text(
                             text = stringResource(id = feature.contextMenuText),
-                            style = Typography.bodyMedium,
-                            modifier = Modifier.padding(start = 8.dp)
+                            style = Typography.bodyMedium.copy(fontWeight = FontWeight.W500),
+                            color = MaterialTheme.colorScheme.primary,
+                            maxLines = 1,
+                            modifier = Modifier.padding(start = 8.dp).basicMarquee()
                         )
                     }
                 }
