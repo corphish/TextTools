@@ -57,7 +57,7 @@ class SimulationActivity : ComponentActivity() {
                         onSimulate = {
                             val intent = Intent(Intent.ACTION_PROCESS_TEXT).apply {
                                 type = "text/plain"
-                                setClass(this@SimulationActivity, OptionsActivity::class.java)
+                                setPackage(packageName)
                                 putExtra(Intent.EXTRA_PROCESS_TEXT, it)
                                 putExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, false)
                                 putExtra(Constants.INTENT_FORCE_COPY, true)
