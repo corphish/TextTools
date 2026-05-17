@@ -23,8 +23,8 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build # Runs the default Gradle build task
 
-    #- name: Run unit tests
-    #  run: ./gradlew test # Runs the project's unit tests
+    - name: Run unit tests
+      run: ./gradlew testDebugUnitTest
 
     - name: Build debug APK
       run: ./gradlew assembleDebug # Generates a debug APK
