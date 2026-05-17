@@ -4,8 +4,6 @@ package com.corphish.quicktools.ui.common
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -16,8 +14,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.corphish.quicktools.R
 import com.corphish.quicktools.ui.theme.BrandFontFamily
 import com.corphish.quicktools.ui.theme.TypographyV2
 
@@ -42,7 +42,7 @@ fun CustomTopAppBar(
         navigationIcon = {
             IconButton(onClick = { onNavigationClick() }) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowLeft,
+                    painterResource(R.drawable.ic_arrow_left),
                     contentDescription = "",
                     modifier = Modifier.size(32.dp),
                     tint = MaterialTheme.colorScheme.primary

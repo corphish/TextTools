@@ -21,11 +21,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowRight
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FloatingActionButton
@@ -108,7 +103,7 @@ fun Greeting(
                     context.startActivity(Intent(context, SettingsActivity::class.java))
                 },
             ) {
-                Icon(Icons.Filled.Settings, "Settings")
+                Icon(painterResource(R.drawable.ic_settings), "Settings")
             }
         }) {
         Column(
@@ -188,7 +183,7 @@ fun Greeting(
                 modifier = Modifier.padding(4.dp)
             ) {
                 Icon(
-                    if (shouldEdit) Icons.Default.Done else Icons.Default.Edit,
+                    painterResource(if (shouldEdit) R.drawable.ic_done else R.drawable.ic_edit),
                     contentDescription = ""
                 )
                 Text(
@@ -216,7 +211,7 @@ fun Greeting(
                 onClick = { context.startActivity(Intent(context, SimulationActivity::class.java)) },
                 modifier = Modifier.padding(top = 8.dp)
             ) {
-                Icon(Icons.AutoMirrored.Filled.ArrowRight, contentDescription = "")
+                Icon(painterResource(R.drawable.ic_simulate), contentDescription = "")
                 Text(
                     text = stringResource(id = R.string.simulate),
                     modifier = Modifier.padding(start = 16.dp),

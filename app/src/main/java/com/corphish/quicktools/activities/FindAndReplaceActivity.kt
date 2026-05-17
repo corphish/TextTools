@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Title
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconButton
@@ -176,7 +174,7 @@ fun FindAndReplace(
                     },
                     colors = if (ignoreCase) IconButtonDefaults.outlinedIconButtonColors() else IconButtonDefaults.filledIconButtonColors()
                 ) {
-                    Icon(Icons.Filled.Title, contentDescription = null)
+                    Icon(painterResource(R.drawable.ic_title), contentDescription = null)
                 }
                 // Action buttons in the bottom row
                 // Undo
@@ -268,7 +266,7 @@ fun FindAndReplace(
                     enabled = findText.isNotEmpty(),
                 ) {
                     Icon(
-                        painterResource(id = R.drawable.ic_previous),
+                        painterResource(id = R.drawable.ic_arrow_left),
                         contentDescription = null
                     )
                 }
@@ -279,7 +277,7 @@ fun FindAndReplace(
                     enabled = findText.isNotEmpty(),
                 ) {
                     Icon(
-                        painterResource(id = R.drawable.ic_next),
+                        painterResource(id = R.drawable.ic_arrow_right),
                         contentDescription = null
                     )
                 }

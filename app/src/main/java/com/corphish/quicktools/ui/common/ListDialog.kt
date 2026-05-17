@@ -15,8 +15,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -33,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.corphish.quicktools.R
 import com.corphish.quicktools.ui.theme.BrandFontFamily
 import com.corphish.quicktools.ui.theme.TypographyV2
 
@@ -84,7 +83,7 @@ fun <T> ListDialog(
                                 .background(MaterialTheme.colorScheme.primary)
                         ) {
                             Icon(
-                                imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowLeft,
+                                painterResource(R.drawable.ic_arrow_left),
                                 contentDescription = "",
                                 modifier = Modifier.size(32.dp),
                                 tint = MaterialTheme.colorScheme.onPrimary

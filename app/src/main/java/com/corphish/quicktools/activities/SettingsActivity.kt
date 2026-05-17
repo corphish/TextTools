@@ -14,8 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -185,7 +183,7 @@ fun Settings(settingsViewModel: SettingsViewModel) {
                 onClick = { uriHandler.openUri(Constants.DONATE_LINK) },
                 modifier = Modifier.padding(top = 8.dp)
             ) {
-                Icon(Icons.Default.ThumbUp, contentDescription = "")
+                Icon(painterResource(R.drawable.ic_thumb_up), contentDescription = "")
                 Text(
                     text = stringResource(id = R.string.donate),
                     modifier = Modifier.padding(start = 16.dp),
