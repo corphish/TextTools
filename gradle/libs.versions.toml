@@ -14,6 +14,9 @@ composeIconsExtended = "1.7.8"
 constraintlayoutCompose = "1.1.1"
 exp4j = "0.4.8"
 ksp = "2.3.7"
+junit = "4.13.2"
+mockk = "1.14.9"
+kotlinxCoroutinesTest = "1.11.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -38,6 +41,9 @@ androidx-constraintlayout-compose = { group = "androidx.constraintlayout", name 
 exp4j = { group = "net.objecthunter", name = "exp4j", version.ref = "exp4j" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
