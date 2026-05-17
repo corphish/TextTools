@@ -283,19 +283,19 @@ class TextTransformViewModel @Inject constructor (
 
                 INDEX_DECORATE_TEXT -> {
                     try {
+                        val cleaned = textTransformer.clearUnicodeFormatting(_mainText.value)
                         when (_selectedSecondaryIndex.value) {
-                            // TODO: We need to identify the exact formatting, strip and reformat
-                            0 -> textTransformer.boldSerif(_mainText.value)
-                            1 -> textTransformer.italicSerif(_mainText.value)
-                            2 -> textTransformer.boldItalicSerif(_mainText.value)
-                            3 -> textTransformer.boldSans(_mainText.value)
-                            4 -> textTransformer.italicSans(_mainText.value)
-                            5 -> textTransformer.boldItalicSans(_mainText.value)
-                            6 -> textTransformer.shortStrikethrough(_mainText.value)
-                            7 -> textTransformer.longStrikethrough(_mainText.value)
-                            8 -> textTransformer.cursive(_mainText.value)
-                            9 -> textTransformer.monospaceFont(_mainText.value)
-                            10 -> textTransformer.clearUnicodeFormatting(_mainText.value)
+                            0 -> textTransformer.boldSerif(cleaned)
+                            1 -> textTransformer.italicSerif(cleaned)
+                            2 -> textTransformer.boldItalicSerif(cleaned)
+                            3 -> textTransformer.boldSans(cleaned)
+                            4 -> textTransformer.italicSans(cleaned)
+                            5 -> textTransformer.boldItalicSans(cleaned)
+                            6 -> textTransformer.shortStrikethrough(cleaned)
+                            7 -> textTransformer.longStrikethrough(cleaned)
+                            8 -> textTransformer.cursive(cleaned)
+                            9 -> textTransformer.monospaceFont(cleaned)
+                            10 -> cleaned
                             else -> _mainText.value
                         }
                     } catch (e: ArrayIndexOutOfBoundsException) {
