@@ -1,6 +1,7 @@
 package com.corphish.quicktools.modules
 
 import android.content.Context
+import com.corphish.quicktools.functions.FileFunctions
 import com.corphish.quicktools.repository.ContextMenuOptionsRepository
 import com.corphish.quicktools.repository.ContextMenuOptionsRepositoryImpl
 import com.corphish.quicktools.repository.SettingsRepository
@@ -23,8 +24,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideTextRepository(@ApplicationContext context: Context): TextRepository =
-        TextRepositoryImpl(context)
+    fun provideTextRepository(fileFunctions: FileFunctions): TextRepository =
+        TextRepositoryImpl(fileFunctions)
 
     @Provides
     @Singleton
