@@ -32,14 +32,16 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.corphish.quicktools.R
 import com.corphish.quicktools.ui.common.CustomTopAppBar
 import com.corphish.quicktools.ui.theme.BrandFontFamily
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.ui.theme.TypographyV2
 import com.corphish.quicktools.viewmodels.TextCountViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class TextCountActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,16 +72,13 @@ class TextCountActivity : ComponentActivity() {
 }
 
 @Composable
-fun TextCount(text: String, innerPadding: PaddingValues = PaddingValues()) {
-    val viewModel = viewModel { TextCountViewModel() }
+fun TextCount(
+    text: String,
+    innerPadding: PaddingValues = PaddingValues(),
+    viewModel: TextCountViewModel = hiltViewModel()
+) {
     val inputText by viewModel.text.collectAsState()
-    val characterCount by viewModel.characterCount.collectAsState()
-    val wordCount by viewModel.wordCount.collectAsState()
-    val letterCount by viewModel.letterCount.collectAsState()
-    val digitCount by viewModel.digitCount.collectAsState()
-    val spaceCount by viewModel.spaceCount.collectAsState()
-    val symbolCount by viewModel.symbolCount.collectAsState()
-    val wordFrequency by viewModel.wordFrequency.collectAsState()
+    val countResult by viewModel.countResult.collectAsState()
 
     val modifier = Modifier
 
@@ -140,7 +139,7 @@ fun TextCount(text: String, innerPadding: PaddingValues = PaddingValues()) {
         ) {
             Column(modifier = modifier.padding(all = 8.dp)) {
                 Text(
-                    text = characterCount.toString(),
+                    text = countResult.characterCount.toString(),
                     style = TypographyV2.headlineLarge,
                     textAlign = TextAlign.Center,
                     modifier = modifier.fillMaxWidth()
@@ -165,7 +164,7 @@ fun TextCount(text: String, innerPadding: PaddingValues = PaddingValues()) {
         ) {
             Column(modifier = modifier.padding(all = 8.dp)) {
                 Text(
-                    text = wordCount.toString(),
+                    text = countResult.wordCount.toString(),
                     style = TypographyV2.headlineLarge,
                     textAlign = TextAlign.Center,
                     modifier = modifier.fillMaxWidth()
@@ -191,7 +190,7 @@ fun TextCount(text: String, innerPadding: PaddingValues = PaddingValues()) {
         ) {
             Column(modifier = modifier.padding(all = 8.dp)) {
                 Text(
-                    text = letterCount.toString(),
+                    text = countResult.letterCount.toString(),
                     style = TypographyV2.headlineLarge,
                     textAlign = TextAlign.Center,
                     modifier = modifier.fillMaxWidth()
@@ -216,7 +215,7 @@ fun TextCount(text: String, innerPadding: PaddingValues = PaddingValues()) {
         ) {
             Column(modifier = modifier.padding(all = 8.dp)) {
                 Text(
-                    text = digitCount.toString(),
+                    text = countResult.digitCount.toString(),
                     style = TypographyV2.headlineLarge,
                     textAlign = TextAlign.Center,
                     modifier = modifier.fillMaxWidth()
@@ -242,7 +241,7 @@ fun TextCount(text: String, innerPadding: PaddingValues = PaddingValues()) {
         ) {
             Column(modifier = modifier.padding(all = 8.dp)) {
                 Text(
-                    text = spaceCount.toString(),
+                    text = countResult.spaceCount.toString(),
                     style = TypographyV2.headlineLarge,
                     textAlign = TextAlign.Center,
                     modifier = modifier.fillMaxWidth()
@@ -267,7 +266,7 @@ fun TextCount(text: String, innerPadding: PaddingValues = PaddingValues()) {
         ) {
             Column(modifier = modifier.padding(all = 8.dp)) {
                 Text(
-                    text = symbolCount.toString(),
+                    text = countResult.symbolCount.toString(),
                     style = TypographyV2.headlineLarge,
                     textAlign = TextAlign.Center,
                     modifier = modifier.fillMaxWidth()
@@ -303,7 +302,7 @@ fun TextCount(text: String, innerPadding: PaddingValues = PaddingValues()) {
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(wordFrequency) {
+                items(countResult.wordFrequency) {
                     Card {
                         Column(
                             modifier = modifier
