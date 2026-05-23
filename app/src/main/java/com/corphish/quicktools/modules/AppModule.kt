@@ -5,6 +5,8 @@ import com.corphish.quicktools.functions.FileFunctions
 import com.corphish.quicktools.repository.ContextMenuOptionsRepository
 import com.corphish.quicktools.repository.ContextMenuOptionsRepositoryImpl
 import com.corphish.quicktools.repository.SettingsRepository
+import com.corphish.quicktools.repository.TextReplacementRepository
+import com.corphish.quicktools.repository.TextReplacementRepositoryImpl
 import com.corphish.quicktools.repository.TextRepository
 import com.corphish.quicktools.repository.TextRepositoryImpl
 import dagger.Module
@@ -26,6 +28,11 @@ object AppModule {
     @Singleton
     fun provideTextRepository(fileFunctions: FileFunctions): TextRepository =
         TextRepositoryImpl(fileFunctions)
+
+    @Provides
+    @Singleton
+    fun provideTextReplacementRepository(): TextReplacementRepository =
+        TextReplacementRepositoryImpl()
 
     @Provides
     @Singleton

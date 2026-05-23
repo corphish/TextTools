@@ -1,5 +1,6 @@
 package com.corphish.quicktools.functions
 
+import androidx.compose.ui.text.TextRange
 import com.corphish.quicktools.data.TextCountResult
 import javax.inject.Inject
 
@@ -53,5 +54,35 @@ class TextFunctions @Inject constructor() {
             symbolCount = symbolCount,
             wordFrequency = wordFrequency
         )
+    }
+
+    /**
+     * Finds occurrences of a string in another string.
+     * @param mainInput The string to search in.
+     * @param findText The string to search for.
+     * @param ignoreCase Whether to ignore case.
+     * @return List of TextRange of occurrences.
+     */
+    fun findOccurrences(
+        mainInput: String,
+        findText: String,
+        ignoreCase: Boolean
+    ): List<TextRange> {
+        if (findText.isEmpty()) return emptyList()
+
+        val result = mutableListOf<TextRange>()
+        var index = -findText.length
+        do {
+            index = mainInput.indexOf(
+                findText,
+                startIndex = index + findText.length,
+                ignoreCase = ignoreCase
+            )
+            if (index != -1) {
+                result += TextRange(start = index, end = index + findText.length)
+            }
+        } while (index >= 0)
+
+        return result
     }
 }

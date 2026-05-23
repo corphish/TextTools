@@ -1,5 +1,6 @@
 package com.corphish.quicktools.functions
 
+import androidx.compose.ui.text.TextRange
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -48,5 +49,32 @@ class TextFunctionsTest {
         assertEquals(3, result.spaceCount)
         assertEquals(0, result.wordCount)
         assertTrue(result.wordFrequency.isEmpty())
+    }
+
+    @Test
+    fun testFindOccurrences() {
+        val text = "hello world hello"
+        
+        // Match
+        val res1 = textFunctions.findOccurrences(text, "hello", false)
+        assertEquals(2, res1.size)
+        assertEquals(TextRange(0, 5), res1[0])
+        assertEquals(TextRange(12, 17), res1[1])
+
+        // Case insensitive
+        val res2 = textFunctions.findOccurrences(text, "HELLO", true)
+        assertEquals(2, res2.size)
+
+        // Case sensitive
+        val res3 = textFunctions.findOccurrences(text, "HELLO", false)
+        assertEquals(0, res3.size)
+
+        // No match
+        val res4 = textFunctions.findOccurrences(text, "hi", false)
+        assertEquals(0, res4.size)
+
+        // Empty search
+        val res5 = textFunctions.findOccurrences(text, "", false)
+        assertEquals(0, res5.size)
     }
 }

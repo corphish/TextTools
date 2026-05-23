@@ -1,24 +1,46 @@
 package com.corphish.quicktools.viewmodels
 
-import androidx.compose.ui.text.TextRange
 import androidx.lifecycle.viewModelScope
-import com.corphish.quicktools.text.TextReplacementManager
+import com.corphish.quicktools.repository.TextReplacementRepository
 import com.corphish.quicktools.usecases.ClipboardUseCase
+import com.corphish.quicktools.usecases.FindOccurrencesUseCase
+import com.corphish.quicktools.usecases.ReplaceTextUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
 class TextReplacementViewModel @Inject constructor(
+    private val textReplacementRepository: TextReplacementRepository,
+    private val findOccurrencesUseCase: FindOccurrencesUseCase,
+    private val replaceTextUseCase: ReplaceTextUseCase,
     clipboardUseCase: ClipboardUseCase
 ) : ClipboardCopyViewModel(clipboardUseCase) {
-    private lateinit var _textReplacementManager: TextReplacementManager
 
-    // Selected text can be edited further by the user
-    private val _mainText = MutableStateFlow("")
-    val mainText = _mainText.asStateFlow()
+    // Main text state from repository
+    val mainText = textReplacementRepository.state.map { it.currentText }.stateIn(
+        viewModelScope,
+        SharingStarted.Eagerly,
+        textReplacementRepository.state.value.currentText
+    )
+
+    // Undo/Redo states
+    val undoState = textReplacementRepository.state.map { it.canUndo }.stateIn(
+        viewModelScope,
+        SharingStarted.Eagerly,
+        false
+    )
+
+    val redoState = textReplacementRepository.state.map { it.canRedo }.stateIn(
+        viewModelScope,
+        SharingStarted.Eagerly,
+        false
+    )
 
     // Find and replace text states
     private val _findText = MutableStateFlow("")
@@ -30,150 +52,96 @@ class TextReplacementViewModel @Inject constructor(
 
     // Counter states
     private val _counterIndex = MutableStateFlow(0)
-    private val _counterTotal = MutableStateFlow(0)
     val counterIndex = _counterIndex.asStateFlow()
-    val counterTotal = _counterTotal.asStateFlow()
 
-    // Find range state
-    private val _findRanges = MutableStateFlow(listOf<TextRange>())
-    val findRanges = _findRanges.asStateFlow()
+    // Find range state and counter total derived from find results
+    val findRanges = combine(
+        textReplacementRepository.state,
+        _findText,
+        _ignoreCase
+    ) { state, findText, ignoreCase ->
+        if (findText.isNotEmpty()) {
+            findOccurrencesUseCase.execute(state.currentText, findText, ignoreCase)
+        } else {
+            emptyList()
+        }
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
-    // Undo and redo states
-    private val _undoState = MutableStateFlow(false)
-    private val _redoState = MutableStateFlow(false)
-    val undoState = _undoState.asStateFlow()
-    val redoState = _redoState.asStateFlow()
+    val counterTotal = findRanges.map { it.size }.stateIn(
+        viewModelScope,
+        SharingStarted.Eagerly,
+        0
+    )
 
     fun initializeWith(originalString: String) {
-        _textReplacementManager = TextReplacementManager(originalString)
-        _mainText.value = originalString
-    }
-
-    private fun invokeFind() {
-        if (_findText.value.isNotEmpty()) {
-            _findRanges.value = findText(_mainText.value, _findText.value, _ignoreCase.value)
-            _counterIndex.value = 0
-            _counterTotal.value = _findRanges.value.size
-        } else {
-            _findRanges.value = listOf()
-            _counterIndex.value = 0
-            _counterTotal.value = 0
-        }
-
-        _undoState.value = _textReplacementManager.canUndo()
-        _redoState.value = _textReplacementManager.canRedo()
+        textReplacementRepository.init(originalString)
     }
 
     fun undo() {
-        viewModelScope.launch {
-            _mainText.value = _textReplacementManager.undo()
-            invokeFind()
-        }
+        textReplacementRepository.undo()
+        resetCounter()
     }
 
     fun redo() {
-        viewModelScope.launch {
-            _mainText.value = _textReplacementManager.redo()
-            invokeFind()
-        }
+        textReplacementRepository.redo()
+        resetCounter()
     }
 
     fun reset() {
-        viewModelScope.launch {
-            _mainText.value = _textReplacementManager.reset()
-            _findRanges.value = listOf()
-            _counterIndex.value = 0
-            _counterTotal.value = 0
-            _undoState.value = _textReplacementManager.canUndo()
-            _redoState.value = _textReplacementManager.canRedo()
-            _findText.value = ""
-            _replaceText.value = ""
-        }
+        textReplacementRepository.reset()
+        _findText.value = ""
+        _replaceText.value = ""
+        resetCounter()
     }
 
     fun replaceFirst() {
-        viewModelScope.launch {
-            _mainText.value = _textReplacementManager.replaceOne(
-                _findRanges.value[_counterIndex.value],
-                _replaceText.value
-            )
-            invokeFind()
+        val ranges = findRanges.value
+        val index = _counterIndex.value
+        if (ranges.isNotEmpty() && index < ranges.size) {
+            replaceTextUseCase.replaceOne(ranges[index], _replaceText.value)
+            resetCounter()
         }
     }
 
     fun replaceAll() {
-        viewModelScope.launch {
-            _mainText.value = _textReplacementManager.replaceAll(
-                _findText.value,
-                _replaceText.value,
-                _ignoreCase.value
-            )
-            invokeFind()
-        }
+        replaceTextUseCase.replaceAll(_findText.value, _replaceText.value, _ignoreCase.value)
+        resetCounter()
     }
 
     fun setFindText(text: String) {
-        viewModelScope.launch {
-            _findText.value = text
-            invokeFind()
-        }
+        _findText.value = text
+        resetCounter()
     }
 
     fun setReplaceText(text: String) {
-        viewModelScope.launch {
-            _replaceText.value = text
-        }
+        _replaceText.value = text
     }
 
     fun setIgnoreCase(state: Boolean) {
-        viewModelScope.launch {
-            _ignoreCase.value = state
-            invokeFind()
-        }
+        _ignoreCase.value = state
+        resetCounter()
     }
 
     fun updateMainText(text: String) {
-        viewModelScope.launch {
-            _mainText.value = text
-            _textReplacementManager.updateText(text)
-            _undoState.value = _textReplacementManager.canUndo()
-            _redoState.value = _textReplacementManager.canRedo()
-        }
+        textReplacementRepository.updateText(text)
+        resetCounter()
+    }
+
+    private fun resetCounter() {
+        _counterIndex.value = 0
     }
 
     fun decrementCounter() {
-        viewModelScope.launch {
-            _counterIndex.value = (_counterIndex.value - 1) % _counterTotal.value
-            if (_counterIndex.value < 0) {
-                _counterIndex.value = _counterTotal.value - 1
-            }
+        val total = counterTotal.value
+        if (total > 0) {
+            _counterIndex.value = (_counterIndex.value - 1 + total) % total
         }
     }
 
     fun incrementCounter() {
-        viewModelScope.launch {
-            _counterIndex.value = (_counterIndex.value + 1) % _counterTotal.value
+        val total = counterTotal.value
+        if (total > 0) {
+            _counterIndex.value = (_counterIndex.value + 1) % total
         }
-    }
-
-    private fun findText(
-        mainInput: String,
-        findText: String,
-        ignoreCase: Boolean
-    ): List<TextRange> {
-        val result = mutableListOf<TextRange>()
-        var index = -findText.length
-        do {
-            index = mainInput.indexOf(
-                findText,
-                startIndex = index + findText.length,
-                ignoreCase = ignoreCase
-            )
-            if (index != -1) {
-                result += TextRange(start = index, end = index + findText.length)
-            }
-        } while (index >= 0)
-
-        return result
     }
 }
