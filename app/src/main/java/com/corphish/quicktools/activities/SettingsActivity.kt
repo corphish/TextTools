@@ -5,31 +5,40 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -37,7 +46,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
@@ -48,13 +60,13 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.window.core.layout.WindowSizeClass
 import com.corphish.quicktools.R
 import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.repository.AppMode
 import com.corphish.quicktools.ui.common.CustomTopAppBar
 import com.corphish.quicktools.ui.theme.BrandFontFamily
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
-import com.corphish.quicktools.ui.theme.Typography
 import com.corphish.quicktools.ui.theme.TypographyV2
 import com.corphish.quicktools.viewmodels.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -80,6 +92,9 @@ class SettingsActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Settings(settingsViewModel: SettingsViewModel) {
+    val adaptiveInfo = currentWindowAdaptiveInfo()
+    val isWideScreen = adaptiveInfo.windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
+    
     val uriHandler = LocalUriHandler.current
     val activity = LocalActivity.current
     val versionName by settingsViewModel.appVersionName.collectAsState()
@@ -95,101 +110,104 @@ fun Settings(settingsViewModel: SettingsViewModel) {
                 scrollBehavior = scrollBehavior
             )
         }
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(
-                    start = it.calculateStartPadding(LayoutDirection.Ltr).plus(16.dp),
-                    end = it.calculateEndPadding(LayoutDirection.Ltr).plus(16.dp),
-                    top = it.calculateTopPadding().plus(16.dp),
-                    bottom = it.calculateBottomPadding().plus(16.dp)
-                )
-                .verticalScroll(rememberScrollState())
-        ) {
-            Text(
-                text = stringResource(id = R.string.app),
-                style = TypographyV2.labelSmall,
-                modifier = Modifier.padding(bottom = 4.dp),
-                fontFamily = BrandFontFamily,
-                color = MaterialTheme.colorScheme.primary
+    ) { innerPadding ->
+        val contentModifier = Modifier
+            .padding(
+                start = innerPadding.calculateStartPadding(LayoutDirection.Ltr).plus(16.dp),
+                end = innerPadding.calculateEndPadding(LayoutDirection.Ltr).plus(16.dp),
+                top = innerPadding.calculateTopPadding().plus(16.dp),
+                bottom = innerPadding.calculateBottomPadding().plus(16.dp)
             )
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
 
-            AppSettings(settingsViewModel)
-
-            Text(
-                text = stringResource(id = R.string.messaging),
-                style = TypographyV2.labelSmall,
-                modifier = Modifier.padding(top = 24.dp, bottom = 4.dp),
-                fontFamily = BrandFontFamily,
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            TextSettings(settingsViewModel)
-
-            Text(
-                text = stringResource(id = R.string.eval_title_small),
-                style = TypographyV2.labelSmall,
-                modifier = Modifier.padding(top = 24.dp, bottom = 4.dp),
-                fontFamily = BrandFontFamily,
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            EvaluateSettings(settingsViewModel)
-
-            Text(
-                text = stringResource(id = R.string.app_info),
-                style = TypographyV2.labelSmall,
-                modifier = Modifier.padding(top = 24.dp, bottom = 8.dp),
-                fontFamily = BrandFontFamily,
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            Text(
-                text = stringResource(
-                    id = R.string.app_version,
-                    versionName,
-                    versionCode
-                ),
-                style = Typography.bodyMedium
-            )
-
-            Button(
-                onClick = { uriHandler.openUri(Constants.RELEASES_PAGE_LINK) },
-                modifier = Modifier.padding(top = 8.dp)
+        if (isWideScreen) {
+            Row(
+                modifier = contentModifier,
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Icon(painterResource(id = R.drawable.ic_open_in_new), contentDescription = "")
-                Text(
-                    text = stringResource(id = R.string.releases),
-                    modifier = Modifier.padding(start = 16.dp),
-                    style = TypographyV2.labelMedium,
-                    fontWeight = FontWeight.W600
-                )
+                Column(modifier = Modifier.weight(1f)) {
+                    SettingsSection(title = R.string.app, icon = R.drawable.ic_settings) {
+                        AppSettings(settingsViewModel)
+                    }
+                    SettingsSection(title = R.string.eval_title_small, icon = R.drawable.ic_numbers, modifier = Modifier.padding(top = 16.dp)) {
+                        EvaluateSettings(settingsViewModel)
+                    }
+                }
+                Column(modifier = Modifier.weight(1f)) {
+                    SettingsSection(title = R.string.messaging, icon = R.drawable.ic_whatsapp) {
+                        TextSettings(settingsViewModel)
+                    }
+                    SettingsSection(title = R.string.app_info, icon = R.drawable.ic_info, modifier = Modifier.padding(top = 16.dp)) {
+                        AppInfoSettings(versionName, versionCode, uriHandler)
+                    }
+                    SettingsSection(title = R.string.donate, icon = R.drawable.ic_volunteer, modifier = Modifier.padding(top = 16.dp)) {
+                        DonateSettings(uriHandler)
+                    }
+                }
             }
+        } else {
+            Column(modifier = contentModifier) {
+                SettingsSection(title = R.string.app, icon = R.drawable.ic_settings) {
+                    AppSettings(settingsViewModel)
+                }
+                SettingsSection(title = R.string.messaging, icon = R.drawable.ic_whatsapp, modifier = Modifier.padding(top = 16.dp)) {
+                    TextSettings(settingsViewModel)
+                }
+                SettingsSection(title = R.string.eval_title_small, icon = R.drawable.ic_numbers, modifier = Modifier.padding(top = 16.dp)) {
+                    EvaluateSettings(settingsViewModel)
+                }
+                SettingsSection(title = R.string.app_info, icon = R.drawable.ic_info, modifier = Modifier.padding(top = 16.dp)) {
+                    AppInfoSettings(versionName, versionCode, uriHandler)
+                }
+                SettingsSection(title = R.string.donate, icon = R.drawable.ic_volunteer, modifier = Modifier.padding(top = 16.dp)) {
+                    DonateSettings(uriHandler)
+                }
+            }
+        }
+    }
+}
 
+@Composable
+fun SettingsSection(
+    title: Int,
+    @DrawableRes icon: Int,
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Column(modifier = modifier) {
+        Row(
+            modifier = Modifier.padding(start = 8.dp, bottom = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Icon(
+                painterResource(icon),
+                contentDescription = null,
+                modifier = Modifier.size(16.dp),
+                tint = MaterialTheme.colorScheme.primary
+            )
             Text(
-                text = stringResource(id = R.string.donate),
+                text = stringResource(id = title),
                 style = TypographyV2.labelSmall,
-                modifier = Modifier.padding(top = 24.dp, bottom = 8.dp),
                 fontFamily = BrandFontFamily,
                 color = MaterialTheme.colorScheme.primary
             )
-
-            Text(
-                text = stringResource(id = R.string.donate_msg),
-                style = Typography.bodyMedium
-            )
-
-            Button(
-                onClick = { uriHandler.openUri(Constants.DONATE_LINK) },
-                modifier = Modifier.padding(top = 8.dp)
+        }
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.extraLarge,
+        ) {
+            Surface(
+                tonalElevation = 2.dp,
+                color = MaterialTheme.colorScheme.surface
             ) {
-                Icon(painterResource(R.drawable.ic_thumb_up), contentDescription = "")
-                Text(
-                    text = stringResource(id = R.string.donate),
-                    modifier = Modifier.padding(start = 16.dp),
-                    style = TypographyV2.labelMedium,
-                    fontWeight = FontWeight.W600
-                )
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    content()
+                }
             }
         }
     }
@@ -205,26 +223,26 @@ fun AppSettings(settingsViewModel: SettingsViewModel) {
     )
     var expanded by rememberSaveable { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier.padding(top = 8.dp)
-    ) {
-        Text(
-            text = stringResource(id = R.string.mode_select_title),
-            style = TypographyV2.labelMedium,
-            fontWeight = FontWeight.W600,
-        )
-        Text(
-            text = stringResource(id = R.string.mode_select_desc),
-            style = TypographyV2.bodySmall
-        )
-        Box(modifier = Modifier.padding(vertical = 4.dp))
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column {
+            Text(
+                text = stringResource(id = R.string.mode_select_title),
+                style = TypographyV2.labelMedium,
+                fontWeight = FontWeight.W600,
+            )
+            Text(
+                text = stringResource(id = R.string.mode_select_desc),
+                style = TypographyV2.bodySmall
+            )
+        }
+        
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = {
                 expanded = !expanded
             }
         ) {
-            TextField(
+            OutlinedTextField(
                 readOnly = true,
                 value = stringResource(id = options[appMode]!!),
                 onValueChange = { },
@@ -234,7 +252,7 @@ fun AppSettings(settingsViewModel: SettingsViewModel) {
                         expanded = expanded
                     )
                 },
-                colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
                 modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true)
                     .fillMaxWidth()
             )
@@ -268,7 +286,7 @@ fun TextSettings(settingsViewModel: SettingsViewModel) {
     val prependCountryCode by settingsViewModel.prependCountryCode.collectAsState()
     val prependCountryCodeIsValid by settingsViewModel.prependCountryCodeIsValid.collectAsState()
 
-    Column {
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         ConstraintLayout(
             modifier = Modifier
                 .clickable {
@@ -284,12 +302,16 @@ fun TextSettings(settingsViewModel: SettingsViewModel) {
                     settingsViewModel.updatePrependCountryCodeEnabled(it)
                 },
                 modifier = Modifier.constrainAs(switch) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
                     end.linkTo(parent.end)
                 }
             )
 
             Column(
                 modifier = Modifier.constrainAs(texts) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
                     start.linkTo(parent.start)
                     end.linkTo(switch.start, margin = 16.dp)
                     width = Dimension.fillToConstraints
@@ -313,9 +335,7 @@ fun TextSettings(settingsViewModel: SettingsViewModel) {
                 settingsViewModel.updatePrependCountryCode(it)
             },
             label = { Text(stringResource(id = R.string.preset_country_code)) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
+            modifier = Modifier.fillMaxWidth(),
             enabled = prependCountryCodeEnabled,
             isError = prependCountryCodeEnabled && !prependCountryCodeIsValid,
             singleLine = true,
@@ -342,23 +362,24 @@ fun EvaluateSettings(settingsViewModel: SettingsViewModel) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     val selectedOptionText by settingsViewModel.evalResultMode.collectAsState()
 
-    Column {
-        Text(
-            text = stringResource(id = R.string.decimal_points_title),
-            style = TypographyV2.labelMedium,
-            fontWeight = FontWeight.W600,
-        )
-        Text(
-            text = stringResource(id = R.string.decimal_points_desc),
-            style = TypographyV2.bodySmall
-        )
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column {
+            Text(
+                text = stringResource(id = R.string.decimal_points_title),
+                style = TypographyV2.labelMedium,
+                fontWeight = FontWeight.W600,
+            )
+            Text(
+                text = stringResource(id = R.string.decimal_points_desc),
+                style = TypographyV2.bodySmall
+            )
+        }
+        
         Text(
             text = "$decimalPoints",
             style = TypographyV2.labelLarge,
             textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
+            modifier = Modifier.fillMaxWidth()
         )
         Slider(
             value = decimalPoints.toFloat(),
@@ -369,25 +390,27 @@ fun EvaluateSettings(settingsViewModel: SettingsViewModel) {
             steps = 3
         )
         
-        Box(modifier = Modifier.padding(vertical = 8.dp))
+        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp), color = MaterialTheme.colorScheme.outlineVariant)
 
-        Text(
-            text = stringResource(id = R.string.eval_result_handling),
-            style = TypographyV2.labelMedium,
-            fontWeight = FontWeight.W600,
-        )
-        Text(
-            text = stringResource(id = R.string.eval_result_desc),
-            style = TypographyV2.bodySmall
-        )
-        Box(modifier = Modifier.padding(vertical = 4.dp))
+        Column {
+            Text(
+                text = stringResource(id = R.string.eval_result_handling),
+                style = TypographyV2.labelMedium,
+                fontWeight = FontWeight.W600,
+            )
+            Text(
+                text = stringResource(id = R.string.eval_result_desc),
+                style = TypographyV2.bodySmall
+            )
+        }
+        
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = {
                 expanded = !expanded
             }
         ) {
-            TextField(
+            OutlinedTextField(
                 readOnly = true,
                 value = options[selectedOptionText],
                 onValueChange = { },
@@ -397,7 +420,7 @@ fun EvaluateSettings(settingsViewModel: SettingsViewModel) {
                         expanded = expanded
                     )
                 },
-                colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
                 modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true).fillMaxWidth()
             )
 
@@ -421,5 +444,95 @@ fun EvaluateSettings(settingsViewModel: SettingsViewModel) {
                 }
             }
         }
+    }
+}
+
+@Composable
+fun AppInfoSettings(versionName: String, versionCode: Int, uriHandler: androidx.compose.ui.platform.UriHandler) {
+    val listItemColors = ListItemDefaults.colors(containerColor = Color.Transparent)
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        ListItem(
+            headlineContent = {
+                Text(
+                    text = stringResource(id = R.string.version),
+                    style = TypographyV2.labelMedium,
+                    fontWeight = FontWeight.W600
+                )
+            },
+            supportingContent = {
+                Text(
+                    text = "$versionName ($versionCode)",
+                    style = TypographyV2.bodySmall
+                )
+            },
+            leadingContent = {
+                Icon(
+                    painterResource(R.drawable.ic_info),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(24.dp)
+                )
+            },
+            colors = listItemColors
+        )
+        
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+
+        ListItem(
+            headlineContent = {
+                Text(
+                    text = stringResource(id = R.string.releases),
+                    style = TypographyV2.labelMedium,
+                    fontWeight = FontWeight.W600
+                )
+            },
+            supportingContent = {
+                Text(
+                    text = stringResource(id = R.string.releases_desc),
+                    style = TypographyV2.bodySmall
+                )
+            },
+            leadingContent = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_open_in_new),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(24.dp)
+                )
+            },
+            modifier = Modifier.clickable { uriHandler.openUri(Constants.RELEASES_PAGE_LINK) },
+            colors = listItemColors
+        )
+    }
+}
+
+@Composable
+fun DonateSettings(uriHandler: androidx.compose.ui.platform.UriHandler) {
+    val listItemColors = ListItemDefaults.colors(containerColor = Color.Transparent)
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        Text(
+            text = stringResource(id = R.string.donate_msg),
+            style = TypographyV2.bodySmall
+        )
+        
+        ListItem(
+            headlineContent = {
+                Text(
+                    text = stringResource(id = R.string.donate),
+                    style = TypographyV2.labelMedium,
+                    fontWeight = FontWeight.W600
+                )
+            },
+            leadingContent = {
+                Icon(
+                    painterResource(R.drawable.ic_volunteer),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(24.dp)
+                )
+            },
+            modifier = Modifier.clickable { uriHandler.openUri(Constants.DONATE_LINK) },
+            colors = listItemColors
+        )
     }
 }

@@ -20,7 +20,9 @@
     <string name="invalid_expression">Invalid mathematical expression</string>
 
     <string name="app_info">App Info</string>
+    <string name="version">Version</string>
     <string name="app_version">Version - %1$s (%2$d)</string>
+    <string name="releases_desc">Check out the latest releases and changelog on GitHub.</string>
 
     <string name="oss_info">Open Source</string>
     <string name="oss_desc">This app is open source! Feel free to contribute, raise issue and check it out.</string>

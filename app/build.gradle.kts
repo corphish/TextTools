@@ -19,7 +19,7 @@ android {
         versionCode = 29
         versionName = "2.1.7"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.corphish.quicktools.HiltTestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -85,6 +85,9 @@ dependencies {
 
     // Material 3 expressive
     implementation(libs.androidx.material3.android)
+    implementation(libs.androidx.adaptive)
+    implementation(libs.androidx.adaptive.layout)
+    implementation(libs.androidx.adaptive.navigation)
 
     // Compose
     implementation(platform(libs.androidx.compose.bom))
@@ -95,6 +98,7 @@ dependencies {
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation (libs.androidx.constraintlayout.compose)
+    implementation(libs.androidx.compose.material)
 
     // To evaluate mathematical expressions
     implementation(libs.exp4j)
@@ -109,6 +113,10 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
+    androidTestImplementation(libs.hilt.android.testing)
+    kspAndroidTest(libs.hilt.compiler)
+    androidTestImplementation(libs.androidx.runner)
+    androidTestImplementation(libs.androidx.test.ext)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
 
