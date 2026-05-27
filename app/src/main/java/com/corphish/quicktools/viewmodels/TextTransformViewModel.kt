@@ -4,8 +4,8 @@ import android.content.res.Resources
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.lifecycle.viewModelScope
 import com.corphish.quicktools.R
-import com.corphish.quicktools.text.TextTransformer
 import com.corphish.quicktools.usecases.ClipboardUseCase
+import com.corphish.quicktools.usecases.TextTransformUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,9 +16,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TextTransformViewModel @Inject constructor (
+    private val textTransformUseCase: TextTransformUseCase,
     clipboardUseCase: ClipboardUseCase
 ) : ClipboardCopyViewModel(clipboardUseCase) {
-    private val textTransformer = TextTransformer()
 
     private val _mainText = MutableStateFlow("")
     val mainText = _mainText.asStateFlow()
@@ -164,173 +164,16 @@ class TextTransformViewModel @Inject constructor (
 
     private fun transform() {
         viewModelScope.launch {
-            _previewText.value = when (_selectedPrimaryIndex.value) {
-                INDEX_NONE -> {
-                    // None
-                    _mainText.value
-                }
-
-                INDEX_WRAP_TEXT -> {
-                    // Wrap
-                    if (_selectedSecondaryIndex.value == 5) {
-                        textTransformer.customWrap(_mainText.value, _secondaryFunctionText.value)
-                    } else {
-                        textTransformer.presetWrap(_mainText.value, _selectedSecondaryIndex.value)
-                    }
-                }
-
-                INDEX_CHANGE_CASE -> {
-                    // Change case
-                    textTransformer.changeCase(_mainText.value, _selectedSecondaryIndex.value)
-                }
-
-                INDEX_SORT_LINES -> {
-                    // Sort lines
-                    textTransformer.sortLines(_mainText.value)
-                }
-
-                INDEX_REPEAT_TEXT -> {
-                    // Repeat text
-                    textTransformer.repeatText(
-                        _mainText.value,
-                        _secondaryFunctionText.value.toIntOrNull() ?: 1
-                    )
-                }
-
-                INDEX_REMOVE_TEXT -> {
-                    // Remove text
-                    when (_selectedSecondaryIndex.value) {
-                        // Remove first/last/all
-                        0, 1, 2 -> textTransformer.removeText(
-                            _mainText.value,
-                            _secondaryFunctionText.value,
-                            _selectedSecondaryIndex.value
-                        )
-
-                        3 -> textTransformer.removeWhiteSpaces(_mainText.value)
-                        4 -> textTransformer.removeLineBreaks(_mainText.value)
-                        5 -> textTransformer.removeEmptyLines(_mainText.value)
-                        6 -> textTransformer.removeDuplicateWords(
-                            _mainText.value,
-                            ignoreCase = true
-                        )
-
-                        7 -> textTransformer.removeDuplicateWords(
-                            _mainText.value,
-                            ignoreCase = false
-                        )
-
-                        8 -> textTransformer.removeDuplicateLines(
-                            _mainText.value,
-                            ignoreCase = true
-                        )
-
-                        9 -> textTransformer.removeDuplicateLines(
-                            _mainText.value,
-                            ignoreCase = false
-                        )
-
-                        else -> _mainText.value
-                    }
-                }
-
-                INDEX_ADD_PREFIX_SUFFIX -> {
-                    // Add prefix or suffix
-                    when (_selectedSecondaryIndex.value) {
-                        0 -> {
-                            textTransformer.addPrefix(_mainText.value, _secondaryFunctionText.value)
-                        }
-
-                        1 -> {
-                            textTransformer.addSuffix(_mainText.value, _secondaryFunctionText.value)
-                        }
-
-                        else -> {
-                            _mainText.value
-                        }
-                    }
-                }
-
-                INDEX_NUMBER_LINES -> {
-                    // Number lines
-                    textTransformer.numberLines(_mainText.value)
-                }
-
-                INDEX_REVERSE_TEXT -> {
-                    // Reverse text
-                    textTransformer.reverseText(_mainText.value)
-                }
-
-                INDEX_REVERSE_WORDS -> {
-                    // Reverse words
-                    textTransformer.reverseWords(_mainText.value)
-                }
-
-                INDEX_PREPEND_LINES -> {
-                    // Prepend text
-                    textTransformer.prependLines(_mainText.value, _secondaryFunctionText.value)
-                }
-
-                INDEX_APPEND_LINES -> {
-                    // Prepend text
-                    textTransformer.appendLines(_mainText.value, _secondaryFunctionText.value)
-                }
-
-                INDEX_REVERSE_LINES -> {
-                    // Reverse lines
-                    textTransformer.reverseLines(_mainText.value)
-                }
-
-                INDEX_DECORATE_TEXT -> {
-                    try {
-                        val cleaned = textTransformer.clearUnicodeFormatting(_mainText.value)
-                        when (_selectedSecondaryIndex.value) {
-                            0 -> textTransformer.boldSerif(cleaned)
-                            1 -> textTransformer.italicSerif(cleaned)
-                            2 -> textTransformer.boldItalicSerif(cleaned)
-                            3 -> textTransformer.boldSans(cleaned)
-                            4 -> textTransformer.italicSans(cleaned)
-                            5 -> textTransformer.boldItalicSans(cleaned)
-                            6 -> textTransformer.shortStrikethrough(cleaned)
-                            7 -> textTransformer.longStrikethrough(cleaned)
-                            8 -> textTransformer.cursive(cleaned)
-                            9 -> textTransformer.monospaceFont(cleaned)
-                            10 -> cleaned
-                            else -> _mainText.value
-                        }
-                    } catch (e: ArrayIndexOutOfBoundsException) {
-                        _decorateTextErrorFlow.emit(true)
-                        _mainText.value
-                    }
-                }
-
-                INDEX_LINE_BREAK -> {
-                    when (_selectedSecondaryIndex.value) {
-                        0 -> textTransformer.lineBreakByCharacter(
-                            _mainText.value,
-                            _secondaryFunctionText.value.toIntOrNull() ?: 0
-                        )
-
-                        1 -> textTransformer.lineBreakByWords(
-                            _mainText.value,
-                            _secondaryFunctionText.value.toIntOrNull() ?: 0
-                        )
-
-                        else -> _mainText.value
-                    }
-                }
-
-                INDEX_SQUEEZE -> {
-                    textTransformer.squeeze(_mainText.value, _secondaryFunctionText.value.toIntOrNull() ?: 0)
-                }
-
-                INDEX_REPLACE_WHITESPACE -> {
-                    _mainText.value.replace(" ", _secondaryFunctionText.value)
-                }
-
-                else -> {
-                    _mainText.value
-                }
+            try {
+                _previewText.value = textTransformUseCase.execute(
+                    _mainText.value,
+                    _selectedPrimaryIndex.value,
+                    _selectedSecondaryIndex.value,
+                    _secondaryFunctionText.value
+                )
+            } catch (e: ArrayIndexOutOfBoundsException) {
+                _decorateTextErrorFlow.emit(true)
+                _previewText.value = _mainText.value
             }
         }
     }

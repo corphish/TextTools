@@ -9,6 +9,9 @@ import com.corphish.quicktools.repository.TextReplacementRepository
 import com.corphish.quicktools.repository.TextReplacementRepositoryImpl
 import com.corphish.quicktools.repository.TextRepository
 import com.corphish.quicktools.repository.TextRepositoryImpl
+import com.corphish.quicktools.repository.TextTransformRepository
+import com.corphish.quicktools.repository.TextTransformRepositoryImpl
+import com.corphish.quicktools.functions.TextFunctions
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,6 +36,11 @@ object AppModule {
     @Singleton
     fun provideTextReplacementRepository(): TextReplacementRepository =
         TextReplacementRepositoryImpl()
+
+    @Provides
+    @Singleton
+    fun provideTextTransformRepository(textFunctions: TextFunctions): TextTransformRepository =
+        TextTransformRepositoryImpl(textFunctions)
 
     @Provides
     @Singleton

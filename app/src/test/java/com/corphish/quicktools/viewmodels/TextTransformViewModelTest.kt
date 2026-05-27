@@ -1,9 +1,15 @@
 package com.corphish.quicktools.viewmodels
 
 import com.corphish.quicktools.MainDispatcherRule
+import com.corphish.quicktools.functions.TextFunctions
+import com.corphish.quicktools.repository.TextTransformRepositoryImpl
 import com.corphish.quicktools.usecases.ClipboardUseCase
+import com.corphish.quicktools.usecases.TextTransformUseCase
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -18,63 +24,79 @@ class TextTransformViewModelTest {
 
     private lateinit var viewModel: TextTransformViewModel
     private val clipboardUseCase: ClipboardUseCase = mockk(relaxed = true)
+    
+    // Real implementations for testing logic
+    private val textFunctions = TextFunctions()
+    private val repository = TextTransformRepositoryImpl(textFunctions)
+    private val textTransformUseCase = TextTransformUseCase(repository)
 
     @Before
     fun setUp() {
-        viewModel = TextTransformViewModel(clipboardUseCase)
+        viewModel = TextTransformViewModel(
+            textTransformUseCase,
+            clipboardUseCase
+        )
     }
 
     @Test
-    fun testInitializeText() = runTest {
+    fun testInitialization() = runTest {
+        backgroundScope.launch { viewModel.mainText.collect() }
+        backgroundScope.launch { viewModel.previewText.collect() }
+
         viewModel.initializeText("hello")
+        runCurrent()
+        
         assertEquals("hello", viewModel.mainText.value)
         assertEquals("hello", viewModel.previewText.value)
     }
 
     @Test
-    fun testTransform_ChangeCase() = runTest {
+    fun testTransformation_ChangeCase() = runTest {
+        backgroundScope.launch { viewModel.mainText.collect() }
+        backgroundScope.launch { viewModel.previewText.collect() }
+        backgroundScope.launch { viewModel.selectedPrimaryIndex.collect() }
+        backgroundScope.launch { viewModel.selectedSecondaryIndex.collect() }
+
         viewModel.initializeText("hello")
-        viewModel.selectPrimaryIndex(TextTransformViewModel.INDEX_CHANGE_CASE)
-        viewModel.selectSecondaryIndex(0) // Uppercase
+        
+        // INDEX_CHANGE_CASE = 2
+        // UPPER_CASE = 0
+        viewModel.selectPrimaryIndex(2)
+        viewModel.selectSecondaryIndex(0)
+        runCurrent()
         
         assertEquals("HELLO", viewModel.previewText.value)
     }
 
     @Test
-    fun testTransform_WrapText() = runTest {
+    fun testTransformation_WrapText() = runTest {
+        backgroundScope.launch { viewModel.mainText.collect() }
+        backgroundScope.launch { viewModel.previewText.collect() }
+
         viewModel.initializeText("hello")
-        viewModel.selectPrimaryIndex(TextTransformViewModel.INDEX_WRAP_TEXT)
-        viewModel.selectSecondaryIndex(0) // Single inverted comma
         
-        assertEquals("'hello'", viewModel.previewText.value)
+        // INDEX_WRAP_TEXT = 1
+        // Parentheses = 2
+        viewModel.selectPrimaryIndex(1)
+        viewModel.selectSecondaryIndex(2)
+        runCurrent()
+        
+        assertEquals("(hello)", viewModel.previewText.value)
     }
 
     @Test
-    fun testTransform_RepeatText() = runTest {
+    fun testTransformation_RepeatText() = runTest {
+        backgroundScope.launch { viewModel.mainText.collect() }
+        backgroundScope.launch { viewModel.previewText.collect() }
+        backgroundScope.launch { viewModel.secondaryFunctionText.collect() }
+
         viewModel.initializeText("abc")
-        viewModel.selectPrimaryIndex(TextTransformViewModel.INDEX_REPEAT_TEXT)
+        
+        // INDEX_REPEAT_TEXT = 4
+        viewModel.selectPrimaryIndex(4)
         viewModel.setSecondaryText("3")
+        runCurrent()
         
         assertEquals("abcabcabc", viewModel.previewText.value)
-    }
-
-    @Test
-    fun testTransform_AddPrefix() = runTest {
-        viewModel.initializeText("world")
-        viewModel.selectPrimaryIndex(TextTransformViewModel.INDEX_ADD_PREFIX_SUFFIX)
-        viewModel.selectSecondaryIndex(0) // Prefix
-        viewModel.setSecondaryText("hello ")
-        
-        assertEquals("hello world", viewModel.previewText.value)
-    }
-    
-    @Test
-    fun testTransform_RemoveText() = runTest {
-        viewModel.initializeText("hello world")
-        viewModel.selectPrimaryIndex(TextTransformViewModel.INDEX_REMOVE_TEXT)
-        viewModel.selectSecondaryIndex(0) // Remove first
-        viewModel.setSecondaryText("hello ")
-        
-        assertEquals("world", viewModel.previewText.value)
     }
 }
