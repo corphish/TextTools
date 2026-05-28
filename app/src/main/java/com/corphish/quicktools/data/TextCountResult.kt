@@ -10,5 +10,20 @@ data class TextCountResult(
     val wordCount: Int = 0,
     val spaceCount: Int = 0,
     val symbolCount: Int = 0,
-    val wordFrequency: List<Pair<String, Int>> = emptyList()
+    val wordFrequency: List<Pair<String, Int>> = emptyList(),
+    val longestRepeatedSubstring: String = "",
+    val runLengthEncoding: String = "",
+    val longestPalindrome: String = "",
+    val emails: List<String> = emptyList(),
+    val phoneNumbers: List<String> = emptyList(),
+    val urls: List<String> = emptyList(),
+    val ipv4Addresses: List<String> = emptyList(),
+    val ipv6Addresses: List<String> = emptyList(),
+    val dates: List<String> = emptyList(),
+    val times: List<String> = emptyList(),
+    val currencies: List<String> = emptyList(),
+    val binaryTexts: List<String> = emptyList(),
+    val hexTexts: List<String> = emptyList(),
+    val jsonTexts: List<String> = emptyList(),
+    val longestIncreasingSubsequence: String = ""
 )

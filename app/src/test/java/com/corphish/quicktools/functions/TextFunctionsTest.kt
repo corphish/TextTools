@@ -24,6 +24,56 @@ class TextFunctionsTest {
     }
 
     @Test
+    fun testAdvancedExtractions() {
+        val email = "support@example.com"
+        val phone = "9876543210"
+        val url = "https://google.com"
+        val ipv4 = "192.168.1.1"
+        val ipv6 = "2001:0db8:85a3:0000:0000:8a2e:0370:7334"
+        val date = "2023-10-25"
+        val time = "14:30"
+        val money = "${'$'}10"
+        val binary = "10101010"
+        val hex = "0xABC"
+        val json = "{\"a\":1}"
+
+        val text = "Email: $email, Phone: $phone, URL: $url, IPv4: $ipv4, IPv6: $ipv6, Date: $date, Time: $time, Money: $money, Binary: $binary, Hex: $hex, JSON: $json"
+        
+        val result = textFunctions.countText(text)
+        
+        assertTrue(result.emails.contains(email))
+        assertTrue(result.phoneNumbers.contains(phone))
+        assertTrue(result.urls.contains(url))
+        assertTrue(result.ipv4Addresses.contains(ipv4))
+        assertTrue(result.ipv6Addresses.contains(ipv6))
+        assertTrue(result.dates.contains(date))
+        assertTrue(result.times.contains(time))
+        assertTrue(result.currencies.contains(money))
+        assertTrue(result.binaryTexts.contains(binary))
+        assertTrue(result.hexTexts.contains(hex))
+        assertTrue(result.jsonTexts.contains(json))
+    }
+
+    @Test
+    fun testLongestIncreasingSubsequence() {
+        assertEquals("abc", textFunctions.countText("azbxc").longestIncreasingSubsequence)
+        assertEquals("023", textFunctions.countText("10293").longestIncreasingSubsequence)
+        assertEquals("abcdef", textFunctions.countText("abcdef").longestIncreasingSubsequence)
+    }
+
+    @Test
+    fun testRunLengthEncoding() {
+        val result = textFunctions.countText("aaabbc")
+        assertEquals("a3b2c1", result.runLengthEncoding)
+    }
+
+    @Test
+    fun testLongestPalindrome() {
+        assertEquals("racecar", textFunctions.countText("abcracecardef").longestPalindrome)
+        assertEquals("noon", textFunctions.countText("afternoon").longestPalindrome)
+    }
+
+    @Test
     fun testCountText_WordFrequency() {
         val text = "apple banana apple orange banana apple"
         val result = textFunctions.countText(text)
@@ -156,14 +206,6 @@ class TextFunctionsTest {
         assertEquals(" world hello", textFunctions.removeText(text, "hello", 0))
         
         // Mode 1: remove last
-        // Note: The implementation of removeText mode 1 is:
-        // val reversed = reverseText(text)
-        // val replaced = reversed.replaceFirst(remove, "")
-        // reverseText(replaced)
-        // So for "hello world hello", removing "hello" mode 1:
-        // reversed = "olleh dlrow olleh"
-        // replaced = " dlrow olleh" (removes first "olleh")
-        // reverseText = "hello world "
         assertEquals("hello world ", textFunctions.removeText(text, "olleh", 1))
         
         // Mode 2: remove all
@@ -257,7 +299,6 @@ class TextFunctionsTest {
         assertEquals(text, textFunctions.lineBreakByCharacter(text, 0))
 
         val words = "one two three"
-        // Current implementation adds space before newline: "one two \nthree"
         assertEquals("one two \nthree", textFunctions.lineBreakByWords(words, 2))
     }
 

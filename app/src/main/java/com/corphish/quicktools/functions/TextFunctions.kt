@@ -55,8 +55,197 @@ class TextFunctions @Inject constructor() {
             wordCount = wordCount,
             spaceCount = spaceCount,
             symbolCount = symbolCount,
-            wordFrequency = wordFrequency
+            wordFrequency = wordFrequency,
+            longestRepeatedSubstring = findLongestRepeatedSubstring(text),
+            runLengthEncoding = calculateRLE(text),
+            longestPalindrome = findLongestPalindrome(text),
+            emails = extractEmails(text),
+            phoneNumbers = extractPhoneNumbers(text),
+            urls = extractURLs(text),
+            ipv4Addresses = extractIPv4(text),
+            ipv6Addresses = extractIPv6(text),
+            dates = extractDates(text),
+            times = extractTimes(text),
+            currencies = extractCurrencies(text),
+            binaryTexts = extractBinary(text),
+            hexTexts = extractHex(text),
+            jsonTexts = extractJSON(text),
+            longestIncreasingSubsequence = findLIS(text)
         )
+    }
+
+    private fun findLongestRepeatedSubstring(text: String): String {
+        val n = text.length
+        var longest = ""
+        for (i in 0 until n) {
+            for (j in i + 1 until n) {
+                var k = 0
+                while (i + k < n && j + k < n && text[i + k] == text[j + k]) {
+                    k++
+                }
+                if (k > longest.length) {
+                    longest = text.substring(i, i + k)
+                }
+            }
+        }
+        return longest
+    }
+
+    private fun calculateRLE(text: String): String {
+        if (text.isEmpty()) return ""
+        val sb = StringBuilder()
+        var i = 0
+        while (i < text.length) {
+            var count = 1
+            while (i + 1 < text.length && text[i] == text[i + 1]) {
+                i++
+                count++
+            }
+            sb.append(text[i]).append(count)
+            i++
+        }
+        return sb.toString()
+    }
+
+    private fun findLongestPalindrome(text: String): String {
+        if (text.isEmpty()) return ""
+        var start = 0
+        var end = 0
+        for (i in text.indices) {
+            val len1 = expandAroundCenter(text, i, i)
+            val len2 = expandAroundCenter(text, i, i + 1)
+            val len = maxOf(len1, len2)
+            if (len > end - start) {
+                start = i - (len - 1) / 2
+                end = i + len / 2
+            }
+        }
+        return text.substring(start, end + 1)
+    }
+
+    private fun expandAroundCenter(s: String, left: Int, right: Int): Int {
+        var l = left
+        var r = right
+        while (l >= 0 && r < s.length && s[l] == s[r]) {
+            l--
+            r++
+        }
+        return r - l - 1
+    }
+
+    private fun extractEmails(text: String): List<String> {
+        val emailRegex = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}".toRegex()
+        return emailRegex.findAll(text).map { it.value }.toList()
+    }
+
+    private fun extractPhoneNumbers(text: String): List<String> {
+        val phoneRegex = "(\\+?\\d{1,3}[- ]?)?(\\d{10}|\\d{3}[- ]\\d{3}[- ]\\d{4}|\\d{3}[- ]\\d{4})".toRegex()
+        return phoneRegex.findAll(text).map { it.value }.toList()
+    }
+
+    private fun extractURLs(text: String): List<String> {
+        val urlRegex = "https?://[\\w\\d:#@%/\\$()~_?+\\-=\\\\.&]*".toRegex()
+        return urlRegex.findAll(text).map { it.value }.toList()
+    }
+
+    private fun extractIPv4(text: String): List<String> {
+        val ipv4Regex = "\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b".toRegex()
+        return ipv4Regex.findAll(text).map { it.value }.toList()
+    }
+
+    private fun extractIPv6(text: String): List<String> {
+        val ipv6Regex = "\\b(?:[A-F0-9]{1,4}:){7}[A-F0-9]{1,4}\\b".toRegex(RegexOption.IGNORE_CASE)
+        return ipv6Regex.findAll(text).map { it.value }.toList()
+    }
+
+    private fun extractDates(text: String): List<String> {
+        val dateRegex = "\\b\\d{1,4}[-/.]\\d{1,2}[-/.]\\d{1,4}\\b".toRegex()
+        return dateRegex.findAll(text).map { it.value }.toList()
+    }
+
+    private fun extractTimes(text: String): List<String> {
+        val timeRegex = "\\b\\d{1,2}:\\d{2}(?::\\d{2})?\\b".toRegex()
+        return timeRegex.findAll(text).map { it.value }.toList()
+    }
+
+    private fun extractCurrencies(text: String): List<String> {
+        val currencyRegex = "[\$€£¥₹]\\s?\\d+(?:[.,]\\d{2})?".toRegex()
+        return currencyRegex.findAll(text).map { it.value }.toList()
+    }
+
+    private fun extractBinary(text: String): List<String> {
+        val binaryRegex = "\\b[01]{8,}\\b".toRegex()
+        return binaryRegex.findAll(text).map { it.value }.toList()
+    }
+
+    private fun extractHex(text: String): List<String> {
+        val hexRegex = "\\b(?:0x)?[A-F0-9]{2,}\\b".toRegex(RegexOption.IGNORE_CASE)
+        return hexRegex.findAll(text).map { it.value }.filter { it.length % 2 == 0 || it.startsWith("0x") }.toList()
+    }
+
+    private fun extractJSON(text: String): List<String> {
+        val jsonList = mutableListOf<String>()
+        var i = 0
+        while (i < text.length) {
+            if (text[i] == '{' || text[i] == '[') {
+                val start = i
+                val openChar = text[i]
+                val closeChar = if (openChar == '{') '}' else ']'
+                var balance = 1
+                i++
+                while (i < text.length && balance > 0) {
+                    if (text[i] == openChar) balance++
+                    else if (text[i] == closeChar) balance--
+                    i++
+                }
+                if (balance == 0) {
+                    val potentialJson = text.substring(start, i)
+                    if (openChar == '[' || potentialJson.contains(":")) {
+                        jsonList.add(potentialJson)
+                    }
+                }
+            } else {
+                i++
+            }
+        }
+        return jsonList
+    }
+
+    private fun findLIS(text: String): String {
+        if (text.isEmpty()) return ""
+        val n = text.length
+        val parent = IntArray(n) { -1 }
+        val indexInTails = IntArray(n)
+        var size = 0
+
+        for (i in 0 until n) {
+            var lo = 0
+            var hi = size
+            while (lo < hi) {
+                val mid = (lo + hi) / 2
+                if (text[indexInTails[mid]] < text[i]) {
+                    lo = mid + 1
+                } else {
+                    hi = mid
+                }
+            }
+
+            if (lo > 0) {
+                parent[i] = indexInTails[lo - 1]
+            }
+            indexInTails[lo] = i
+            if (lo == size) {
+                size++
+            }
+        }
+
+        val res = StringBuilder()
+        var curr = indexInTails[size - 1]
+        while (curr != -1) {
+            res.append(text[curr])
+            curr = parent[curr]
+        }
+        return res.reverse().toString()
     }
 
     /**

@@ -35,7 +35,11 @@ class TextCountViewModelTest {
             digitCount = 3,
             spaceCount = 2,
             symbolCount = 1,
-            wordCount = 3
+            wordCount = 3,
+            longestRepeatedSubstring = "o ",
+            runLengthEncoding = "H1e1l2o1 1w1o1r1l1d1 1112131!1",
+            longestPalindrome = "ll",
+            longestIncreasingSubsequence = "123"
         )
         every { textCountUseCase.execute(text) } returns expectedResult
         

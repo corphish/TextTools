@@ -137,7 +137,7 @@
     <string name="remove_duplicate_lines">Remove duplicate lines</string>
     <string name="remove_duplicate_lines_case_sensitive">Remove duplicate lines (case sensitive)</string>
     <string name="cursive">Cursive</string>
-    <string name="text_count">Text Count</string>
+    <string name="text_count">Text Analysis</string>
     <string name="characters">Characters</string>
     <string name="letters">Letters</string>
     <string name="words">Words</string>
@@ -146,7 +146,7 @@
     <string name="symbols">Other symbols</string>
     <string name="word_frequency">Word frequency</string>
     <string name="statistics">Statistics</string>
-    <string name="context_menu_text_count">[T\u00B2] Text Count</string>
+    <string name="context_menu_text_count">[T\u00B2] Text Analysis</string>
     <string name="text_count_desc">Get detailed analysis about character count, word count, letter count and more for the selected text.</string>
     <string name="title_activity_on_boarding">Onboarding</string>
     <string name="mode_select_title">Context menu options</string>
@@ -177,4 +177,22 @@
     <string name="append_lines">Append lines</string>
     <string name="generic_error">Unexpected error occurred</string>
     <string name="monospace">Monospace</string>
+    <string name="visualizations">Visualizations</string>
+    <string name="all_words">All Words</string>
+    <string name="advanced_features">Advanced Features</string>
+    <string name="longest_repeated_substring">Longest Repeated Substring</string>
+    <string name="run_length_encoding">Run Length Encoding</string>
+    <string name="longest_palindrome">Longest Palindrome</string>
+    <string name="longest_increasing_subsequence">Longest Increasing Subsequence</string>
+    <string name="emails">Emails</string>
+    <string name="phone_numbers">Phone Numbers</string>
+    <string name="urls">URLs</string>
+    <string name="ipv4_addresses">IPv4 Addresses</string>
+    <string name="ipv6_addresses">IPv6 Addresses</string>
+    <string name="dates">Dates</string>
+    <string name="times">Times</string>
+    <string name="currencies">Currencies</string>
+    <string name="binary_texts">Binary Texts</string>
+    <string name="hex_texts">Hex Texts</string>
+    <string name="json_blocks">JSON Blocks</string>
 </resources>
