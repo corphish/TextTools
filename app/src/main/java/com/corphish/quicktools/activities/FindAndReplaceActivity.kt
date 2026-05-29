@@ -43,6 +43,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -184,7 +185,7 @@ fun FindAndReplace(
                         TextField(
                             value = mainTextState,
                             onValueChange = { viewModel.updateMainText(it) },
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier.fillMaxSize().testTag("main_input"),
                             colors = TextFieldDefaults.colors(
                                 focusedContainerColor = Color.Transparent,
                                 unfocusedContainerColor = Color.Transparent,
@@ -220,7 +221,7 @@ fun FindAndReplace(
                                 TextField(
                                     value = findText,
                                     onValueChange = { viewModel.setFindText(it) },
-                                    modifier = Modifier.fillMaxWidth(),
+                                    modifier = Modifier.fillMaxWidth().testTag("find_input"),
                                     colors = TextFieldDefaults.colors(
                                         focusedContainerColor = Color.Transparent,
                                         unfocusedContainerColor = Color.Transparent,
@@ -258,7 +259,7 @@ fun FindAndReplace(
                                 TextField(
                                     value = replaceText,
                                     onValueChange = { viewModel.setReplaceText(it) },
-                                    modifier = Modifier.fillMaxWidth(),
+                                    modifier = Modifier.fillMaxWidth().testTag("replace_input"),
                                     colors = TextFieldDefaults.colors(
                                         focusedContainerColor = Color.Transparent,
                                         unfocusedContainerColor = Color.Transparent,
@@ -320,7 +321,7 @@ fun FindAndReplace(
                         top.linkTo(mainLabel.bottom, margin = 8.dp)
                         width = Dimension.fillToConstraints
                         height = Dimension.fillToConstraints
-                    },
+                    }.testTag("main_input"),
                     shape = MaterialTheme.shapes.medium,
                     color = MaterialTheme.colorScheme.surface,
                     tonalElevation = 2.dp
@@ -356,7 +357,7 @@ fun FindAndReplace(
                         bottom.linkTo(replaceLabel.top, margin = 16.dp)
                         end.linkTo(findButtons.start, margin = 8.dp)
                         width = Dimension.fillToConstraints
-                    },
+                    }.testTag("find_input"),
                     shape = MaterialTheme.shapes.medium,
                     color = MaterialTheme.colorScheme.surface,
                     tonalElevation = 2.dp
@@ -404,7 +405,7 @@ fun FindAndReplace(
                         bottom.linkTo(floatingToolbar.top, margin = 24.dp)
                         end.linkTo(replaceButtons.start, margin = 8.dp)
                         width = Dimension.fillToConstraints
-                    },
+                    }.testTag("replace_input"),
                     shape = MaterialTheme.shapes.medium,
                     color = MaterialTheme.colorScheme.surface,
                     tonalElevation = 2.dp
@@ -456,12 +457,14 @@ fun FindAndReplace(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun FindButtons(viewModel: TextReplacementViewModel, findText: String) {
+fun FindButtons(viewModel: TextReplacementViewModel, findText: String, modifier: Modifier = Modifier) {
     SplitButtonLayout(
+        modifier = modifier,
         leadingButton = {
             SplitButtonDefaults.LeadingButton(
                 onClick = { viewModel.decrementCounter() },
                 enabled = findText.isNotEmpty(),
+                modifier = Modifier.testTag("find_prev_button")
             ) {
                 Icon(
                     painterResource(id = R.drawable.ic_arrow_left),
@@ -473,6 +476,7 @@ fun FindButtons(viewModel: TextReplacementViewModel, findText: String) {
             SplitButtonDefaults.TrailingButton(
                 onClick = { viewModel.incrementCounter() },
                 enabled = findText.isNotEmpty(),
+                modifier = Modifier.testTag("find_next_button")
             ) {
                 Icon(
                     painterResource(id = R.drawable.ic_arrow_right),
@@ -485,12 +489,14 @@ fun FindButtons(viewModel: TextReplacementViewModel, findText: String) {
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun ReplaceButtons(viewModel: TextReplacementViewModel, replaceText: String, counterTotal: Int) {
+fun ReplaceButtons(viewModel: TextReplacementViewModel, replaceText: String, counterTotal: Int, modifier: Modifier = Modifier) {
     SplitButtonLayout(
+        modifier = modifier,
         leadingButton = {
             SplitButtonDefaults.LeadingButton(
                 onClick = { viewModel.replaceFirst() },
                 enabled = (replaceText.isNotEmpty() && counterTotal > 0),
+                modifier = Modifier.testTag("replace_button")
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_done),
@@ -502,6 +508,7 @@ fun ReplaceButtons(viewModel: TextReplacementViewModel, replaceText: String, cou
             SplitButtonDefaults.TrailingButton(
                 onClick = { viewModel.replaceAll() },
                 enabled = (replaceText.isNotEmpty() && counterTotal > 0),
+                modifier = Modifier.testTag("replace_all_button")
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_done_all),
@@ -536,13 +543,15 @@ fun ActionButtons(
                 onClick = {
                     viewModel.setIgnoreCase(!ignoreCase)
                 },
-                colors = if (ignoreCase) IconButtonDefaults.outlinedIconButtonColors() else IconButtonDefaults.filledIconButtonColors()
+                colors = if (ignoreCase) IconButtonDefaults.outlinedIconButtonColors() else IconButtonDefaults.filledIconButtonColors(),
+                modifier = Modifier.testTag("ignore_case_button")
             ) {
                 Icon(painterResource(R.drawable.ic_title), contentDescription = null)
             }
             IconButton(
                 onClick = { viewModel.undo() },
                 enabled = undoState,
+                modifier = Modifier.testTag("undo_button")
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_undo),
@@ -552,6 +561,7 @@ fun ActionButtons(
             IconButton(
                 onClick = { viewModel.redo() },
                 enabled = redoState,
+                modifier = Modifier.testTag("redo_button")
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_redo),
@@ -560,6 +570,7 @@ fun ActionButtons(
             }
             IconButton(
                 onClick = { viewModel.reset() },
+                modifier = Modifier.testTag("reset_button")
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_reset),
@@ -572,6 +583,7 @@ fun ActionButtons(
 
         FloatingActionButton(
             onClick = { onComplete(mainTextState) },
+            modifier = Modifier.testTag("complete_button")
         ) {
             Icon(
                 painter = painterResource(id = if (forceCopy) R.drawable.ic_copy else R.drawable.ic_save),
