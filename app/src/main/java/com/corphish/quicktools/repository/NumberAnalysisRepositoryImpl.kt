@@ -148,17 +148,34 @@ class NumberAnalysisRepositoryImpl @Inject constructor(
                 mathTransformations.add(R.string.square to numberFunctions.square(n).toString())
                 mathTransformations.add(R.string.cube to numberFunctions.cube(n).toString())
                 mathTransformations.add(
-                    R.string.square_root to numberFunctions.sqrtBI(n).toString()
+                    R.string.square_root to numberFunctions.bigDecimalToString(
+                        numberFunctions.sqrtBD(BigDecimal(n)),
+                        10, precision
+                    )
                 )
-                mathTransformations.add(R.string.cube_root to numberFunctions.cbrtBI(n).toString())
                 mathTransformations.add(
-                    R.string.log to numberFunctions.log(BigDecimal(n)).toString()
+                    R.string.cube_root to numberFunctions.bigDecimalToString(
+                        numberFunctions.cbrtBD(BigDecimal(n)),
+                        10, precision
+                    )
                 )
-                mathTransformations.add(R.string.ln to numberFunctions.ln(BigDecimal(n)).toString())
                 mathTransformations.add(
-                    R.string.exponential to if (n.toDouble() <= 64.0) numberFunctions.exp(
-                        BigDecimal(n)
-                    ).toString() else "@string/result_too_large"
+                    R.string.log to numberFunctions.bigDecimalToString(
+                        numberFunctions.log(BigDecimal(n)),
+                        10, precision
+                    )
+                )
+                mathTransformations.add(
+                    R.string.ln to numberFunctions.bigDecimalToString(
+                        numberFunctions.ln(BigDecimal(n)),
+                        10, precision
+                    )
+                )
+                mathTransformations.add(
+                    R.string.exponential to if (n.toDouble() <= 64.0) numberFunctions.bigDecimalToString(
+                        numberFunctions.exp(BigDecimal(n)),
+                        10, precision
+                    ) else "@string/result_too_large"
                 )
                 mathTransformations.add(
                     R.string.absolute_value to numberFunctions.abs(n).toString()

@@ -56,8 +56,12 @@ class NumberFunctions @Inject constructor() {
         
         return bases.filter { base ->
             fullText.all { char ->
-                val index = base62Chars.indexOf(char)
-                index != -1 && index < base
+                if (base <= 36) {
+                    Character.digit(char, base) != -1
+                } else {
+                    val index = base62Chars.indexOf(char)
+                    index != -1 && index < base
+                }
             }
         }
     }
