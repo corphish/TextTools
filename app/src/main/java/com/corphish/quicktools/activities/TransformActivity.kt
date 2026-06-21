@@ -1,6 +1,7 @@
 package com.corphish.quicktools.activities
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -9,20 +10,28 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -37,6 +46,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -112,7 +122,6 @@ class TransformActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TextTransformUI(
     textToTransform: String,
@@ -126,18 +135,15 @@ fun TextTransformUI(
     val inputText by viewModel.mainText.collectAsState()
     val previewText by viewModel.previewText.collectAsState()
 
-    var primaryFunctionExpanded by remember { mutableStateOf(false) }
     val selectedPrimaryIndex by viewModel.selectedPrimaryIndex.collectAsState()
-
-    var secondaryFunctionExpanded by remember { mutableStateOf(false) }
-    val selectedSecondaryIndex by viewModel.selectedSecondaryIndex.collectAsState()
     val secondaryList by viewModel.secondaryOptionList.collectAsState()
 
-    val secondaryFunctionText by viewModel.secondaryFunctionText.collectAsState()
-    val secondaryFunctionTextLabel by viewModel.secondaryFunctionTextLabel.collectAsState()
-    val secondaryFunctionTextInputType by viewModel.secondaryFunctionTextInputType.collectAsState()
-    val secondaryFunctionTextEnabled by viewModel.secondaryFunctionTextEnabled.collectAsState()
-    val secondaryFunctionTextVisible by viewModel.secondaryFunctionTextVisible.collectAsState()
+    var primaryFunctionExpanded by remember { mutableStateOf(false) }
+    var secondaryFunctionExpanded by remember { mutableStateOf(false) }
+
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    var landscapeOptionsVisible by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
 
@@ -151,71 +157,217 @@ fun TextTransformUI(
         }
     }
 
-    ConstraintLayout(
+    Box(
         modifier = Modifier
-            .fillMaxHeight()
+            .fillMaxSize()
             .padding(paddingValues)
     ) {
-        val (
-            inputAndPreviewTextField,
-            functionSheet
-        ) = createRefs()
+        if (isLandscape) {
+            Row(modifier = Modifier.fillMaxSize()) {
+                InputAndPreviewTextField(
+                    inputText = inputText,
+                    onInputTextChanged = { viewModel.initializeText(it) },
+                    previewText = previewText,
+                    showInput = !landscapeOptionsVisible,
+                    showPreview = true,
+                    isLandscape = true,
+                    modifier = Modifier.weight(1f)
+                )
 
-        InputAndPreviewTextField(
-            inputText = inputText,
-            onInputTextChanged = { viewModel.initializeText(it) },
-            previewText = previewText,
-            modifier = Modifier.constrainAs(inputAndPreviewTextField) {
-                top.linkTo(parent.top, margin = 16.dp)
-                bottom.linkTo(functionSheet.top, margin = 8.dp)
-                start.linkTo(parent.start, margin = 8.dp)
-                end.linkTo(parent.end, margin = 8.dp)
-                height = Dimension.fillToConstraints
-                width = Dimension.fillToConstraints
-            }
-        )
-
-        Card(
-            shape = RoundedCornerShape(
-                topStart = 16.dp,
-                topEnd = 16.dp,
-                bottomEnd = 0.dp,
-                bottomStart = 0.dp
-            ),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-            modifier = Modifier
-                .animateContentSize()
-                .constrainAs(functionSheet) {
-                    //top.linkTo(previewTextField.bottom, margin = 8.dp)
-                    bottom.linkTo(parent.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    width = Dimension.matchParent
+                if (landscapeOptionsVisible) {
+                    Card(
+                        shape = RoundedCornerShape(
+                            topStart = 16.dp,
+                            bottomStart = 16.dp
+                        ),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        ),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                        modifier = Modifier
+                            .width(320.dp)
+                            .fillMaxHeight()
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(end = 8.dp)
+                        ) {
+                            TransformOptionsHeader()
+                            Spacer(modifier = Modifier.weight(1f))
+                            IconButton(onClick = { landscapeOptionsVisible = false }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_arrow_left),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
+                        TransformOptionsBody(
+                            viewModel = viewModel,
+                            allowApply = allowApply,
+                            allowCopy = allowCopy,
+                            onApply = onApply,
+                            onCopy = onCopy,
+                            previewText = previewText,
+                            onPrimaryClick = { primaryFunctionExpanded = true },
+                            onSecondaryClick = { secondaryFunctionExpanded = true },
+                            isLandscape = true
+                        )
+                    }
+                } else {
+                    IconButton(
+                        onClick = { landscapeOptionsVisible = true },
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .padding(16.dp)
+                            .background(MaterialTheme.colorScheme.primary, CircleShape)
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_text_transform),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
                 }
-        ) {
-            Row(
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_text_transform),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.primary, CircleShape)
-                )
-                Text(
-                    text = stringResource(id = R.string.transform),
-                    style = TypographyV2.labelSmall,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontFamily = BrandFontFamily,
-                    modifier = Modifier.padding(start = 8.dp)
-                )
             }
+        } else {
+            ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+                val (inputAndPreviewTextField, functionSheet) = createRefs()
 
+                InputAndPreviewTextField(
+                    inputText = inputText,
+                    onInputTextChanged = { viewModel.initializeText(it) },
+                    previewText = previewText,
+                    modifier = Modifier.constrainAs(inputAndPreviewTextField) {
+                        top.linkTo(parent.top, margin = 16.dp)
+                        bottom.linkTo(functionSheet.top, margin = 8.dp)
+                        start.linkTo(parent.start, margin = 8.dp)
+                        end.linkTo(parent.end, margin = 8.dp)
+                        height = Dimension.fillToConstraints
+                        width = Dimension.fillToConstraints
+                    }
+                )
+
+                Card(
+                    shape = RoundedCornerShape(
+                        topStart = 16.dp,
+                        topEnd = 16.dp,
+                        bottomEnd = 0.dp,
+                        bottomStart = 0.dp
+                    ),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                    modifier = Modifier
+                        .animateContentSize()
+                        .constrainAs(functionSheet) {
+                            bottom.linkTo(parent.bottom)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            width = Dimension.matchParent
+                        }
+                ) {
+                    TransformOptionsHeader()
+                    TransformOptionsBody(
+                        viewModel = viewModel,
+                        allowApply = allowApply,
+                        allowCopy = allowCopy,
+                        onApply = onApply,
+                        onCopy = onCopy,
+                        previewText = previewText,
+                        onPrimaryClick = { primaryFunctionExpanded = true },
+                        onSecondaryClick = { secondaryFunctionExpanded = true },
+                        isLandscape = false
+                    )
+                }
+            }
+        }
+    }
+
+    if (primaryFunctionExpanded) {
+        ListDialog(
+            title = stringResource(R.string.transform_long),
+            message = "",
+            list = TextTransformViewModel.transformOptions,
+            onItemSelected = {
+                viewModel.selectPrimaryIndex(it)
+                primaryFunctionExpanded = false
+            },
+            stringSelector = { stringResource(it) },
+            iconSelector = { R.drawable.ic_text_transform },
+            onBackPressed = { primaryFunctionExpanded = false },
+            dismissible = true,
+            onDismissRequest = { primaryFunctionExpanded = false }
+        )
+    }
+
+    if (secondaryFunctionExpanded) {
+        ListDialog(
+            title = stringResource(TextTransformViewModel.transformOptions[selectedPrimaryIndex]),
+            message = "",
+            list = secondaryList,
+            onItemSelected = {
+                viewModel.selectSecondaryIndex(it)
+                secondaryFunctionExpanded = false
+            },
+            stringSelector = { stringResource(it) },
+            iconSelector = { R.drawable.ic_text_transform },
+            onBackPressed = { secondaryFunctionExpanded = false },
+            dismissible = true,
+            onDismissRequest = { secondaryFunctionExpanded = false }
+        )
+    }
+}
+
+@Composable
+fun TransformOptionsHeader() {
+    Row(
+        modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.ic_text_transform),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onPrimary,
+            modifier = Modifier.background(MaterialTheme.colorScheme.primary, CircleShape)
+        )
+        Text(
+            text = stringResource(id = R.string.transform),
+            style = TypographyV2.labelSmall,
+            color = MaterialTheme.colorScheme.primary,
+            fontFamily = BrandFontFamily,
+            modifier = Modifier.padding(start = 8.dp)
+        )
+    }
+}
+
+@Composable
+fun TransformOptionsBody(
+    viewModel: TextTransformViewModel,
+    allowApply: Boolean,
+    allowCopy: Boolean,
+    onApply: (String) -> Unit,
+    onCopy: (String) -> Unit,
+    previewText: String,
+    onPrimaryClick: () -> Unit,
+    onSecondaryClick: () -> Unit,
+    isLandscape: Boolean = false,
+) {
+    val selectedPrimaryIndex by viewModel.selectedPrimaryIndex.collectAsState()
+    val selectedSecondaryIndex by viewModel.selectedSecondaryIndex.collectAsState()
+    val secondaryList by viewModel.secondaryOptionList.collectAsState()
+
+    val secondaryFunctionText by viewModel.secondaryFunctionText.collectAsState()
+    val secondaryFunctionTextLabel by viewModel.secondaryFunctionTextLabel.collectAsState()
+    val secondaryFunctionTextInputType by viewModel.secondaryFunctionTextInputType.collectAsState()
+    val secondaryFunctionTextEnabled by viewModel.secondaryFunctionTextEnabled.collectAsState()
+    val secondaryFunctionTextVisible by viewModel.secondaryFunctionTextVisible.collectAsState()
+
+    Column {
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState())
+        ) {
             // Function 1
             Row(
                 modifier = Modifier
@@ -225,9 +377,7 @@ fun TextTransformUI(
                         color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
                         shape = RoundedCornerShape(size = 4.dp)
                     )
-                    .clickable {
-                        primaryFunctionExpanded = !primaryFunctionExpanded
-                    },
+                    .clickable { onPrimaryClick() },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
@@ -254,19 +404,12 @@ fun TextTransformUI(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(
-                            start = 16.dp,
-                            end = 16.dp,
-                            top = 4.dp,
-                            bottom = 4.dp
-                        )
+                        .padding(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 4.dp)
                         .background(
                             color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
                             shape = RoundedCornerShape(size = 4.dp)
                         )
-                        .clickable {
-                            secondaryFunctionExpanded = !secondaryFunctionExpanded
-                        },
+                        .clickable { onSecondaryClick() },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
@@ -289,7 +432,6 @@ fun TextTransformUI(
                 }
             }
 
-            // Text input for repeat/remove/add prefix or suffix
             if (secondaryFunctionTextVisible) {
                 OutlinedTextField(
                     value = secondaryFunctionText,
@@ -302,89 +444,44 @@ fun TextTransformUI(
                         .fillMaxWidth()
                 )
             }
+        }
 
-            Row(
-                modifier = Modifier.padding(
-                    horizontal = 16.dp,
-                    vertical = 8.dp
-                )
+        if (isLandscape) {
+            Spacer(modifier = Modifier.weight(1f))
+        }
+
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+        ) {
+            Button(
+                onClick = { onApply(previewText) },
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 8.dp),
+                enabled = allowApply
             ) {
-                Button(
-                    onClick = { onApply(previewText) },
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(end = 8.dp),
-                    enabled = allowApply
-                ) {
-                    MarqueeText(
-                        text = stringResource(id = R.string.apply),
-                        fontFamily = BrandFontFamily
-                    )
-                }
+                MarqueeText(
+                    text = stringResource(id = R.string.apply),
+                    fontFamily = BrandFontFamily
+                )
+            }
 
-                Button(
-                    onClick = {
-                        viewModel.copyToClipboard(previewText)
-                        onCopy(previewText)
-                    },
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 8.dp),
-                    enabled = allowCopy
-                ) {
-                    MarqueeText(
-                        text = stringResource(id = R.string.copy_to_clipboard),
-                        fontFamily = BrandFontFamily
-                    )
-                }
+            Button(
+                onClick = {
+                    viewModel.copyToClipboard(previewText)
+                    onCopy(previewText)
+                },
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 8.dp),
+                enabled = allowCopy
+            ) {
+                MarqueeText(
+                    text = stringResource(id = R.string.copy_to_clipboard),
+                    fontFamily = BrandFontFamily
+                )
             }
         }
-    }
-
-    if (primaryFunctionExpanded) {
-        ListDialog(
-            title = stringResource(R.string.transform_long),
-            message = "",
-            list = TextTransformViewModel.transformOptions,
-            onItemSelected = {
-                viewModel.selectPrimaryIndex(it)
-                primaryFunctionExpanded = false
-            },
-            stringSelector = {
-                stringResource(it)
-            },
-            iconSelector = { R.drawable.ic_text_transform },
-            onBackPressed = {
-                primaryFunctionExpanded = !primaryFunctionExpanded
-            },
-            dismissible = true,
-            onDismissRequest = {
-                primaryFunctionExpanded = !primaryFunctionExpanded
-            }
-        )
-    }
-
-    if (secondaryFunctionExpanded) {
-        ListDialog(
-            title = stringResource(TextTransformViewModel.transformOptions[selectedPrimaryIndex]),
-            message = "",
-            list = secondaryList,
-            onItemSelected = {
-                viewModel.selectSecondaryIndex(it)
-                secondaryFunctionExpanded = false
-            },
-            stringSelector = {
-                stringResource(it)
-            },
-            iconSelector = { R.drawable.ic_text_transform },
-            onBackPressed = {
-                secondaryFunctionExpanded = !secondaryFunctionExpanded
-            },
-            dismissible = true,
-            onDismissRequest = {
-                secondaryFunctionExpanded = !secondaryFunctionExpanded
-            }
-        )
     }
 }
 

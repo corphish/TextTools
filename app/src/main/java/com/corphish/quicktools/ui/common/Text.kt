@@ -4,7 +4,9 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -38,83 +40,142 @@ fun InputAndPreviewTextField(
     inputText: String,
     previewText: String,
     onInputTextChanged: (String) -> Unit = {},
+    showInput: Boolean = true,
+    showPreview: Boolean = true,
+    isLandscape: Boolean = false,
 ) {
     val fontSize = determineFontSizeForWordCount(inputText)
 
-    Column(
-        modifier = modifier
-            .animateContentSize()
-            .fillMaxSize()
-            .padding(all = 16.dp)
-    ) {
-        Text(
-            stringResource(R.string.input),
-            style = TypographyV2.labelSmall,
-            color = MaterialTheme.colorScheme.primary
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-
-        Box(modifier = modifier) {
-            if (inputText.isEmpty()) {
-                Text(
-                    stringResource(R.string.enter_text_here),
-                    style = LocalTextStyle.current.copy(fontSize = fontSize),
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
-                )
+    if (isLandscape) {
+        Row(
+            modifier = modifier
+                .animateContentSize()
+                .fillMaxSize()
+                .padding(all = 16.dp)
+        ) {
+            if (showInput) {
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                ) {
+                    InputPart(inputText, onInputTextChanged, fontSize)
+                }
             }
+            if (showInput && showPreview) {
+                Spacer(modifier = Modifier.width(16.dp))
+            }
+            if (showPreview) {
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                ) {
+                    PreviewPart(previewText, fontSize)
+                }
+            }
+        }
+    } else {
+        Column(
+            modifier = modifier
+                .animateContentSize()
+                .fillMaxSize()
+                .padding(all = 16.dp)
+        ) {
+            if (showInput) {
+                Column(modifier = Modifier.weight(1f)) {
+                    InputPart(inputText, onInputTextChanged, fontSize)
+                }
+            }
+            if (showInput && showPreview) {
+                Spacer(modifier = Modifier.height(16.dp))
+                HorizontalDivider(
+                    thickness = 4.dp,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .width(32.dp)
+                        .align(Alignment.CenterHorizontally)
+                        .clip(RoundedCornerShape(50))
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+            if (showPreview) {
+                Column(modifier = Modifier.weight(1f)) {
+                    PreviewPart(previewText, fontSize)
+                }
+            }
+        }
+    }
+}
 
-            BasicTextField(
-                value = inputText,
-                onValueChange = onInputTextChanged,
-                textStyle = LocalTextStyle.current.copy(fontSize = fontSize, color = MaterialTheme.colorScheme.onSurface),
-                cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
-                maxLines = 4,
-                modifier = Modifier.fillMaxWidth()
+@Composable
+private fun InputPart(
+    inputText: String,
+    onInputTextChanged: (String) -> Unit,
+    fontSize: TextUnit
+) {
+    Text(
+        stringResource(R.string.input),
+        style = TypographyV2.labelSmall,
+        color = MaterialTheme.colorScheme.primary
+    )
+    Spacer(modifier = Modifier.height(4.dp))
+
+    Box(modifier = Modifier.fillMaxWidth()) {
+        if (inputText.isEmpty()) {
+            Text(
+                stringResource(R.string.enter_text_here),
+                style = LocalTextStyle.current.copy(fontSize = fontSize),
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
             )
         }
 
-        Spacer(modifier = Modifier.weight(1f))
-        HorizontalDivider(
-            thickness = 4.dp,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier
-                .width(32.dp)
-                .align(Alignment.CenterHorizontally)
-                .clip(RoundedCornerShape(50))
+        BasicTextField(
+            value = inputText,
+            onValueChange = onInputTextChanged,
+            textStyle = LocalTextStyle.current.copy(
+                fontSize = fontSize,
+                color = MaterialTheme.colorScheme.onSurface
+            ),
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+            modifier = Modifier.fillMaxWidth()
         )
-        Spacer(modifier = Modifier.height(16.dp))
+    }
+}
 
+@Composable
+private fun PreviewPart(
+    previewText: String,
+    fontSize: TextUnit
+) {
+    Text(
+        stringResource(R.string.preview),
+        style = TypographyV2.labelSmall,
+        color = MaterialTheme.colorScheme.primary
+    )
+    Spacer(modifier = Modifier.height(4.dp))
+
+    if (previewText.isEmpty()) {
         Text(
-            stringResource(R.string.preview),
-            style = TypographyV2.labelSmall,
-            color = MaterialTheme.colorScheme.primary
+            stringResource(R.string.preview_text_placeholder),
+            style = LocalTextStyle.current.copy(fontSize = fontSize),
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+            modifier = Modifier
+                .verticalScroll(
+                    rememberScrollState()
+                )
+                .fillMaxWidth()
         )
-        Spacer(modifier = Modifier.height(4.dp))
-
-        if (previewText.isEmpty()) {
-            Text(
-                stringResource(R.string.preview_text_placeholder),
-                style = LocalTextStyle.current.copy(fontSize = fontSize),
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
-                modifier = Modifier
-                    .verticalScroll(
-                        rememberScrollState()
-                    )
-                    .fillMaxWidth()
-            )
-        } else {
-            Text(
-                previewText,
-                style = LocalTextStyle.current.copy(fontSize = fontSize),
-                modifier = Modifier
-                    .verticalScroll(
-                        rememberScrollState()
-                    )
-                    .fillMaxWidth()
-            )
-        }
-
-        Spacer(modifier = Modifier.weight(1f))
+    } else {
+        Text(
+            previewText,
+            style = LocalTextStyle.current.copy(fontSize = fontSize),
+            modifier = Modifier
+                .verticalScroll(
+                    rememberScrollState()
+                )
+                .fillMaxWidth()
+        )
     }
 }
 
