@@ -58,6 +58,13 @@ data class Feature(
                 featureTitle = R.string.title_activity_find_and_replace,
                 featureDesc = R.string.find_and_replace_desc,
                 contextMenuText = R.string.context_menu_find_and_replace,
+            ),
+            Feature(
+                id = FeatureIds.NUMBER_ANALYSIS,
+                icon = R.drawable.ic_numbers,
+                featureTitle = R.string.number_analysis,
+                featureDesc = R.string.number_analysis_desc,
+                contextMenuText = R.string.context_menu_number_analysis,
             )
         )
     }

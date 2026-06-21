@@ -195,4 +195,49 @@
     <string name="binary_texts">Binary Texts</string>
     <string name="hex_texts">Hex Texts</string>
     <string name="json_blocks">JSON Blocks</string>
+
+    <string name="number_analysis">Number Analysis</string>
+    <string name="context_menu_number_analysis">[T\u00B2] Number Analysis</string>
+    <string name="number_analysis_desc">Analyze numbers, convert them to different bases, find factors, prime information, and more.</string>
+    <string name="conversions">Conversions</string>
+    <string name="math_transformations">Mathematical Transformations</string>
+    <string name="digit_derivations">Digit-based Derivations</string>
+    <string name="factors">Factors</string>
+    <string name="prime_number">Prime Number</string>
+    <string name="language_conversion">Language Conversion</string>
+
+    <string name="square">Square</string>
+    <string name="cube">Cube</string>
+    <string name="square_root">Square Root</string>
+    <string name="cube_root">Cube Root</string>
+    <string name="log">Log (base 10)</string>
+    <string name="ln">Log (natural)</string>
+    <string name="exponential">Exponential</string>
+    <string name="absolute_value">Absolute Value</string>
+    <string name="factorial">Factorial</string>
+
+    <string name="sum_of_digits">Sum of digits</string>
+    <string name="product_of_digits">Product of digits</string>
+    <string name="product_of_digits_except_zero">Product of digits (except zero)</string>
+    <string name="reverse">Reverse</string>
+    <string name="digit_frequency">Digit frequency</string>
+    <string name="largest_digit">Largest digit</string>
+    <string name="smallest_digit">Smallest digit</string>
+    <string name="digital_root">Digital root</string>
+
+    <string name="prime_factors">Prime factors</string>
+    <string name="divisors">Divisors</string>
+
+    <string name="is_prime">Is prime?</string>
+    <string name="next_prime">Next prime</string>
+    <string name="prev_prime">Previous prime</string>
+
+    <string name="number_to_words">Number to words</string>
+    <string name="ordinal">Ordinal</string>
+    <string name="roman_numeral">Roman numeral</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="supported_bases">Supported bases: %1$s</string>
+    <string name="invalid_number">Invalid number for analysis</string>
+    <string name="result_too_large">Result too large</string>
 </resources>

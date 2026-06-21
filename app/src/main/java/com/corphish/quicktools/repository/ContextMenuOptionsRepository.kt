@@ -37,5 +37,6 @@ enum class FeatureIds {
     TRANSFORM,
     TEXT_COUNT,
     SAVE_TEXT,
-    FIND_AND_REPLACE
+    FIND_AND_REPLACE,
+    NUMBER_ANALYSIS
 }

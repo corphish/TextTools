@@ -31,7 +31,8 @@ class OptionsActivity : NoUIActivity() {
         Option(FeatureIds.TRANSFORM, R.string.transform_long, R.drawable.ic_text_transform, TransformActivity::class.java, false),
         Option(FeatureIds.TEXT_COUNT, R.string.text_count, R.drawable.ic_text_count, TextCountActivity::class.java, false),
         Option(FeatureIds.SAVE_TEXT, R.string.save_text_title, R.drawable.ic_save, SaveTextActivity::class.java, false),
-        Option(FeatureIds.FIND_AND_REPLACE, R.string.title_activity_find_and_replace, R.drawable.ic_find_and_replace, FindAndReplaceActivity::class.java, true)
+        Option(FeatureIds.FIND_AND_REPLACE, R.string.title_activity_find_and_replace, R.drawable.ic_find_and_replace, FindAndReplaceActivity::class.java, true),
+        Option(FeatureIds.NUMBER_ANALYSIS, R.string.number_analysis, R.drawable.ic_numbers, NumberAnalysisActivity::class.java, false)
     )
 
     private val router = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
