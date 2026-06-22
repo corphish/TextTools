@@ -193,13 +193,20 @@ fun LazyListScope.analysisContent(
         item { SectionHeader(stringResource(R.string.conversions), painterResource(R.drawable.ic_auto_fix_high)) }
         item {
             AnalysisSection {
-                res.conversions.forEach { (base, value) ->
+                res.conversions.toList().forEachIndexed { index, (base, value) ->
                     ResultItem(
                         label = "Base $base",
                         value = value,
                         allowApply = allowApply,
                         onApply = onApply
                     )
+                    if (index < res.conversions.size - 1) {
+                        HorizontalDivider(
+                            color = MaterialTheme.colorScheme.surface,
+                            thickness = 2.dp,
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+                    }
                 }
             }
         }
@@ -208,7 +215,7 @@ fun LazyListScope.analysisContent(
             item { SectionHeader(stringResource(R.string.math_transformations), painterResource(R.drawable.ic_numbers)) }
             item {
                 AnalysisSection {
-                    res.mathTransformations.forEach { (labelRes, value) ->
+                    res.mathTransformations.toList().forEachIndexed { index, (labelRes, value) ->
                         val isError = value.startsWith("@string/")
                         val displayValue = if (isError) {
                             val resId = when (value) {
@@ -224,6 +231,13 @@ fun LazyListScope.analysisContent(
                             allowCopy = !isError,
                             onApply = onApply
                         )
+                        if (index < res.mathTransformations.size - 1) {
+                            HorizontalDivider(
+                                color = MaterialTheme.colorScheme.surface,
+                                thickness = 2.dp,
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            )
+                        }
                     }
                 }
             }
@@ -233,13 +247,20 @@ fun LazyListScope.analysisContent(
             item { SectionHeader(stringResource(R.string.digit_derivations), painterResource(R.drawable.ic_bar_chart)) }
             item {
                 AnalysisSection {
-                    res.digitDerivations.forEach { (labelRes, value) ->
+                    res.digitDerivations.toList().forEachIndexed { index, (labelRes, value) ->
                         ResultItem(
                             label = stringResource(labelRes),
                             value = value,
                             allowApply = allowApply,
                             onApply = onApply
                         )
+                        if (index < res.digitDerivations.size - 1) {
+                            HorizontalDivider(
+                                color = MaterialTheme.colorScheme.surface,
+                                thickness = 2.dp,
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            )
+                        }
                     }
                 }
             }
@@ -249,13 +270,20 @@ fun LazyListScope.analysisContent(
             item { SectionHeader(stringResource(R.string.factors), painterResource(R.drawable.ic_auto_awesome)) }
             item {
                 AnalysisSection {
-                    res.factors.forEach { (labelRes, value) ->
+                    res.factors.toList().forEachIndexed { index, (labelRes, value) ->
                         ResultItem(
                             label = stringResource(labelRes),
                             value = value,
                             allowApply = allowApply,
                             onApply = onApply
                         )
+                        if (index < res.factors.size - 1) {
+                            HorizontalDivider(
+                                color = MaterialTheme.colorScheme.surface,
+                                thickness = 2.dp,
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            )
+                        }
                     }
                 }
             }
@@ -265,7 +293,7 @@ fun LazyListScope.analysisContent(
             item { SectionHeader(stringResource(R.string.prime_number), painterResource(R.drawable.ic_auto_fix_high)) }
             item {
                 AnalysisSection {
-                    res.primeInfo.forEach { (labelRes, value) ->
+                    res.primeInfo.toList().forEachIndexed { index, (labelRes, value) ->
                         val isError = value == "@string/result_too_large"
                         val displayValue = if (value.startsWith("@string/")) {
                             val resId = when (value) {
@@ -283,6 +311,13 @@ fun LazyListScope.analysisContent(
                             allowCopy = !isError,
                             onApply = onApply
                         )
+                        if (index < res.primeInfo.size - 1) {
+                            HorizontalDivider(
+                                color = MaterialTheme.colorScheme.surface,
+                                thickness = 2.dp,
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            )
+                        }
                     }
                 }
             }
@@ -292,13 +327,20 @@ fun LazyListScope.analysisContent(
             item { SectionHeader(stringResource(R.string.language_conversion), painterResource(R.drawable.ic_title)) }
             item {
                 AnalysisSection {
-                    res.languageConversions.forEach { (labelRes, value) ->
+                    res.languageConversions.toList().forEachIndexed { index, (labelRes, value) ->
                         ResultItem(
                             label = stringResource(labelRes),
                             value = value,
                             allowApply = allowApply,
                             onApply = onApply
                         )
+                        if (index < res.languageConversions.size - 1) {
+                            HorizontalDivider(
+                                color = MaterialTheme.colorScheme.surface,
+                                thickness = 2.dp,
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            )
+                        }
                     }
                 }
             }
@@ -395,9 +437,13 @@ fun AnalysisSection(
         shape = MaterialTheme.shapes.medium,
         modifier = Modifier.fillMaxWidth()
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column {
+            Spacer(modifier = Modifier.height(8.dp))
             if (icon != null) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Icon(
                         painter = icon,
                         contentDescription = null,
@@ -412,9 +458,10 @@ fun AnalysisSection(
                         modifier = Modifier.padding(start = 8.dp)
                     )
                 }
-                HorizontalDivider(modifier = Modifier.padding(top = 8.dp, bottom = 8.dp))
+                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
             }
             content()
+            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }
@@ -454,7 +501,7 @@ fun ResultItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {
