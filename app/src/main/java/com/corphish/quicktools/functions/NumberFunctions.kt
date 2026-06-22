@@ -1,9 +1,11 @@
 package com.corphish.quicktools.functions
 
+import androidx.compose.ui.text.capitalize
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.MathContext
 import java.math.RoundingMode
+import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.math.*
@@ -357,7 +359,8 @@ class NumberFunctions @Inject constructor() {
             }
         }
         val finalStr = result.trim()
-        return if (isNegative) "minus $finalStr" else finalStr
+        val words = if (isNegative) "minus $finalStr" else finalStr
+        return words.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
     }
 
     fun numberToRoman(n: BigInteger): String {
