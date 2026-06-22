@@ -305,8 +305,6 @@ fun LazyListScope.statsContent(result: TextCountResult, context: Context) {
                         }
                     }
 
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
-
                     Text(
                         stringResource(R.string.all_words),
                         style = TypographyV2.labelSmall,
@@ -361,35 +359,35 @@ fun LazyListScope.statsContent(result: TextCountResult, context: Context) {
             color = MaterialTheme.colorScheme.surface,
             tonalElevation = 2.dp
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column {
                 FeatureItem(stringResource(R.string.longest_repeated_substring), result.longestRepeatedSubstring, context)
-                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                HorizontalDivider(color = MaterialTheme.colorScheme.surface, thickness = 2.dp)
                 FeatureItem(stringResource(R.string.run_length_encoding), result.runLengthEncoding, context)
-                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                HorizontalDivider(color = MaterialTheme.colorScheme.surface, thickness = 2.dp)
                 FeatureItem(stringResource(R.string.longest_palindrome), result.longestPalindrome, context)
-                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                HorizontalDivider(color = MaterialTheme.colorScheme.surface, thickness = 2.dp)
                 FeatureItem(stringResource(R.string.longest_increasing_subsequence), result.longestIncreasingSubsequence, context)
-                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                HorizontalDivider(color = MaterialTheme.colorScheme.surface, thickness = 2.dp)
                 FeatureListItems(stringResource(R.string.emails), result.emails, context)
-                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                HorizontalDivider(color = MaterialTheme.colorScheme.surface, thickness = 2.dp)
                 FeatureListItems(stringResource(R.string.phone_numbers), result.phoneNumbers, context)
-                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                HorizontalDivider(color = MaterialTheme.colorScheme.surface, thickness = 2.dp)
                 FeatureListItems(stringResource(R.string.urls), result.urls, context)
-                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                HorizontalDivider(color = MaterialTheme.colorScheme.surface, thickness = 2.dp)
                 FeatureListItems(stringResource(R.string.ipv4_addresses), result.ipv4Addresses, context)
-                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                HorizontalDivider(color = MaterialTheme.colorScheme.surface, thickness = 2.dp)
                 FeatureListItems(stringResource(R.string.ipv6_addresses), result.ipv6Addresses, context)
-                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                HorizontalDivider(color = MaterialTheme.colorScheme.surface, thickness = 2.dp)
                 FeatureListItems(stringResource(R.string.dates), result.dates, context)
-                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                HorizontalDivider(color = MaterialTheme.colorScheme.surface, thickness = 2.dp)
                 FeatureListItems(stringResource(R.string.times), result.times, context)
-                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                HorizontalDivider(color = MaterialTheme.colorScheme.surface, thickness = 2.dp)
                 FeatureListItems(stringResource(R.string.currencies), result.currencies, context)
-                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                HorizontalDivider(color = MaterialTheme.colorScheme.surface, thickness = 2.dp)
                 FeatureListItems(stringResource(R.string.binary_texts), result.binaryTexts, context)
-                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                HorizontalDivider(color = MaterialTheme.colorScheme.surface, thickness = 2.dp)
                 FeatureListItems(stringResource(R.string.hex_texts), result.hexTexts, context)
-                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                HorizontalDivider(color = MaterialTheme.colorScheme.surface, thickness = 2.dp)
                 FeatureListItems(stringResource(R.string.json_blocks), result.jsonTexts, context)
             }
         }
@@ -417,7 +415,7 @@ fun LegendItem(label: String, color: Color) {
 @Composable
 fun FeatureItem(label: String, value: String, context: Context) {
     val toastText = stringResource(R.string.copied_to_clipboard)
-    Column {
+    Column(modifier = Modifier.padding(16.dp)) {
         Text(text = label, style = TypographyV2.labelSmall, color = MaterialTheme.colorScheme.secondary)
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
@@ -437,7 +435,7 @@ fun FeatureItem(label: String, value: String, context: Context) {
 @Composable
 fun FeatureListItems(label: String, values: List<String>, context: Context) {
     val toastText = stringResource(R.string.copied_to_clipboard)
-    Column {
+    Column(modifier = Modifier.padding(16.dp)) {
         Text(text = label, style = TypographyV2.labelSmall, color = MaterialTheme.colorScheme.secondary)
         if (values.isEmpty()) {
             Text(text = stringResource(R.string.none), style = TypographyV2.bodyMedium)
