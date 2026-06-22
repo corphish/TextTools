@@ -80,7 +80,6 @@ class TransformActivity : ComponentActivity() {
             val forceCopy = intent.getBooleanExtra(Constants.INTENT_FORCE_COPY, false)
 
             val text = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT).toString()
-            val resultIntent = Intent()
 
             setContent {
                 QuickToolsTheme {
@@ -96,19 +95,15 @@ class TransformActivity : ComponentActivity() {
                             paddingValues = it,
                             allowApply = if (forceCopy) false else !readonly,
                             allowCopy = true,
-                            onApply = { applyText ->
-                                resultIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, applyText)
-                                setResult(RESULT_OK, resultIntent)
+                            onNext = { text ->
+                                val nextIntent = Intent(this, TextActionActivity::class.java)
+                                nextIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, text)
+                                nextIntent.putExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, intent.getBooleanExtra(
+                                    Intent.EXTRA_PROCESS_TEXT_READONLY, true))
+                                nextIntent.putExtra(Constants.INTENT_FORCE_COPY, forceCopy)
+                                startActivity(nextIntent)
                                 finish()
                             },
-                            onCopy = { text ->
-                                Toast.makeText(
-                                    this,
-                                    R.string.copied_to_clipboard,
-                                    Toast.LENGTH_LONG
-                                ).show()
-                                finish()
-                            }
                         )
                     }
                 }
@@ -128,8 +123,7 @@ fun TextTransformUI(
     paddingValues: PaddingValues,
     allowApply: Boolean,
     allowCopy: Boolean,
-    onApply: (String) -> Unit = {},
-    onCopy: (String) -> Unit = {},
+    onNext: (String) -> Unit = {},
 ) {
     val viewModel: TextTransformViewModel = hiltViewModel()
     val inputText by viewModel.mainText.collectAsState()
@@ -206,8 +200,7 @@ fun TextTransformUI(
                             viewModel = viewModel,
                             allowApply = allowApply,
                             allowCopy = allowCopy,
-                            onApply = onApply,
-                            onCopy = onCopy,
+                            onNext = onNext,
                             previewText = previewText,
                             onPrimaryClick = { primaryFunctionExpanded = true },
                             onSecondaryClick = { secondaryFunctionExpanded = true },
@@ -273,8 +266,7 @@ fun TextTransformUI(
                         viewModel = viewModel,
                         allowApply = allowApply,
                         allowCopy = allowCopy,
-                        onApply = onApply,
-                        onCopy = onCopy,
+                        onNext = onNext,
                         previewText = previewText,
                         onPrimaryClick = { primaryFunctionExpanded = true },
                         onSecondaryClick = { secondaryFunctionExpanded = true },
@@ -347,8 +339,7 @@ fun TransformOptionsBody(
     viewModel: TextTransformViewModel,
     allowApply: Boolean,
     allowCopy: Boolean,
-    onApply: (String) -> Unit,
-    onCopy: (String) -> Unit,
+    onNext: (String) -> Unit,
     previewText: String,
     onPrimaryClick: () -> Unit,
     onSecondaryClick: () -> Unit,
@@ -450,37 +441,14 @@ fun TransformOptionsBody(
             Spacer(modifier = Modifier.weight(1f))
         }
 
-        Row(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+        Button(
+            onClick = { onNext(previewText) },
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
-            Button(
-                onClick = { onApply(previewText) },
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(end = 8.dp),
-                enabled = allowApply
-            ) {
-                MarqueeText(
-                    text = stringResource(id = R.string.apply),
-                    fontFamily = BrandFontFamily
-                )
-            }
-
-            Button(
-                onClick = {
-                    viewModel.copyToClipboard(previewText)
-                    onCopy(previewText)
-                },
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(start = 8.dp),
-                enabled = allowCopy
-            ) {
-                MarqueeText(
-                    text = stringResource(id = R.string.copy_to_clipboard),
-                    fontFamily = BrandFontFamily
-                )
-            }
+            MarqueeText(
+                text = stringResource(id = R.string.next),
+                fontFamily = BrandFontFamily
+            )
         }
     }
 }

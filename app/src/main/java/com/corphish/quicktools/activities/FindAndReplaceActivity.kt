@@ -101,20 +101,16 @@ class FindAndReplaceActivity : ComponentActivity() {
                         FindAndReplace(
                             defaultPadding = it,
                             viewModel = viewModel,
-                            forceCopy = forceCopy,
-                        ) { finalText ->
-                            if (forceCopy) {
-                                viewModel.copyToClipboard(finalText)
-                                Toast.makeText(this, R.string.copied_to_clipboard, Toast.LENGTH_LONG)
-                                    .show()
-                            } else {
-                                val resultIntent = Intent()
+                            onComplete = { finalText ->
+                                val resultIntent = Intent(this, TextActionActivity::class.java)
                                 resultIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, finalText)
-                                setResult(RESULT_OK, resultIntent)
-                            }
+                                resultIntent.putExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, readonly)
+                                resultIntent.putExtra(Constants.INTENT_FORCE_COPY, forceCopy)
+                                startActivity(resultIntent)
 
-                            finish()
-                        }
+                                finish()
+                            }
+                        )
                     }
                 }
             }
@@ -130,7 +126,6 @@ class FindAndReplaceActivity : ComponentActivity() {
 fun FindAndReplace(
     defaultPadding: PaddingValues,
     viewModel: TextReplacementViewModel,
-    forceCopy: Boolean,
     onComplete: (String) -> Unit,
 ) {
     val highlightColor = MaterialTheme.colorScheme.secondary
@@ -282,7 +277,6 @@ fun FindAndReplace(
                         ignoreCase = ignoreCase,
                         undoState = undoState,
                         redoState = redoState,
-                        forceCopy = forceCopy,
                         mainTextState = mainTextState,
                         onComplete = onComplete
                     )
@@ -445,7 +439,6 @@ fun FindAndReplace(
                         ignoreCase = ignoreCase,
                         undoState = undoState,
                         redoState = redoState,
-                        forceCopy = forceCopy,
                         mainTextState = mainTextState,
                         onComplete = onComplete
                     )
@@ -526,7 +519,6 @@ fun ActionButtons(
     ignoreCase: Boolean,
     undoState: Boolean,
     redoState: Boolean,
-    forceCopy: Boolean,
     mainTextState: String,
     onComplete: (String) -> Unit
 ) {
@@ -586,7 +578,7 @@ fun ActionButtons(
             modifier = Modifier.testTag("complete_button")
         ) {
             Icon(
-                painter = painterResource(id = if (forceCopy) R.drawable.ic_copy else R.drawable.ic_save),
+                painter = painterResource(id = R.drawable.ic_arrow_right),
                 contentDescription = null
             )
         }

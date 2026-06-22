@@ -1,14 +1,18 @@
 package com.corphish.quicktools.modules
 
 import android.content.Context
+import com.corphish.quicktools.functions.ContextFunctions
 import com.corphish.quicktools.functions.FileFunctions
 import com.corphish.quicktools.functions.NumberFunctions
+import com.corphish.quicktools.functions.TextActionDeterminationFunctions
 import com.corphish.quicktools.functions.TextFunctions
 import com.corphish.quicktools.repository.ContextMenuOptionsRepository
 import com.corphish.quicktools.repository.ContextMenuOptionsRepositoryImpl
 import com.corphish.quicktools.repository.NumberAnalysisRepository
 import com.corphish.quicktools.repository.NumberAnalysisRepositoryImpl
 import com.corphish.quicktools.repository.SettingsRepository
+import com.corphish.quicktools.repository.TextActionRepository
+import com.corphish.quicktools.repository.TextActionRepositoryImpl
 import com.corphish.quicktools.repository.TextReplacementRepository
 import com.corphish.quicktools.repository.TextReplacementRepositoryImpl
 import com.corphish.quicktools.repository.TextRepository
@@ -54,4 +58,9 @@ object AppModule {
     @Singleton
     fun provideContextMenuOptionsRepository(@ApplicationContext context: Context): ContextMenuOptionsRepository =
         ContextMenuOptionsRepositoryImpl(context)
+
+    @Provides
+    @Singleton
+    fun provideTextActionRepository(contextFunctions: ContextFunctions, textActionDeterminationFunctions: TextActionDeterminationFunctions): TextActionRepository =
+        TextActionRepositoryImpl(contextFunctions, textActionDeterminationFunctions)
 }

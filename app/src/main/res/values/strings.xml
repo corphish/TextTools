@@ -1,5 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="MissingTranslation">
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="app_name">Text Tools</string>
     <string name="app_desc">Collection of useful text related functions which can be accessed within many apps inside the Android System by selecting a text within it. The supported options appear in the context menu that appears after selecting a text. You may have to reveal them by pressing the 3 dots icon in the context menu. The list of supported functions will keep on growing.</string>
     <string name="app_desc_short">Collection of useful text related functions which can be accessed within many apps inside the Android System by selecting a text within it</string>
@@ -240,4 +239,20 @@
     <string name="supported_bases">Supported bases: %1$s</string>
     <string name="invalid_number">Invalid number for analysis</string>
     <string name="result_too_large">Result too large</string>
+    <string name="title_activity_text_action">TextActionActivity</string>
+    <string name="text_actions">Actions</string>
+    <string name="text_actions_desc">What would you like to do with the result?</string>
+    <string name="next">Next</string>
+    <string name="send_email">Send Email</string>
+    <string name="dial">Dial</string>
+    <string name="open_in_browser">Open in browser</string>
+    <string name="open_in_maps">Open in maps</string>
+    <string name="track_flight">Track flight</string>
+    <string name="add_to_calendar">Add to calendar</string>
+    <string name="send_email_fail">Failed to send email</string>
+    <string name="dial_fail">Failed to dial</string>
+    <string name="open_in_web_fail">Failed to open in web browser</string>
+    <string name="open_in_maps_fail">Failed to open in maps</string>
+    <string name="track_flight_fail">Failed to track flight</string>
+    <string name="add_to_calendar_fail">Failed to add to calendar</string>
 </resources>
