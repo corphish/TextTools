@@ -255,4 +255,19 @@
     <string name="open_in_maps_fail">Failed to open in maps</string>
     <string name="track_flight_fail">Failed to track flight</string>
     <string name="add_to_calendar_fail">Failed to add to calendar</string>
+
+    <string name="context_menu_text_template">[T\u00B2] Text Template</string>
+    <string name="text_template">Text Template</string>
+    <string name="text_template_desc">Create and apply custom text templates with your selected text as a parameter.</string>
+    <string name="create_template">Create template</string>
+    <string name="edit_template">Edit template</string>
+    <string name="delete_template">Delete template</string>
+    <string name="template_name">Template name</string>
+    <string name="template_value">Template (use %s as placeholder)</string>
+    <string name="save_template">Save template</string>
+    <string name="select_template">Select template</string>
+    <string name="no_templates">No templates found. Create one to get started!</string>
+    <string name="delete_all_templates">Delete all templates</string>
+    <string name="delete_all_templates_desc">This will permanently delete all the templates that you have created.</string>
+    <string name="text_template_all_deleted">Deleted all text templates</string>
 </resources>

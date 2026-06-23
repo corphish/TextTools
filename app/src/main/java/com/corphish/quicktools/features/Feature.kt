@@ -65,6 +65,13 @@ data class Feature(
                 featureTitle = R.string.number_analysis,
                 featureDesc = R.string.number_analysis_desc,
                 contextMenuText = R.string.context_menu_number_analysis,
+            ),
+            Feature(
+                id = FeatureIds.TEXT_TEMPLATE,
+                icon = R.drawable.ic_edit_note,
+                featureTitle = R.string.text_template,
+                featureDesc = R.string.text_template_desc,
+                contextMenuText = R.string.context_menu_text_template,
             )
         )
     }

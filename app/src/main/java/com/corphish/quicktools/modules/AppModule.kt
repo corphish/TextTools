@@ -6,6 +6,7 @@ import com.corphish.quicktools.functions.FileFunctions
 import com.corphish.quicktools.functions.NumberFunctions
 import com.corphish.quicktools.functions.TextActionDeterminationFunctions
 import com.corphish.quicktools.functions.TextFunctions
+import com.corphish.quicktools.functions.TextTemplateFunctions
 import com.corphish.quicktools.repository.ContextMenuOptionsRepository
 import com.corphish.quicktools.repository.ContextMenuOptionsRepositoryImpl
 import com.corphish.quicktools.repository.NumberAnalysisRepository
@@ -17,6 +18,8 @@ import com.corphish.quicktools.repository.TextReplacementRepository
 import com.corphish.quicktools.repository.TextReplacementRepositoryImpl
 import com.corphish.quicktools.repository.TextRepository
 import com.corphish.quicktools.repository.TextRepositoryImpl
+import com.corphish.quicktools.repository.TextTemplateRepository
+import com.corphish.quicktools.repository.TextTemplateRepositoryImpl
 import com.corphish.quicktools.repository.TextTransformRepository
 import com.corphish.quicktools.repository.TextTransformRepositoryImpl
 import dagger.Module
@@ -63,4 +66,9 @@ object AppModule {
     @Singleton
     fun provideTextActionRepository(contextFunctions: ContextFunctions, textActionDeterminationFunctions: TextActionDeterminationFunctions): TextActionRepository =
         TextActionRepositoryImpl(contextFunctions, textActionDeterminationFunctions)
+
+    @Provides
+    @Singleton
+    fun provideTextTemplateRepository(@ApplicationContext context: Context, textTemplateFunctions: TextTemplateFunctions): TextTemplateRepository =
+        TextTemplateRepositoryImpl(context, textTemplateFunctions)
 }

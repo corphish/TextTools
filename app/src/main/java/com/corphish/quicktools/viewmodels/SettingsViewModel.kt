@@ -7,6 +7,7 @@ import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.repository.AppMode
 import com.corphish.quicktools.repository.ContextMenuOptionsRepository
 import com.corphish.quicktools.repository.SettingsRepository
+import com.corphish.quicktools.usecases.ManageTemplatesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,6 +18,7 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val contextMenuOptionsRepository: ContextMenuOptionsRepository,
+    private val manageTemplatesUseCase: ManageTemplatesUseCase,
 ): ViewModel() {
     private val _prependCountryCodeEnabled = MutableStateFlow(settingsRepository.getPrependCountryCodeEnabled())
     private val _prependCountryCode = MutableStateFlow(settingsRepository.getPrependCountryCode())
@@ -89,6 +91,12 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             contextMenuOptionsRepository.setCurrentAppMode(mode)
             _appMode.value = mode
+        }
+    }
+
+    fun clearAllTemplates() {
+        viewModelScope.launch {
+            manageTemplatesUseCase.clearAllTemplates()
         }
     }
 }

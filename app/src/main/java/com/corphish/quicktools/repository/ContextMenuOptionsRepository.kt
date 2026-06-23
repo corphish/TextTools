@@ -38,5 +38,6 @@ enum class FeatureIds {
     TEXT_COUNT,
     SAVE_TEXT,
     FIND_AND_REPLACE,
-    NUMBER_ANALYSIS
+    NUMBER_ANALYSIS,
+    TEXT_TEMPLATE
 }

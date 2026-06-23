@@ -1,6 +1,7 @@
 package com.corphish.quicktools.activities
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
@@ -51,6 +52,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -93,8 +95,9 @@ class SettingsActivity : ComponentActivity() {
 @Composable
 fun Settings(settingsViewModel: SettingsViewModel) {
     val adaptiveInfo = currentWindowAdaptiveInfo()
-    val isWideScreen = adaptiveInfo.windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
-    
+    val isWideScreen =
+        adaptiveInfo.windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
+
     val uriHandler = LocalUriHandler.current
     val activity = LocalActivity.current
     val versionName by settingsViewModel.appVersionName.collectAsState()
@@ -130,18 +133,37 @@ fun Settings(settingsViewModel: SettingsViewModel) {
                     SettingsSection(title = R.string.app, icon = R.drawable.ic_settings) {
                         AppSettings(settingsViewModel)
                     }
-                    SettingsSection(title = R.string.eval_title_small, icon = R.drawable.ic_numbers, modifier = Modifier.padding(top = 16.dp)) {
+                    SettingsSection(
+                        title = R.string.eval_title_small,
+                        icon = R.drawable.ic_numbers,
+                        modifier = Modifier.padding(top = 16.dp)
+                    ) {
                         EvaluateSettings(settingsViewModel)
+                    }
+                    SettingsSection(
+                        title = R.string.text_template,
+                        icon = R.drawable.ic_edit_note,
+                        modifier = Modifier.padding(top = 16.dp)
+                    ) {
+                        TemplateSettings(settingsViewModel)
                     }
                 }
                 Column(modifier = Modifier.weight(1f)) {
                     SettingsSection(title = R.string.messaging, icon = R.drawable.ic_whatsapp) {
                         TextSettings(settingsViewModel)
                     }
-                    SettingsSection(title = R.string.app_info, icon = R.drawable.ic_info, modifier = Modifier.padding(top = 16.dp)) {
+                    SettingsSection(
+                        title = R.string.app_info,
+                        icon = R.drawable.ic_info,
+                        modifier = Modifier.padding(top = 16.dp)
+                    ) {
                         AppInfoSettings(versionName, versionCode, uriHandler)
                     }
-                    SettingsSection(title = R.string.donate, icon = R.drawable.ic_volunteer, modifier = Modifier.padding(top = 16.dp)) {
+                    SettingsSection(
+                        title = R.string.donate,
+                        icon = R.drawable.ic_volunteer,
+                        modifier = Modifier.padding(top = 16.dp)
+                    ) {
                         DonateSettings(uriHandler)
                     }
                 }
@@ -151,16 +173,39 @@ fun Settings(settingsViewModel: SettingsViewModel) {
                 SettingsSection(title = R.string.app, icon = R.drawable.ic_settings) {
                     AppSettings(settingsViewModel)
                 }
-                SettingsSection(title = R.string.messaging, icon = R.drawable.ic_whatsapp, modifier = Modifier.padding(top = 16.dp)) {
+                SettingsSection(
+                    title = R.string.messaging,
+                    icon = R.drawable.ic_whatsapp,
+                    modifier = Modifier.padding(top = 16.dp)
+                ) {
                     TextSettings(settingsViewModel)
                 }
-                SettingsSection(title = R.string.eval_title_small, icon = R.drawable.ic_numbers, modifier = Modifier.padding(top = 16.dp)) {
+                SettingsSection(
+                    title = R.string.eval_title_small,
+                    icon = R.drawable.ic_numbers,
+                    modifier = Modifier.padding(top = 16.dp)
+                ) {
                     EvaluateSettings(settingsViewModel)
                 }
-                SettingsSection(title = R.string.app_info, icon = R.drawable.ic_info, modifier = Modifier.padding(top = 16.dp)) {
+                SettingsSection(
+                    title = R.string.text_template,
+                    icon = R.drawable.ic_edit_note,
+                    modifier = Modifier.padding(top = 16.dp)
+                ) {
+                    TemplateSettings(settingsViewModel)
+                }
+                SettingsSection(
+                    title = R.string.app_info,
+                    icon = R.drawable.ic_info,
+                    modifier = Modifier.padding(top = 16.dp)
+                ) {
                     AppInfoSettings(versionName, versionCode, uriHandler)
                 }
-                SettingsSection(title = R.string.donate, icon = R.drawable.ic_volunteer, modifier = Modifier.padding(top = 16.dp)) {
+                SettingsSection(
+                    title = R.string.donate,
+                    icon = R.drawable.ic_volunteer,
+                    modifier = Modifier.padding(top = 16.dp)
+                ) {
                     DonateSettings(uriHandler)
                 }
             }
@@ -235,7 +280,7 @@ fun AppSettings(settingsViewModel: SettingsViewModel) {
                 style = TypographyV2.bodySmall
             )
         }
-        
+
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = {
@@ -253,7 +298,11 @@ fun AppSettings(settingsViewModel: SettingsViewModel) {
                     )
                 },
                 colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
-                modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true)
+                modifier = Modifier
+                    .menuAnchor(
+                        ExposedDropdownMenuAnchorType.PrimaryNotEditable,
+                        true
+                    )
                     .fillMaxWidth()
             )
 
@@ -374,7 +423,7 @@ fun EvaluateSettings(settingsViewModel: SettingsViewModel) {
                 style = TypographyV2.bodySmall
             )
         }
-        
+
         Text(
             text = "$decimalPoints",
             style = TypographyV2.labelLarge,
@@ -389,8 +438,11 @@ fun EvaluateSettings(settingsViewModel: SettingsViewModel) {
             valueRange = 1f..5f,
             steps = 3
         )
-        
-        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp), color = MaterialTheme.colorScheme.outlineVariant)
+
+        HorizontalDivider(
+            modifier = Modifier.padding(vertical = 8.dp),
+            color = MaterialTheme.colorScheme.outlineVariant
+        )
 
         Column {
             Text(
@@ -403,7 +455,7 @@ fun EvaluateSettings(settingsViewModel: SettingsViewModel) {
                 style = TypographyV2.bodySmall
             )
         }
-        
+
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = {
@@ -421,7 +473,12 @@ fun EvaluateSettings(settingsViewModel: SettingsViewModel) {
                     )
                 },
                 colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
-                modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true).fillMaxWidth()
+                modifier = Modifier
+                    .menuAnchor(
+                        ExposedDropdownMenuAnchorType.PrimaryNotEditable,
+                        true
+                    )
+                    .fillMaxWidth()
             )
 
             DropdownMenu(
@@ -448,7 +505,46 @@ fun EvaluateSettings(settingsViewModel: SettingsViewModel) {
 }
 
 @Composable
-fun AppInfoSettings(versionName: String, versionCode: Int, uriHandler: androidx.compose.ui.platform.UriHandler) {
+fun TemplateSettings(settingsViewModel: SettingsViewModel) {
+    val listItemColors = ListItemDefaults.colors(containerColor = Color.Transparent)
+    val context = LocalContext.current
+
+    ListItem(
+        headlineContent = {
+            Text(
+                text = stringResource(id = R.string.delete_all_templates),
+                style = TypographyV2.labelMedium,
+                fontWeight = FontWeight.W600
+            )
+        },
+        supportingContent = {
+            Text(
+                text = stringResource(id = R.string.delete_all_templates_desc),
+                style = TypographyV2.bodySmall
+            )
+        },
+        leadingContent = {
+            Icon(
+                painterResource(R.drawable.ic_delete),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.error,
+                modifier = Modifier.size(24.dp)
+            )
+        },
+        modifier = Modifier.clickable {
+            settingsViewModel.clearAllTemplates()
+            Toast.makeText(context, R.string.text_template_all_deleted, Toast.LENGTH_SHORT).show()
+        },
+        colors = listItemColors
+    )
+}
+
+@Composable
+fun AppInfoSettings(
+    versionName: String,
+    versionCode: Int,
+    uriHandler: androidx.compose.ui.platform.UriHandler
+) {
     val listItemColors = ListItemDefaults.colors(containerColor = Color.Transparent)
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         ListItem(
@@ -475,7 +571,7 @@ fun AppInfoSettings(versionName: String, versionCode: Int, uriHandler: androidx.
             },
             colors = listItemColors
         )
-        
+
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 
         ListItem(
@@ -514,7 +610,7 @@ fun DonateSettings(uriHandler: androidx.compose.ui.platform.UriHandler) {
             text = stringResource(id = R.string.donate_msg),
             style = TypographyV2.bodySmall
         )
-        
+
         ListItem(
             headlineContent = {
                 Text(

@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -159,6 +160,11 @@ fun Greeting(
                             shouldEdit = shouldEdit,
                             onFeatureEnabledOrDisabled = { featureId, enabled ->
                                 viewModel.enableOrDisableFeature(featureId, enabled)
+                            },
+                            onClick = {
+                                if (feature.id == FeatureIds.TEXT_TEMPLATE) {
+                                    context.startActivity(Intent(context, TextTemplateActivity::class.java))
+                                }
                             }
                         )
 
@@ -275,9 +281,11 @@ fun FeatureItem(
     appMode: AppMode,
     shouldEdit: Boolean = false,
     enabledFeatures: List<FeatureIds> = emptyList(),
-    onFeatureEnabledOrDisabled: (FeatureIds, Boolean) -> Unit = { _, _ -> }
+    onFeatureEnabledOrDisabled: (FeatureIds, Boolean) -> Unit = { _, _ -> },
+    onClick: () -> Unit = {}
 ) {
     ListItem(
+        modifier = Modifier.clickable(enabled = !shouldEdit) { onClick() },
         headlineContent = {
             Text(
                 text = stringResource(id = feature.featureTitle),
