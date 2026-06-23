@@ -21,10 +21,10 @@ jobs:
       run: chmod +x gradlew # Makes the Gradle wrapper script executable
 
     - name: Build with Gradle
-      run: ./gradlew build --write-locks # Runs the default Gradle build task
+      run: ./gradlew build # Runs the default Gradle build task
 
     - name: Run unit tests
-      run: ./gradlew testDebugUnitTest --write-locks
+      run: ./gradlew testDebugUnitTest
 
     - name: Build debug APK
-      run: ./gradlew assembleDebug --write-locks
+      run: ./gradlew assembleDebug # Generates a debug APK
