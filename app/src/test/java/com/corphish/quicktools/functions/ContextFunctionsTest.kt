@@ -53,12 +53,61 @@ class ContextFunctionsTest {
         val uri: Uri = mockk()
         
         every { Uri.parse(url) } returns uri
-        mockkConstructor(Intent::class)
-        every { anyConstructed<Intent>().setAction(Intent.ACTION_VIEW) } returns mockk()
-        every { anyConstructed<Intent>().setData(any()) } returns mockk()
-        every { anyConstructed<Intent>().addFlags(any()) } returns mockk()
         
         contextFunctions.openInWeb(url)
+        
+        verify { context.startActivity(any()) }
+    }
+
+    @Test
+    fun testSendEmail() {
+        val email = "test@test.com"
+        val uri: Uri = mockk()
+        every { Uri.parse("mailto:$email") } returns uri
+        
+        contextFunctions.sendEmail(email)
+        
+        verify { context.startActivity(any()) }
+    }
+
+    @Test
+    fun testDialPhone() {
+        val phone = "1234567890"
+        val uri: Uri = mockk()
+        every { Uri.parse("tel:$phone") } returns uri
+        
+        contextFunctions.dialPhone(phone)
+        
+        verify { context.startActivity(any()) }
+    }
+
+    @Test
+    fun testOpenMap() {
+        val address = "New York"
+        val uri: Uri = mockk()
+        mockkStatic(Uri::class)
+        every { Uri.encode(address) } returns "New%20York"
+        every { Uri.parse("geo:0,0?q=New%20York") } returns uri
+        
+        contextFunctions.openMap(address)
+        
+        verify { context.startActivity(any()) }
+    }
+
+    @Test
+    fun testTrackFlight() {
+        val flight = "AI101"
+        
+        contextFunctions.trackFlight(flight)
+        
+        verify { context.startActivity(any()) }
+    }
+
+    @Test
+    fun testAddToCalendar() {
+        val date = "Tomorrow"
+        
+        contextFunctions.addToCalendar(date)
         
         verify { context.startActivity(any()) }
     }
