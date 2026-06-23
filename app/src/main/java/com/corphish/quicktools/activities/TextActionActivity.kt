@@ -161,7 +161,12 @@ fun TextActionUI(
 @Composable
 fun ColumnScope.LoadingLayout() {
     Spacer(modifier = Modifier.weight(1f))
-    CircularProgressIndicator()
+    Box(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator()
+    }
     Spacer(modifier = Modifier.weight(1f))
 }
 
