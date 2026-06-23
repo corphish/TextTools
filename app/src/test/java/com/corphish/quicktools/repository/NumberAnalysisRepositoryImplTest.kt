@@ -33,6 +33,9 @@ class NumberAnalysisRepositoryImplTest {
         // Mock math transformations
         every { numberFunctions.square(any<BigInteger>()) } returns BigInteger.valueOf(100)
         every { numberFunctions.cube(any<BigInteger>()) } returns BigInteger.valueOf(1000)
+        every { numberFunctions.sqrtBD(any<BigDecimal>()) } returns BigDecimal.valueOf(3.16)
+        every { numberFunctions.cbrtBD(any<BigDecimal>()) } returns BigDecimal.valueOf(2.15)
+        every { numberFunctions.bigDecimalToString(any(), any(), any()) } returns "3.16"
         every { numberFunctions.sqrtBI(any<BigInteger>()) } returns BigInteger.valueOf(3)
         every { numberFunctions.cbrtBI(any<BigInteger>()) } returns BigInteger.valueOf(2)
         every { numberFunctions.abs(any<BigInteger>()) } returns BigInteger.TEN

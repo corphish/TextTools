@@ -4,6 +4,7 @@ import com.corphish.quicktools.MainDispatcherRule
 import com.corphish.quicktools.repository.AppMode
 import com.corphish.quicktools.repository.ContextMenuOptionsRepository
 import com.corphish.quicktools.repository.SettingsRepository
+import com.corphish.quicktools.usecases.ManageTemplatesUseCase
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -25,6 +26,7 @@ class SettingsViewModelTest {
     private lateinit var viewModel: SettingsViewModel
     private val settingsRepository: SettingsRepository = mockk(relaxed = true)
     private val contextMenuOptionsRepository: ContextMenuOptionsRepository = mockk(relaxed = true)
+    private val manageTemplatesUseCase: ManageTemplatesUseCase = mockk(relaxed = true)
 
     @Before
     fun setUp() {
@@ -34,7 +36,7 @@ class SettingsViewModelTest {
         every { settingsRepository.getEvaluateResultMode() } returns 0
         every { contextMenuOptionsRepository.getCurrentAppMode() } returns AppMode.SINGLE
         
-        viewModel = SettingsViewModel(settingsRepository, contextMenuOptionsRepository)
+        viewModel = SettingsViewModel(settingsRepository, contextMenuOptionsRepository, manageTemplatesUseCase)
     }
 
     @Test
@@ -81,5 +83,11 @@ class SettingsViewModelTest {
         viewModel.updateAppMode(AppMode.MULTI)
         verify { contextMenuOptionsRepository.setCurrentAppMode(AppMode.MULTI) }
         assertEquals(AppMode.MULTI, viewModel.appMode.value)
+    }
+
+    @Test
+    fun testClearAllTemplates() = runTest {
+        viewModel.clearAllTemplates()
+        verify { manageTemplatesUseCase.clearAllTemplates() }
     }
 }

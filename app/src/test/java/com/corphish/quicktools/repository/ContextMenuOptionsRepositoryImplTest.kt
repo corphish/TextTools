@@ -88,11 +88,13 @@ class ContextMenuOptionsRepositoryImplTest {
         every { sharedPreferences.getBoolean("context_menu_features_FIND_AND_REPLACE", true) } returns true
         every { sharedPreferences.getBoolean("context_menu_features_SAVE_TEXT", true) } returns true
         every { sharedPreferences.getBoolean("context_menu_features_NUMBER_ANALYSIS", true) } returns true
+        every { sharedPreferences.getBoolean("context_menu_features_TEXT_TEMPLATE", true) } returns true
 
         val features = repository.getCurrentlyEnabledFeatures()
         assertTrue(features.contains(FeatureIds.EVAL))
         assertTrue(!features.contains(FeatureIds.WHATSAPP))
         assertTrue(features.contains(FeatureIds.NUMBER_ANALYSIS))
+        assertTrue(features.contains(FeatureIds.TEXT_TEMPLATE))
     }
 
     @Test

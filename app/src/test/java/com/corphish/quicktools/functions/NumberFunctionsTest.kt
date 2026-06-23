@@ -128,7 +128,7 @@ class NumberFunctionsTest {
 
     @Test
     fun testLanguage() {
-        assertEquals("one hundred and twenty-three", numberFunctions.numberToWords(BigInteger.valueOf(123)))
+        assertEquals("One hundred and twenty-three", numberFunctions.numberToWords(BigInteger.valueOf(123)))
         assertEquals("CXXIII", numberFunctions.numberToRoman(BigInteger.valueOf(123)))
         assertEquals("123rd", numberFunctions.numberToOrdinal(BigInteger.valueOf(123)))
     }
