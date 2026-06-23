@@ -107,6 +107,7 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
     ksp(libs.hilt.compiler)
+    ksp(libs.metadata.jvm)
 
 
     // Testing
@@ -115,6 +116,7 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.hilt.android.testing)
     kspAndroidTest(libs.hilt.compiler)
+    kspAndroidTest(libs.metadata.jvm)
     androidTestImplementation(libs.androidx.runner)
     androidTestImplementation(libs.androidx.test.ext)
     androidTestImplementation(platform(libs.androidx.compose.bom))

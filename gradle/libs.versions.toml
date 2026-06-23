@@ -1,24 +1,25 @@
 [versions]
 agp = "9.2.1"
 hiltNavigationCompose = "1.3.0"
-kotlin = "2.3.21"
-coreKtx = "1.18.0"
-lifecycleRuntimeKtx = "2.10.0"
+kotlin = "2.4.0"
+coreKtx = "1.19.0"
+lifecycleRuntimeKtx = "2.11.0"
 activityCompose = "1.13.0"
-composeBom = "2026.04.01"
+composeBom = "2026.06.00"
 hilt = "2.59.2"
 appcompat = "1.7.1"
 preferenceKtx = "1.2.1"
-composeMaterial3Android = "1.5.0-alpha18"
+composeMaterial3Android = "1.5.0-alpha22"
 constraintlayoutCompose = "1.1.1"
 exp4j = "0.4.8"
-ksp = "2.3.7"
+ksp = "2.3.9"
 junit = "4.13.2"
-mockk = "1.14.9"
+mockk = "1.14.11"
 kotlinxCoroutinesTest = "1.11.0"
 adaptive = "1.2.0"
-androidxTestRunner = "1.6.2"
-androidxTestExtJunit = "1.2.1"
+androidxTestRunner = "1.7.0"
+androidxTestExtJunit = "1.3.0"
+kotlinMetadataJvm = "2.4.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -51,6 +52,7 @@ hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testi
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
+metadata-jvm = { group = "org.jetbrains.kotlin", name = "kotlin-metadata-jvm", version.ref = "kotlinMetadataJvm" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
