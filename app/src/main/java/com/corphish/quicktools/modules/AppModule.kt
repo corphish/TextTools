@@ -5,6 +5,7 @@ import com.corphish.quicktools.functions.ContextFunctions
 import com.corphish.quicktools.functions.FileFunctions
 import com.corphish.quicktools.functions.NumberFunctions
 import com.corphish.quicktools.functions.TextActionDeterminationFunctions
+import com.corphish.quicktools.functions.TextClassifierFunctions
 import com.corphish.quicktools.functions.TextFunctions
 import com.corphish.quicktools.functions.TextTemplateFunctions
 import com.corphish.quicktools.repository.ContextMenuOptionsRepository
@@ -14,6 +15,8 @@ import com.corphish.quicktools.repository.NumberAnalysisRepositoryImpl
 import com.corphish.quicktools.repository.SettingsRepository
 import com.corphish.quicktools.repository.TextActionRepository
 import com.corphish.quicktools.repository.TextActionRepositoryImpl
+import com.corphish.quicktools.repository.TextAnalysisRepository
+import com.corphish.quicktools.repository.TextAnalysisRepositoryImpl
 import com.corphish.quicktools.repository.TextReplacementRepository
 import com.corphish.quicktools.repository.TextReplacementRepositoryImpl
 import com.corphish.quicktools.repository.TextRepository
@@ -66,6 +69,11 @@ object AppModule {
     @Singleton
     fun provideTextActionRepository(contextFunctions: ContextFunctions, textActionDeterminationFunctions: TextActionDeterminationFunctions): TextActionRepository =
         TextActionRepositoryImpl(contextFunctions, textActionDeterminationFunctions)
+
+    @Provides
+    @Singleton
+    fun provideTextAnalysisRepository(textFunctions: TextFunctions, textClassifierFunctions: TextClassifierFunctions, contextFunctions: ContextFunctions): TextAnalysisRepository =
+        TextAnalysisRepositoryImpl(textFunctions, textClassifierFunctions, contextFunctions)
 
     @Provides
     @Singleton

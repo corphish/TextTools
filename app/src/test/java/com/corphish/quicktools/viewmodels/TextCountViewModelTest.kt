@@ -3,6 +3,7 @@ package com.corphish.quicktools.viewmodels
 import com.corphish.quicktools.MainDispatcherRule
 import com.corphish.quicktools.data.TextCountResult
 import com.corphish.quicktools.usecases.TextCountUseCase
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -41,7 +42,7 @@ class TextCountViewModelTest {
             longestPalindrome = "ll",
             longestIncreasingSubsequence = "123"
         )
-        every { textCountUseCase.execute(text) } returns expectedResult
+        coEvery { textCountUseCase.execute(text) } returns expectedResult
         
         viewModel.setTextAndProcess(text)
         
@@ -54,7 +55,7 @@ class TextCountViewModelTest {
         val expectedResult = TextCountResult(
             wordFrequency = listOf("apple" to 3, "banana" to 2, "orange" to 1)
         )
-        every { textCountUseCase.execute(text) } returns expectedResult
+        coEvery { textCountUseCase.execute(text) } returns expectedResult
         
         viewModel.setTextAndProcess(text)
         
