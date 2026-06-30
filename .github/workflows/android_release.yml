@@ -28,6 +28,9 @@ jobs:
         run: |
           echo $ENCODED_STRING | base64 --decode > keystore.jks
 
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
       - name: Build and Sign Release APK
         run: >
           ./gradlew assembleRelease
