@@ -27,7 +27,8 @@ class ContextMenuOptionsRepositoryImpl(private val context: Context) :
         FeatureIds.FIND_AND_REPLACE to context.packageName + ".activities.FindAndReplaceActivityAlias",
         FeatureIds.SAVE_TEXT to context.packageName + ".activities.SaveTextActivityAlias",
         FeatureIds.NUMBER_ANALYSIS to context.packageName + ".activities.NumberAnalysisActivityAlias",
-        FeatureIds.TEXT_TEMPLATE to context.packageName + ".activities.TextTemplateActivityAlias"
+        FeatureIds.TEXT_TEMPLATE to context.packageName + ".activities.TextTemplateActivityAlias",
+        FeatureIds.TEXT_ACTION to context.packageName + ".activities.TextActionActivityAlias"
     )
 
     override fun getCurrentAppMode(): AppMode {

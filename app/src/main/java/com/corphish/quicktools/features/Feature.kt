@@ -72,6 +72,13 @@ data class Feature(
                 featureTitle = R.string.text_template,
                 featureDesc = R.string.text_template_desc,
                 contextMenuText = R.string.context_menu_text_template,
+            ),
+            Feature(
+                id = FeatureIds.TEXT_ACTION,
+                icon = R.drawable.ic_auto_awesome,
+                featureTitle = R.string.text_actions,
+                featureDesc = R.string.text_actions_feature_desc,
+                contextMenuText = R.string.context_menu_text_action
             )
         )
     }

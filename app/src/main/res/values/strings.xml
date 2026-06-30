@@ -242,6 +242,7 @@
     <string name="title_activity_text_action">TextActionActivity</string>
     <string name="text_actions">Actions</string>
     <string name="text_actions_desc">What would you like to do with the result?</string>
+    <string name="text_actions_feature_desc">Process the text directly with supported system functions.</string>
     <string name="next">Next</string>
     <string name="send_email">Send Email</string>
     <string name="dial">Dial</string>
@@ -256,6 +257,7 @@
     <string name="track_flight_fail">Failed to track flight</string>
     <string name="add_to_calendar_fail">Failed to add to calendar</string>
 
+    <string name="context_menu_text_action">[T\u00B2] Actions</string>
     <string name="context_menu_text_template">[T\u00B2] Text Template</string>
     <string name="text_template">Text Template</string>
     <string name="text_template_desc">Create and apply custom text templates with your selected text as a parameter.</string>

@@ -290,6 +290,21 @@
             </intent-filter>
         </activity-alias>
 
+        <activity-alias
+            android:name=".activities.TextActionActivityAlias"
+            android:enabled="false"
+            android:exported="true"
+            android:label="@string/context_menu_text_action"
+            android:targetActivity=".activities.TextActionActivity">
+            <intent-filter android:label="@string/context_menu_text_action">
+                <action android:name="android.intent.action.PROCESS_TEXT" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity-alias>
+
         <activity
             android:name=".activities.MainActivity"
             android:exported="true"
