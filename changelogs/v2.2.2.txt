@@ -2,3 +2,5 @@
 - Added template type which can be either URL or plain text. If URL is selected, the placeholder input is encoded to URL format.
 - Added an option to directly go to Text Actions for the selected text.
 - Support for Android 10.
+
+This release also introduces an automated release pipeline enabled by Github Actions (about time). Going forward the new release binary name will be "TextTools-v<tag>.apk".
