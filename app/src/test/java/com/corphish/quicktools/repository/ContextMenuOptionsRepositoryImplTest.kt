@@ -89,6 +89,7 @@ class ContextMenuOptionsRepositoryImplTest {
         every { sharedPreferences.getBoolean("context_menu_features_SAVE_TEXT", true) } returns true
         every { sharedPreferences.getBoolean("context_menu_features_NUMBER_ANALYSIS", true) } returns true
         every { sharedPreferences.getBoolean("context_menu_features_TEXT_TEMPLATE", true) } returns true
+        every { sharedPreferences.getBoolean("context_menu_features_TEXT_ACTION", true) } returns true
 
         val features = repository.getCurrentlyEnabledFeatures()
         assertTrue(features.contains(FeatureIds.EVAL))
