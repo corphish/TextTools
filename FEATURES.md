@@ -12,22 +12,50 @@ We may often find ourselves to mathematically calculate something while texting 
 
 ![Eval Example](assets/eval.gif)
 
-### Transform text
-Transform the selected text inline. Supported transformations include changing the case, wrapping it with text and many more.
+### Text Transformation
+Transform selected text with various formatting options. Supported transformations include:
+* Case conversion: Change text to upper case, lower case, title case, or random case.
+* Text wrapping: Wrap the selection with single or double quotes, parentheses, brackets, or custom character sequences.
+* Sorting: Sort lines of text alphabetically.
+* Line management: Add line numbers, remove empty lines, or reverse the order of lines.
+* Word manipulation: Reverse words or reverse each character within words.
+* Cleaning: Remove white spaces, line breaks, or duplicate words and lines.
+* Decorative styles: Apply Unicode-based styles such as bold, italic, monospace, or script fonts.
 
-![Transform Example](assets/text_transform.gif)
+### Text Analysis
+Get comprehensive statistics and insights for any selected text. The analysis includes:
+* Basic counts: Characters, letters, digits, spaces, and symbols.
+* Linguistic data: Word count and word frequency analysis.
+* Pattern extraction: Identification of emails, phone numbers, URLs, dates, and times.
+* Advanced detection: Identification of IP addresses, currency values, binary or hexadecimal strings, and JSON blocks.
+* Structural analysis: Detection of the longest palindrome, longest repeated substring, and longest increasing subsequence.
 
-### Text count
-Get detailed analysis about character count, word count, letter count and more for the selected text.
+https://github.com/user-attachments/assets/25fdf3ac-a31d-4142-aed3-8bcebc3dafea
 
-![Text Count Example](assets/text_count.gif)
+### Save Text
+Directly save the selected text for future reference. You can save the content as a standard text file on your device or send it to supported note-taking applications. This streamlines the process of capturing snippets of information from any application.
 
-### Save text
-Lets you save the selected text into a file so that it can be accessed later.
+https://github.com/user-attachments/assets/8eadb102-a2f0-4cc6-ab3d-ada103229f52
 
-![Save text Example](assets/save.gif)
+### Find and Replace
+Perform search and replace operations within the selected block of text. This feature supports case-sensitive or case-insensitive matching and allows you to replace individual occurrences or all instances at once. It provides a convenient way to perform batch edits on text selection before applying it back to the original field.
 
-### Find & Replace
-Quickly find certain text and replace them with text of your choice within the selected text.
+https://github.com/user-attachments/assets/6d31ec98-5cb6-4f90-aa74-e16b988709f0
 
-![Find and Replace Example](assets/find_replace.gif)
+### Number Analysis
+Specifically designed for numeric selections, this feature provides detailed mathematical properties of a number. It includes:
+* Transformations: Square, cube, square root, and logarithmic values.
+* Digit properties: Sum of digits, product of digits, and digital root.
+* Number theory: Primality testing, prime factors, and divisors.
+* Representations: Conversion to words, ordinals, and Roman numerals.
+* Base conversion: View the number in binary, octal, hexadecimal, and other bases.
+
+https://github.com/user-attachments/assets/e5f537d5-d59d-4401-afc7-0ae3bf610fe0
+
+### Text Template
+Create and apply custom templates where the selected text acts as a dynamic parameter. You can define templates for frequent tasks, such as generating search URLs or formatted messages. Templates support automatic URL encoding for safe parameter insertion when the output is intended for web use.
+
+https://github.com/user-attachments/assets/28f3e7bb-d42e-4330-b375-17b481b0d736
+
+### Text Actions
+Identify and act upon specific entities found within the selected text. The system automatically detects data types like email addresses, phone numbers, physical addresses, and flight numbers, offering relevant actions such as sending an email, dialing a number, opening maps, or tracking a flight status.
