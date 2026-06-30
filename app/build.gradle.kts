@@ -14,7 +14,7 @@ android {
 
     defaultConfig {
         applicationId = "com.corphish.quicktools"
-        minSdk = 30
+        minSdk = 29
         targetSdk = 37
         versionCode = 30
         versionName = "2.2.0"
