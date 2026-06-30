@@ -16,8 +16,8 @@ android {
         applicationId = "com.corphish.quicktools"
         minSdk = 29
         targetSdk = 37
-        versionCode = 32
-        versionName = "2.2.2"
+        versionCode = 33
+        versionName = "2.2.3"
 
         testInstrumentationRunner = "com.corphish.quicktools.HiltTestRunner"
         vectorDrawables {

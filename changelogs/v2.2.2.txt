@@ -4,3 +4,4 @@
 - Support for Android 10.
 
 This release also introduces an automated release pipeline enabled by Github Actions (about time). Going forward the new release binary name will be "TextTools-v<tag>.apk".
+Expect the release diff (below) for this release to be inaccurate as it did take few releases to correct the pipeline.
