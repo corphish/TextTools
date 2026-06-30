@@ -1,0 +1,4 @@
+- Fixed progress bar not appearing in center in Text Actions.
+- Added template type which can be either URL or plain text. If URL is selected, the placeholder input is encoded to URL format.
+- Added an option to directly go to Text Actions for the selected text.
+- Support for Android 10.
