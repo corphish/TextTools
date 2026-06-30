@@ -270,4 +270,7 @@
     <string name="delete_all_templates">Delete all templates</string>
     <string name="delete_all_templates_desc">This will permanently delete all the templates that you have created.</string>
     <string name="text_template_all_deleted">Deleted all text templates</string>
+    <string name="template_type">Template type</string>
+    <string name="plain_text">Plain text</string>
+    <string name="url">URL</string>
 </resources>

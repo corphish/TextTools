@@ -1,6 +1,7 @@
 package com.corphish.quicktools.repository
 
 import android.content.Context
+import com.corphish.quicktools.data.TemplateType
 import com.corphish.quicktools.data.TextTemplate
 import com.corphish.quicktools.functions.TextTemplateFunctions
 import androidx.core.content.edit
@@ -26,7 +27,8 @@ class TextTemplateRepositoryImpl @Inject constructor(
                 TextTemplate(
                     id = obj.getString("id"),
                     name = obj.getString("name"),
-                    template = obj.getString("template")
+                    template = obj.getString("template"),
+                    type = if (obj.has("type")) TemplateType.valueOf(obj.getString("type")) else TemplateType.PLAIN_TEXT
                 )
             )
         }
@@ -51,8 +53,8 @@ class TextTemplateRepositoryImpl @Inject constructor(
         saveList(templates)
     }
 
-    override fun applyTemplate(template: String, input: String): String {
-        return textTemplateFunctions.applyTemplate(template, input)
+    override fun applyTemplate(template: String, input: String, type: TemplateType): String {
+        return textTemplateFunctions.applyTemplate(template, input, type)
     }
 
     override fun clearAllTemplates() {
@@ -68,6 +70,7 @@ class TextTemplateRepositoryImpl @Inject constructor(
             obj.put("id", it.id)
             obj.put("name", it.name)
             obj.put("template", it.template)
+            obj.put("type", it.type.name)
             array.put(obj)
         }
         prefs.edit {

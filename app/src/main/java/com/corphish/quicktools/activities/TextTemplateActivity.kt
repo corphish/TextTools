@@ -47,6 +47,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.corphish.quicktools.R
 import com.corphish.quicktools.data.Constants
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.FilterChip
+import com.corphish.quicktools.data.TemplateType
 import com.corphish.quicktools.data.TextTemplate
 import com.corphish.quicktools.ui.common.CustomTopAppBar
 import com.corphish.quicktools.ui.theme.BrandFontFamily
@@ -166,7 +169,7 @@ fun TextTemplateUI(
                             isSelectionMode = isSelectionMode,
                             onClick = {
                                 if (isSelectionMode) {
-                                    onTemplateSelected(viewModel.applyTemplate(template.template))
+                                    onTemplateSelected(viewModel.applyTemplate(template))
                                 } else {
                                     templateToEdit = template
                                     showAddDialog = true
@@ -209,11 +212,11 @@ fun TextTemplateUI(
                 showAddDialog = false
                 templateToEdit = null
             },
-            onSave = { name, template ->
+            onSave = { name, template, type ->
                 if (templateToEdit == null) {
-                    viewModel.addTemplate(name, template)
+                    viewModel.addTemplate(name, template, type)
                 } else {
-                    viewModel.updateTemplate(templateToEdit!!.id, name, template)
+                    viewModel.updateTemplate(templateToEdit!!.id, name, template, type)
                 }
                 showAddDialog = false
             }
@@ -264,10 +267,11 @@ fun TemplateItem(
 fun TemplateDialog(
     template: TextTemplate?,
     onDismiss: () -> Unit,
-    onSave: (String, String) -> Unit
+    onSave: (String, String, TemplateType) -> Unit
 ) {
     var name by remember { mutableStateOf(template?.name ?: "") }
     var value by remember { mutableStateOf(template?.template ?: "") }
+    var type by remember { mutableStateOf(template?.type ?: TemplateType.PLAIN_TEXT) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -292,11 +296,36 @@ fun TemplateDialog(
                     label = { Text(stringResource(R.string.template_value)) },
                     modifier = Modifier.fillMaxWidth()
                 )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = stringResource(R.string.template_type),
+                    style = MaterialTheme.typography.labelMedium,
+                    fontFamily = BrandFontFamily
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    TemplateType.entries.forEach { templateType ->
+                        FilterChip(
+                            selected = type == templateType,
+                            onClick = { type = templateType },
+                            label = {
+                                Text(
+                                    text = when (templateType) {
+                                        TemplateType.PLAIN_TEXT -> stringResource(R.string.plain_text)
+                                        TemplateType.URL -> stringResource(R.string.url)
+                                    }
+                                )
+                            }
+                        )
+                    }
+                }
             }
         },
         confirmButton = {
             Button(
-                onClick = { onSave(name, value) },
+                onClick = { onSave(name, value, type) },
                 enabled = name.isNotBlank() && value.isNotBlank()
             ) {
                 Text(

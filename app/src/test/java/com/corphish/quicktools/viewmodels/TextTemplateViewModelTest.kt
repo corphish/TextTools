@@ -1,6 +1,7 @@
 package com.corphish.quicktools.viewmodels
 
 import com.corphish.quicktools.MainDispatcherRule
+import com.corphish.quicktools.data.TemplateType
 import com.corphish.quicktools.data.TextTemplate
 import com.corphish.quicktools.usecases.ApplyTemplateUseCase
 import com.corphish.quicktools.usecases.ManageTemplatesUseCase
@@ -47,14 +48,14 @@ class TextTemplateViewModelTest {
 
     @Test
     fun testAddTemplate() = runTest {
-        viewModel.addTemplate("New Template", "Welcome %s")
+        viewModel.addTemplate("New Template", "Welcome %s", TemplateType.PLAIN_TEXT)
         verify { manageTemplatesUseCase.saveTemplate(any()) }
         verify { manageTemplatesUseCase.getTemplates() }
     }
 
     @Test
     fun testUpdateTemplate() = runTest {
-        viewModel.updateTemplate("1", "Updated Name", "Updated Template %s")
+        viewModel.updateTemplate("1", "Updated Name", "Updated Template %s", TemplateType.PLAIN_TEXT)
         verify { manageTemplatesUseCase.updateTemplate(any()) }
         verify { manageTemplatesUseCase.getTemplates() }
     }
@@ -68,10 +69,11 @@ class TextTemplateViewModelTest {
 
     @Test
     fun testApplyTemplate() = runTest {
+        val template = TextTemplate("1", "Template 1", "Hello %s", TemplateType.PLAIN_TEXT)
         viewModel.setUserInput("Android")
-        every { applyTemplateUseCase.execute("Hello %s", "Android") } returns "Hello Android"
+        every { applyTemplateUseCase.execute("Hello %s", "Android", TemplateType.PLAIN_TEXT) } returns "Hello Android"
 
-        val result = viewModel.applyTemplate("Hello %s")
+        val result = viewModel.applyTemplate(template)
 
         assertEquals("Hello Android", result)
     }

@@ -2,6 +2,7 @@ package com.corphish.quicktools.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.corphish.quicktools.data.TemplateType
 import com.corphish.quicktools.data.TextTemplate
 import com.corphish.quicktools.usecases.ApplyTemplateUseCase
 import com.corphish.quicktools.usecases.ManageTemplatesUseCase
@@ -35,18 +36,19 @@ class TextTemplateViewModel @Inject constructor(
         _userInput.value = input
     }
 
-    fun addTemplate(name: String, template: String) {
+    fun addTemplate(name: String, template: String, type: TemplateType) {
         val newTemplate = TextTemplate(
             id = UUID.randomUUID().toString(),
             name = name,
-            template = template
+            template = template,
+            type = type
         )
         manageTemplatesUseCase.saveTemplate(newTemplate)
         loadTemplates()
     }
 
-    fun updateTemplate(id: String, name: String, template: String) {
-        val updatedTemplate = TextTemplate(id = id, name = name, template = template)
+    fun updateTemplate(id: String, name: String, template: String, type: TemplateType) {
+        val updatedTemplate = TextTemplate(id = id, name = name, template = template, type = type)
         manageTemplatesUseCase.updateTemplate(updatedTemplate)
         loadTemplates()
     }
@@ -56,7 +58,7 @@ class TextTemplateViewModel @Inject constructor(
         loadTemplates()
     }
 
-    fun applyTemplate(template: String): String {
-        return applyTemplateUseCase.execute(template, _userInput.value)
+    fun applyTemplate(template: TextTemplate): String {
+        return applyTemplateUseCase.execute(template.template, _userInput.value, template.type)
     }
 }

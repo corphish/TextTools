@@ -1,5 +1,6 @@
 package com.corphish.quicktools.usecases
 
+import com.corphish.quicktools.data.TemplateType
 import com.corphish.quicktools.repository.TextTemplateRepository
 import io.mockk.every
 import io.mockk.mockk
@@ -18,8 +19,8 @@ class ApplyTemplateUseCaseTest {
 
     @Test
     fun testExecute() {
-        every { repository.applyTemplate("Hello %s", "World") } returns "Hello World"
-        val result = useCase.execute("Hello %s", "World")
+        every { repository.applyTemplate("Hello %s", "World", TemplateType.PLAIN_TEXT) } returns "Hello World"
+        val result = useCase.execute("Hello %s", "World", TemplateType.PLAIN_TEXT)
         assertEquals("Hello World", result)
     }
 }
