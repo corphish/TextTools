@@ -61,7 +61,7 @@ import androidx.window.core.layout.WindowSizeClass
 import com.corphish.quicktools.R
 import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.ui.common.CustomTopAppBar
-import com.corphish.quicktools.ui.theme.QuickToolsTheme
+import com.corphish.quicktools.ui.theme.AppTheme
 import com.corphish.quicktools.ui.theme.TypographyV2
 import com.corphish.quicktools.viewmodels.TextReplacementViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -88,7 +88,7 @@ class FindAndReplaceActivity : ComponentActivity() {
             viewModel.initializeWith(text)
 
             setContent {
-                QuickToolsTheme {
+                AppTheme {
                     // A surface container using the 'background' color from the theme
                     Scaffold(
                         topBar = {

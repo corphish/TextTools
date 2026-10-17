@@ -59,6 +59,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.window.core.layout.WindowSizeClass
+import com.corphish.quicktools.ui.theme.AppTheme
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.R
 import com.corphish.quicktools.data.Constants
@@ -79,7 +80,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            QuickToolsTheme {
+            AppTheme {
                 Greeting(
                     viewModel = viewModel
                 )

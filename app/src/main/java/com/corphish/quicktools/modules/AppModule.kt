@@ -20,6 +20,8 @@ import com.corphish.quicktools.repository.TextTemplateRepository
 import com.corphish.quicktools.repository.TextTemplateRepositoryImpl
 import com.corphish.quicktools.repository.TextTransformRepository
 import com.corphish.quicktools.repository.TextTransformRepositoryImpl
+import com.corphish.quicktools.repository.ThemeRepository
+import com.corphish.quicktools.repository.ThemeRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -73,4 +75,8 @@ abstract class AppModule {
     @Binds
     @Singleton
     abstract fun bindEvalRepository(impl: EvalRepositoryImpl): EvalRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindThemeRepository(impl: ThemeRepositoryImpl): ThemeRepository
 }

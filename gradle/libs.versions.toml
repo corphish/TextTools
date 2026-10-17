@@ -19,6 +19,7 @@ androidxTestRunner = "1.7.0"
 androidxTestExtJunit = "1.3.0"
 kotlinMetadataJvm = "2.4.20"
 robolectric = "4.17"
+tabotaboUi = "0.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -50,6 +51,7 @@ mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 metadata-jvm = { group = "org.jetbrains.kotlin", name = "kotlin-metadata-jvm", version.ref = "kotlinMetadataJvm" }
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
+tabotabo-ui = { group = "io.github.tabotabodev", name = "tabotabo-ui", version.ref = "tabotaboUi" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

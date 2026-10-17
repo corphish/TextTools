@@ -69,7 +69,7 @@ import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.repository.AppMode
 import com.corphish.quicktools.ui.common.CustomTopAppBar
 import com.corphish.quicktools.ui.theme.BrandFontFamily
-import com.corphish.quicktools.ui.theme.QuickToolsTheme
+import com.corphish.quicktools.ui.theme.AppTheme
 import com.corphish.quicktools.ui.theme.TypographyV2
 import com.corphish.quicktools.viewmodels.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -81,7 +81,7 @@ class SettingsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            QuickToolsTheme { Settings(settingsViewModel) }
+            AppTheme { Settings(settingsViewModel) }
         }
     }
 

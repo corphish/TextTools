@@ -13,7 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import com.corphish.quicktools.R
 import com.corphish.quicktools.data.Result
 import com.corphish.quicktools.ui.common.ListDialog
-import com.corphish.quicktools.ui.theme.QuickToolsTheme
+import com.corphish.quicktools.ui.theme.AppTheme
 import com.corphish.quicktools.viewmodels.SaveTextViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -27,7 +27,7 @@ class SaveTextActivity : NoUIActivity() {
         val text = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT).toString()
 
         setContent {
-            QuickToolsTheme {
+            AppTheme {
                 SaveTextSelectionDialog(
                     onProcessNoteSelected = { processNote(text) },
                     onProcessFileSelected = { processTextFile(text) },

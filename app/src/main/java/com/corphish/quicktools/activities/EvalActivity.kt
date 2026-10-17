@@ -22,7 +22,7 @@ import com.corphish.quicktools.R
 import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.data.Result
 import com.corphish.quicktools.ui.common.ListDialog
-import com.corphish.quicktools.ui.theme.QuickToolsTheme
+import com.corphish.quicktools.ui.theme.AppTheme
 import com.corphish.quicktools.ui.theme.TypographyV2
 import com.corphish.quicktools.viewmodels.EvalViewModel
 import com.corphish.quicktools.viewmodels.EvalViewModel.Companion.EVAL_RESULT_APPEND
@@ -140,7 +140,7 @@ fun UserSelectionDialog(
         mutableStateOf(false)
     }
 
-    QuickToolsTheme {
+    AppTheme {
         ListDialog(
             title = stringResource(id = R.string.eval_title_small),
             message = stringResource(id = R.string.eval_result_desc),

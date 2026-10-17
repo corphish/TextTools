@@ -67,6 +67,9 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
+    // Tabotabo UI design system
+    implementation(libs.tabotabo.ui)
+
     // Material 3 expressive
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.adaptive)

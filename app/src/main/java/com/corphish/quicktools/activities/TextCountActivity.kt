@@ -60,6 +60,7 @@ import com.corphish.quicktools.ui.common.CustomTopAppBar
 import com.corphish.quicktools.ui.common.PieChart
 import com.corphish.quicktools.ui.common.PieChartData
 import com.corphish.quicktools.ui.theme.BrandFontFamily
+import com.corphish.quicktools.ui.theme.AppTheme
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.ui.theme.TypographyV2
 import com.corphish.quicktools.viewmodels.TextCountViewModel
@@ -76,7 +77,7 @@ class TextCountActivity : ComponentActivity() {
             ""
         }
         setContent {
-            QuickToolsTheme {
+            AppTheme {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     topBar = {

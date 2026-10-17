@@ -17,7 +17,7 @@ import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.extensions.truncate
 import com.corphish.quicktools.repository.FeatureIds
 import com.corphish.quicktools.ui.common.ListDialog
-import com.corphish.quicktools.ui.theme.QuickToolsTheme
+import com.corphish.quicktools.ui.theme.AppTheme
 import com.corphish.quicktools.viewmodels.OptionsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -51,7 +51,7 @@ class OptionsActivity : NoUIActivity() {
             val readonly = intent.getBooleanExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, false)
             val forceCopy = intent.getBooleanExtra(Constants.INTENT_FORCE_COPY, false)
             setContent {
-                QuickToolsTheme {
+                AppTheme {
                     val enabledFeatures by viewModel.enabledFeatures.collectAsState()
                     val optionDialog = remember {
                         mutableStateOf(true)

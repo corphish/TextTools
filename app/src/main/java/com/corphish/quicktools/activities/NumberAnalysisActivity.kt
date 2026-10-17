@@ -60,7 +60,7 @@ import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.data.NumberAnalysisResult
 import com.corphish.quicktools.ui.common.CustomTopAppBar
 import com.corphish.quicktools.ui.theme.BrandFontFamily
-import com.corphish.quicktools.ui.theme.QuickToolsTheme
+import com.corphish.quicktools.ui.theme.AppTheme
 import com.corphish.quicktools.viewmodels.NumberAnalysisViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -79,7 +79,7 @@ class NumberAnalysisActivity : ComponentActivity() {
         val allowApply = if (forceCopy) false else !readonly
 
         setContent {
-            QuickToolsTheme {
+            AppTheme {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     topBar = {

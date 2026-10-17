@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import com.corphish.quicktools.R
 import com.corphish.quicktools.repository.AppMode
 import com.corphish.quicktools.ui.theme.BrandFontFamily
+import com.corphish.quicktools.ui.theme.AppTheme
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.viewmodels.OnBoardingViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -68,7 +69,7 @@ class OnBoardingActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            QuickToolsTheme {
+            AppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     OnBoarding(
                         paddingValues = innerPadding,

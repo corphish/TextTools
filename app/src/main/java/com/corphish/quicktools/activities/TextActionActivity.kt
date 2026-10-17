@@ -46,7 +46,7 @@ import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.functions.IntentAction
 import com.corphish.quicktools.functions.ParsedTextAction
 import com.corphish.quicktools.ui.theme.BrandFontFamily
-import com.corphish.quicktools.ui.theme.QuickToolsTheme
+import com.corphish.quicktools.ui.theme.AppTheme
 import com.corphish.quicktools.ui.theme.Typography
 import com.corphish.quicktools.ui.theme.TypographyV2
 import com.corphish.quicktools.viewmodels.TexActionState
@@ -64,7 +64,7 @@ class TextActionActivity : ComponentActivity() {
         val forceCopy = intent.getBooleanExtra(Constants.INTENT_FORCE_COPY, false)
 
         setContent {
-            QuickToolsTheme {
+            AppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     TextActionUI(
                         text = text.toString(),

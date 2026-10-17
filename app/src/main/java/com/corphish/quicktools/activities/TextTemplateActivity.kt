@@ -53,7 +53,7 @@ import com.corphish.quicktools.data.TemplateType
 import com.corphish.quicktools.data.TextTemplate
 import com.corphish.quicktools.ui.common.CustomTopAppBar
 import com.corphish.quicktools.ui.theme.BrandFontFamily
-import com.corphish.quicktools.ui.theme.QuickToolsTheme
+import com.corphish.quicktools.ui.theme.AppTheme
 import com.corphish.quicktools.ui.theme.TypographyV2
 import com.corphish.quicktools.viewmodels.TextTemplateViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -70,7 +70,7 @@ class TextTemplateActivity : ComponentActivity() {
         } else ""
 
         setContent {
-            QuickToolsTheme {
+            AppTheme {
                 Scaffold(
                     topBar = {
                         CustomTopAppBar(

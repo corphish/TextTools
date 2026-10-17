@@ -65,7 +65,7 @@ import com.corphish.quicktools.ui.common.InputAndPreviewTextField
 import com.corphish.quicktools.ui.common.ListDialog
 import com.corphish.quicktools.ui.common.MarqueeText
 import com.corphish.quicktools.ui.theme.BrandFontFamily
-import com.corphish.quicktools.ui.theme.QuickToolsTheme
+import com.corphish.quicktools.ui.theme.AppTheme
 import com.corphish.quicktools.ui.theme.TypographyV2
 import com.corphish.quicktools.viewmodels.TextTransformViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -84,7 +84,7 @@ class TransformActivity : ComponentActivity() {
             val text = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT).toString()
 
             setContent {
-                QuickToolsTheme {
+                AppTheme {
                     Scaffold(
                         topBar = {
                             CustomTopAppBar(
