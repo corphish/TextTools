@@ -15,6 +15,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Quick Tools"
+rootProject.name = "Text Tools"
 include(":app")
  
