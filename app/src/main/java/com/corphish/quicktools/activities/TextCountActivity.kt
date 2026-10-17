@@ -59,6 +59,7 @@ import com.corphish.quicktools.data.TextCountResult
 import com.corphish.quicktools.ui.common.CustomTopAppBar
 import com.corphish.quicktools.ui.common.PieChart
 import com.corphish.quicktools.ui.common.PieChartData
+import com.corphish.quicktools.ui.common.pieChartColor
 import com.corphish.quicktools.ui.theme.BrandFontFamily
 import com.corphish.quicktools.ui.theme.AppTheme
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
@@ -247,18 +248,18 @@ fun LazyListScope.statsContent(result: TextCountResult, context: Context) {
             Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
                 PieChart(
                     data = listOf(
-                        PieChartData(stringResource(R.string.letters), result.letterCount.toFloat(), Color(0xFF6200EE)),
-                        PieChartData(stringResource(R.string.digits), result.digitCount.toFloat(), Color(0xFF03DAC6)),
-                        PieChartData(stringResource(R.string.spaces), result.spaceCount.toFloat(), Color(0xFFBB86FC)),
-                        PieChartData(stringResource(R.string.symbols), result.symbolCount.toFloat(), Color(0xFF3700B3))
+                        PieChartData(stringResource(R.string.letters), result.letterCount.toFloat()),
+                        PieChartData(stringResource(R.string.digits), result.digitCount.toFloat()),
+                        PieChartData(stringResource(R.string.spaces), result.spaceCount.toFloat()),
+                        PieChartData(stringResource(R.string.symbols), result.symbolCount.toFloat())
                     ),
                     modifier = Modifier.size(150.dp)
                 )
                 Column(modifier = Modifier.padding(start = 16.dp)) {
-                    LegendItem(stringResource(R.string.letters), Color(0xFF6200EE))
-                    LegendItem(stringResource(R.string.digits), Color(0xFF03DAC6))
-                    LegendItem(stringResource(R.string.spaces), Color(0xFFBB86FC))
-                    LegendItem(stringResource(R.string.symbols), Color(0xFF3700B3))
+                    LegendItem(stringResource(R.string.letters), pieChartColor(0))
+                    LegendItem(stringResource(R.string.digits), pieChartColor(1))
+                    LegendItem(stringResource(R.string.spaces), pieChartColor(2))
+                    LegendItem(stringResource(R.string.symbols), pieChartColor(3))
                 }
             }
         }
@@ -284,24 +285,18 @@ fun LazyListScope.statsContent(result: TextCountResult, context: Context) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         val topWords = result.wordFrequency.take(8)
-                        val colors = listOf(
-                            Color(0xFFF44336), Color(0xFFE91E63), Color(0xFF9C27B0),
-                            Color(0xFF673AB7), Color(0xFF3F51B5), Color(0xFF2196F3),
-                            Color(0xFF03A9F4), Color(0xFF00BCD4)
-                        )
                         PieChart(
-                            data = topWords.mapIndexed { index, pair ->
+                            data = topWords.map { pair ->
                                 PieChartData(
                                     pair.first,
-                                    pair.second.toFloat(),
-                                    colors[index % colors.size]
+                                    pair.second.toFloat()
                                 )
                             },
                             modifier = Modifier.size(150.dp)
                         )
                         Column(modifier = Modifier.padding(start = 16.dp)) {
                             topWords.forEachIndexed { index, pair ->
-                                LegendItem("${pair.first} (${pair.second})", colors[index % colors.size])
+                                LegendItem("${pair.first} (${pair.second})", pieChartColor(index))
                             }
                         }
                     }

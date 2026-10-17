@@ -1,43 +1,58 @@
 package com.corphish.quicktools.ui.common
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.corphish.quicktools.R
-import com.corphish.quicktools.ui.theme.BrandFontFamily
-import com.corphish.quicktools.ui.theme.TypographyV2
+import com.tabotabo.ui.button.IconAction
+import com.tabotabo.ui.surface.GlowCard
+import com.tabotabo.ui.surface.glowOutline
+import com.tabotabo.ui.text.EmphasisText
+import com.tabotabo.ui.theme.TabotaboTheme
+import com.tabotabo.ui.typography.EmphasisWeights
+import com.tabotabo.ui.typography.body
+
+/** Size of the icon shown in each list item. */
+private val ItemIconSize = 24.dp
 
 /**
- * A list of selectable options shown inside a dialog.
+ * A list of selectable options shown inside an outlined dialog, styled like `TabotaboDialog`
+ * but without confirm/dismiss buttons: picking an item is the action.
+ *
+ * @param title Dialog title; its last word is emphasised.
+ * @param message Optional message under the title; hidden when empty.
+ * @param list Items to show.
+ * @param supportBack Whether to show a back arrow before the title.
+ * @param onItemSelected Called with the index of the picked item.
+ * @param stringSelector Label of an item.
+ * @param iconSelector Drawable resource of an item's icon.
+ * @param onBackPressed Called when the back arrow is tapped.
+ * @param additionalContent Content shown below the list.
+ * @param dismissible Whether back press and outside taps dismiss the dialog.
+ * @param onDismissRequest Called when the dialog is dismissed.
  */
 @Composable
 fun <T> ListDialog(
@@ -53,6 +68,11 @@ fun <T> ListDialog(
     dismissible: Boolean = true,
     onDismissRequest: () -> Unit
 ) {
+    val colors = TabotaboTheme.colors
+    val dimensions = TabotaboTheme.dimensions
+    val spacing = dimensions.spacing
+    val shape = RoundedCornerShape(dimensions.cardCorner)
+
     Dialog(
         onDismissRequest = { onDismissRequest() },
         properties = DialogProperties(
@@ -60,106 +80,83 @@ fun <T> ListDialog(
             dismissOnClickOutside = dismissible
         )
     ) {
-        Card(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            shape = RoundedCornerShape(16.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                .background(colors.surface, shape)
+                .glowOutline(colors.outline, dimensions.outlineWidth, shape)
+                .padding(spacing.xl),
         ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (supportBack) {
+                    IconAction(onClick = onBackPressed, contentDescription = stringResource(R.string.back)) {
+                        Icon(painterResource(R.drawable.ic_arrow_left), contentDescription = null)
+                    }
+                    Spacer(modifier = Modifier.width(spacing.xs))
+                }
+
+                EmphasisText(
+                    style = TabotaboTheme.typography.headlineSmall,
+                    weights = EmphasisWeights.Title,
+                ) {
+                    FocusedLastWord(title)
+                }
+            }
+
+            if (message.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(spacing.s))
+                Text(text = message, style = TabotaboTheme.typography.body, color = colors.muted)
+            }
+
+            Spacer(modifier = Modifier.height(spacing.l))
+
             Column(
                 modifier = Modifier
-                    .padding(16.dp),
+                    .weight(1f, fill = false)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(spacing.s),
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(bottom = 4.dp)
-                ) {
-                    if (supportBack) {
-                        IconButton(
-                            onClick = { onBackPressed() },
-                            modifier = Modifier
-                                .clip(CircleShape)
-                                .size(48.dp)
-                                .background(MaterialTheme.colorScheme.primary)
-                        ) {
-                            Icon(
-                                painterResource(R.drawable.ic_arrow_left),
-                                contentDescription = stringResource(R.string.back),
-                                modifier = Modifier.size(32.dp),
-                                tint = MaterialTheme.colorScheme.onPrimary
-                            )
-                        }
-                    }
-
-                    Text(
-                        text = title,
-                        style = TypographyV2.headlineMedium,
-                        fontFamily = BrandFontFamily,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.padding(
-                            start = if (supportBack) 16.dp else 0.dp,
-                            bottom = if (message.isEmpty()) 16.dp else 0.dp
-                        )
-                    )
-                }
-
-                if (!message.isEmpty()) {
-                    Text(
-                        text = message,
-                        style = TypographyV2.bodyMedium,
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    )
-                }
-
-                Column(
-                    modifier = Modifier.verticalScroll(rememberScrollState())
-                ) {
-                    for ((index, item) in list.withIndex()) {
-                        ListDialogItem(text = stringSelector(item), icon = iconSelector(item)) {
-                            onItemSelected(index)
-                        }
+                for ((index, item) in list.withIndex()) {
+                    ListDialogItem(text = stringSelector(item), icon = iconSelector(item)) {
+                        onItemSelected(index)
                     }
                 }
-
-                additionalContent()
             }
+
+            additionalContent()
         }
     }
 }
 
+/**
+ * One option of a [ListDialog]: an outlined card with an icon and a label.
+ *
+ * @param text Label of the option.
+ * @param icon Drawable resource of the option's icon.
+ * @param onClick Called when the option is tapped.
+ */
 @Composable
 fun ListDialogItem(text: String, @DrawableRes icon: Int, onClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() }
+    val spacing = TabotaboTheme.dimensions.spacing
+
+    GlowCard(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = onClick,
+        contentPadding = PaddingValues(horizontal = spacing.l, vertical = spacing.m),
     ) {
-        Row(
-            modifier = Modifier.padding(all = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(36.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primary),
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painterResource(id = icon),
-                    contentDescription = text,
-                    modifier = Modifier.size(24.dp),
-                    colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onPrimary)
-                )
-            }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                painterResource(id = icon),
+                contentDescription = null,
+                modifier = Modifier.size(ItemIconSize),
+                tint = TabotaboTheme.colors.primary
+            )
 
             Text(
                 text = text,
-                style = TypographyV2.labelMedium,
-                fontFamily = BrandFontFamily,
-                fontWeight = FontWeight.W400,
-                modifier = Modifier.padding(start = 16.dp)
+                style = TabotaboTheme.typography.bodyLarge,
+                color = TabotaboTheme.colors.accent,
+                modifier = Modifier.padding(start = spacing.l)
             )
         }
     }

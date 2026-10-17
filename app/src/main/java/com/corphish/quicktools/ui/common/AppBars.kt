@@ -1,54 +1,45 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.corphish.quicktools.ui.common
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MediumTopAppBar
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.corphish.quicktools.R
-import com.corphish.quicktools.ui.theme.BrandFontFamily
-import com.corphish.quicktools.ui.theme.TypographyV2
+import com.tabotabo.ui.layout.ScreenHeader
+import com.tabotabo.ui.theme.TabotaboTheme
 
+/**
+ * Screen header with a back arrow and a title whose last word is emphasised.
+ *
+ * Meant for a Material3 `Scaffold`'s `topBar` slot, so it applies the top and horizontal
+ * safe-drawing insets itself. Screens on `ScreenScaffold` should use `ScreenHeader` directly.
+ *
+ * @param id String resource of the title.
+ * @param modifier Modifier for the header.
+ * @param onNavigationClick Called when the back arrow is tapped.
+ */
 @Composable
 fun CustomTopAppBar(
     @StringRes id: Int,
-    hideTitle: Boolean = false,
+    modifier: Modifier = Modifier,
     onNavigationClick: () -> Unit = {},
-    scrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(),
 ) {
-    MediumTopAppBar(
-        title = {
-            if (!hideTitle) {
-                Text(
-                    text = stringResource(id = id),
-                    style = TypographyV2.headlineMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontFamily = BrandFontFamily,
-                )
-            }
-        },
-        navigationIcon = {
-            IconButton(onClick = { onNavigationClick() }) {
-                Icon(
-                    painterResource(R.drawable.ic_arrow_left),
-                    contentDescription = stringResource(R.string.back),
-                    modifier = Modifier.size(32.dp),
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
-        },
-        scrollBehavior = scrollBehavior
-    )
+    val title = stringResource(id = id)
+    val spacing = TabotaboTheme.dimensions.spacing
+
+    ScreenHeader(
+        modifier = modifier
+            .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal))
+            .padding(horizontal = spacing.s, vertical = spacing.m),
+        onBack = onNavigationClick,
+        backContentDescription = stringResource(R.string.back),
+    ) {
+        FocusedLastWord(title)
+    }
 }
