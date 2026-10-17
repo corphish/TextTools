@@ -1,8 +1,5 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.kotlin.compose)
@@ -20,9 +17,6 @@ android {
         versionName = "2.2.5"
 
         testInstrumentationRunner = "com.corphish.quicktools.HiltTestRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
     }
 
     buildTypes {
@@ -38,19 +32,6 @@ android {
 
     testOptions {
         unitTests.isReturnDefaultValues = true
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlin {
-        jvmToolchain(17)
-
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_17)
-        }
     }
 
     buildFeatures {
@@ -74,6 +55,11 @@ android {
     androidResources {
         generateLocaleConfig = true
     }
+}
+
+kotlin {
+    // Sets the JDK used for Kotlin and Java compilation, and the JVM target (17) for both.
+    jvmToolchain(17)
 }
 
 dependencies {
@@ -123,10 +109,4 @@ dependencies {
     // Compose debug
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-}
-
-configurations.all {
-    resolutionStrategy {
-        force("androidx.concurrent:concurrent-futures:1.2.0")
-    }
 }
