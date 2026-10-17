@@ -81,6 +81,11 @@
     <string name="save_text_error">Failed to save text</string>
 
     <string name="title_activity_find_and_replace">Find &amp; Replace</string>
+    <string name="title_activity_transform">Transform Text</string>
+    <string name="title_activity_text_count">Text Analysis</string>
+    <string name="title_activity_number_analysis">Number Analysis</string>
+    <string name="title_activity_text_template">Text Template</string>
+    <string name="title_activity_mode_select">Context Menu Options</string>
     <string name="context_menu_find_and_replace">[T\u00B2] Find &amp; Replace</string>
     <string name="replace_this">Replace</string>
     <string name="replace_all">Replace All</string>
@@ -164,7 +169,7 @@
     <string name="after_certain_characters">After certain characters</string>
     <string name="after_certain_words">After certain words</string>
     <string name="copy_to_clipboard">Copy to clipboard</string>
-    <string name="title_activity_simulation">SimulationActivity</string>
+    <string name="title_activity_simulation">Simulation</string>
     <string name="simulate">Simulate</string>
     <string name="simulate_desc">If the Text Tools options are not seen for the selected text in an other app, that text can be copied and pasted here for simulation of text tools functions.</string>
     <string name="simulate_details">Enter or paste the text here and then click the button below to simulate various functions of Text Tools. Any text produced by a function of Text Tools (like Text Transform) will not be reflected here but rather be copied to the clipboard.</string>
@@ -239,7 +244,7 @@
     <string name="supported_bases">Supported bases: %1$s</string>
     <string name="invalid_number">Invalid number for analysis</string>
     <string name="result_too_large">Result too large</string>
-    <string name="title_activity_text_action">TextActionActivity</string>
+    <string name="title_activity_text_action">Text Actions</string>
     <string name="text_actions">Actions</string>
     <string name="text_actions_desc">What would you like to do with the result?</string>
     <string name="text_actions_feature_desc">Process the text directly with supported system functions.</string>

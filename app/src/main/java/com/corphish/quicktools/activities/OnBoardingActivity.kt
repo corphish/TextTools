@@ -52,7 +52,6 @@ import com.tabotabo.ui.layout.LocalScreenLayoutInfo
 import com.tabotabo.ui.layout.ScreenScaffold
 import com.tabotabo.ui.motion.PopInContent
 import com.tabotabo.ui.surface.GlowCard
-import com.tabotabo.ui.text.HeroTitle
 import com.tabotabo.ui.text.ScreenTitle
 import com.tabotabo.ui.text.Subtitle
 import com.tabotabo.ui.theme.TabotaboTheme
@@ -185,14 +184,14 @@ fun InitialPage(
 }
 
 /**
- * App name as a hero title above the short app description.
+ * App name as a screen title above the short app description.
  */
 @Composable
 private fun WelcomeText() {
     val appName = stringResource(R.string.app_name)
 
     Column(verticalArrangement = Arrangement.spacedBy(TabotaboTheme.dimensions.spacing.s)) {
-        HeroTitle { FocusedLastWord(appName) }
+        ScreenTitle { FocusedLastWord(appName) }
         Subtitle(text = stringResource(R.string.app_desc_short), maxLines = Int.MAX_VALUE)
     }
 }
@@ -291,7 +290,7 @@ fun ModeSelectionScreen(
  */
 @Composable
 private fun ModeSelectionIntro(onBack: () -> Unit, modifier: Modifier = Modifier) {
-    val title = stringResource(R.string.mode_select_title)
+    val title = stringResource(R.string.title_activity_mode_select)
 
     Column(
         modifier = modifier,

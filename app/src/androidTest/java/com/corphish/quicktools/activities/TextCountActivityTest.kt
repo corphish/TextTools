@@ -28,7 +28,7 @@ class TextCountActivityTest {
 
     @Test
     fun testActivityTitleIsDisplayed() {
-        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.text_count))
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.title_activity_text_count))
             .assertIsDisplayed()
     }
 

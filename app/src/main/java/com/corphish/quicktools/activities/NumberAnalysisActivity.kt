@@ -111,7 +111,7 @@ fun NumberAnalysisScreen(
     }
 
     ScreenScaffold(
-        header = { AppScreenHeader(id = R.string.number_analysis, onBack = onBack) }
+        header = { AppScreenHeader(id = R.string.title_activity_number_analysis, onBack = onBack) }
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),

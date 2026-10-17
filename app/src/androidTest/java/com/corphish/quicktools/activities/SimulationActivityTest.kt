@@ -28,9 +28,7 @@ class SimulationActivityTest {
 
     @Test
     fun testActivityTitleIsDisplayed() {
-        // The simulate button shares the title's text, so match the non-clickable node
-        composeTestRule.onAllNodesWithText(composeTestRule.activity.getString(R.string.simulate))
-            .filterToOne(!hasClickAction())
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.title_activity_simulation))
             .assertIsDisplayed()
     }
 

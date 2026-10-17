@@ -119,7 +119,7 @@ fun TextActionUI(
     }
 
     ScreenScaffold(
-        header = { AppScreenHeader(id = R.string.text_actions, onBack = onBack) }
+        header = { AppScreenHeader(id = R.string.title_activity_text_action, onBack = onBack) }
     ) {
         PopInContent(targetState = actionState, modifier = Modifier.fillMaxSize()) { state ->
             when (state) {

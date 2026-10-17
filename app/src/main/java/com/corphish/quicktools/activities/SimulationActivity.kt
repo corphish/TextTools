@@ -99,7 +99,7 @@ fun Simulation(onBack: () -> Unit = {}, onSimulate: (String) -> Unit = {}) {
 
     val header: @Composable () -> Unit = {
         AppScreenHeader(
-            id = R.string.simulate,
+            id = R.string.title_activity_simulation,
             onBack = onBack,
             actions = {
                 IconAction(

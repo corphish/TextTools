@@ -55,7 +55,7 @@ import com.tabotabo.ui.layout.ScreenScaffold
 import com.tabotabo.ui.surface.GlowCard
 import com.tabotabo.ui.surface.TabotaboDialog
 import com.tabotabo.ui.surface.Tag
-import com.tabotabo.ui.text.HeroTitle
+import com.tabotabo.ui.text.ScreenTitle
 import com.tabotabo.ui.text.Subtitle
 import com.tabotabo.ui.theme.TabotaboTheme
 import com.tabotabo.ui.typography.caption
@@ -90,7 +90,7 @@ class MainActivity : ComponentActivity() {
 }
 
 /**
- * Main screen: hero title with edit and settings actions, a grid of feature tiles and a
+ * Main screen: screen title with edit and settings actions, a grid of feature tiles and a
  * Simulate button. Tapping a tile shows its details; in edit mode it turns the feature on or
  * off instead, and enabled features glow.
  *
@@ -157,7 +157,7 @@ fun Greeting(
 }
 
 /**
- * Hero title with edit and settings actions, above a short description (or, in edit mode, an
+ * Screen title with edit and settings actions, above a short description (or, in edit mode, an
  * explanation of editing).
  *
  * @param shouldEdit Whether the screen is in edit mode.
@@ -174,7 +174,7 @@ private fun MainHeader(
 
     Column(verticalArrangement = Arrangement.spacedBy(TabotaboTheme.dimensions.spacing.s)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            HeroTitle(modifier = Modifier.weight(1f)) { FocusedLastWord(appName) }
+            ScreenTitle(modifier = Modifier.weight(1f)) { FocusedLastWord(appName) }
             IconAction(
                 onClick = onEditToggle,
                 contentDescription = stringResource(if (shouldEdit) R.string.done else R.string.edit),

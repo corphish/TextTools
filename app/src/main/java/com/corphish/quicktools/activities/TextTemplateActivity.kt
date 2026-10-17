@@ -122,7 +122,7 @@ fun TextTemplateUI(
     val templateToEdit = templates.firstOrNull { it.id == templateToEditId }
 
     ScreenScaffold(
-        header = { AppScreenHeader(id = R.string.text_template, onBack = onBack) },
+        header = { AppScreenHeader(id = R.string.title_activity_text_template, onBack = onBack) },
         actions = if (isSelectionMode) {
             null
         } else {

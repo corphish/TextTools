@@ -111,7 +111,7 @@ fun TextCount(
     }
 
     ScreenScaffold(
-        header = { AppScreenHeader(id = R.string.text_count, onBack = onBack) }
+        header = { AppScreenHeader(id = R.string.title_activity_text_count, onBack = onBack) }
     ) {
         LazyColumn(
             modifier = Modifier

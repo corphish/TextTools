@@ -152,7 +152,7 @@ fun TextTransformUI(
     }
 
     val header: @Composable () -> Unit = {
-        AppScreenHeader(id = R.string.transform_long, onBack = onBack)
+        AppScreenHeader(id = R.string.title_activity_transform, onBack = onBack)
     }
     val nextButton: @Composable () -> Unit = {
         PrimaryButton(
