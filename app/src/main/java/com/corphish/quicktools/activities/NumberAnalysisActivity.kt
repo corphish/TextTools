@@ -9,59 +9,44 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.window.core.layout.WindowSizeClass
 import com.corphish.quicktools.R
 import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.data.NumberAnalysisResult
-import com.corphish.quicktools.ui.common.CustomTopAppBar
-import com.corphish.quicktools.ui.theme.BrandFontFamily
+import com.corphish.quicktools.ui.common.AppScreenHeader
+import com.corphish.quicktools.ui.common.ButtonIcon
+import com.corphish.quicktools.ui.common.CardTextField
+import com.corphish.quicktools.ui.common.SectionLabel
 import com.corphish.quicktools.ui.theme.AppTheme
 import com.corphish.quicktools.viewmodels.NumberAnalysisViewModel
+import com.tabotabo.ui.button.IconAction
+import com.tabotabo.ui.layout.ScreenScaffold
+import com.tabotabo.ui.surface.SelectablePill
+import com.tabotabo.ui.text.Fact
+import com.tabotabo.ui.text.Subtitle
+import com.tabotabo.ui.theme.TabotaboTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -80,45 +65,44 @@ class NumberAnalysisActivity : ComponentActivity() {
 
         setContent {
             AppTheme {
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    topBar = {
-                        CustomTopAppBar(
-                            id = R.string.number_analysis,
-                            onNavigationClick = { finish() }
-                        )
+                NumberAnalysisScreen(
+                    initialText = initialText,
+                    allowApply = allowApply,
+                    onBack = { finish() },
+                    onApply = { text ->
+                        val resultIntent = Intent()
+                        resultIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, text)
+                        setResult(RESULT_OK, resultIntent)
+                        finish()
                     }
-                ) { innerPadding ->
-                    NumberAnalysisScreen(
-                        initialText = initialText,
-                        innerPadding = innerPadding,
-                        allowApply = allowApply,
-                        onApply = { text ->
-                            val resultIntent = Intent()
-                            resultIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, text)
-                            setResult(RESULT_OK, resultIntent)
-                            finish()
-                        }
-                    )
-                }
+                )
             }
         }
     }
 }
 
+/**
+ * Number analysis screen: the number and its base, followed by conversions and other derived
+ * values, each of which can be copied or applied.
+ *
+ * @param initialText Text to analyse initially.
+ * @param allowApply Whether values may replace the selected text.
+ * @param onBack Called when the user leaves the screen.
+ * @param onApply Called with a value to replace the selected text with.
+ * @param viewModel Holds the input and its analysis.
+ */
 @Composable
 fun NumberAnalysisScreen(
     initialText: String,
-    innerPadding: PaddingValues,
     allowApply: Boolean,
+    onBack: () -> Unit,
     onApply: (String) -> Unit,
     viewModel: NumberAnalysisViewModel = hiltViewModel()
 ) {
     val inputText by viewModel.inputText.collectAsState()
     val analysisResult by viewModel.analysisResult.collectAsState()
     val selectedBase by viewModel.selectedBase.collectAsState()
-    val adaptiveInfo = currentWindowAdaptiveInfo()
-    val isWideScreen = adaptiveInfo.windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
+    val spacing = TabotaboTheme.dimensions.spacing
 
     LaunchedEffect(Unit) {
         if (initialText.isNotEmpty()) {
@@ -126,430 +110,192 @@ fun NumberAnalysisScreen(
         }
     }
 
-    if (isWideScreen) {
-        Row(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ScreenScaffold(
+        header = { AppScreenHeader(id = R.string.number_analysis, onBack = onBack) }
+    ) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(spacing.m)
         ) {
-            Column(modifier = Modifier.weight(0.4f).fillMaxHeight()) {
-                InputSection(
+            item {
+                NumberInputSection(
                     text = inputText,
                     selectedBase = selectedBase ?: analysisResult?.base ?: 10,
                     supportedBases = analysisResult?.supportedBases ?: emptyList(),
                     onTextChange = { viewModel.setInput(it) },
-                    onBaseChange = { viewModel.setBase(it) },
-                    isWideScreen = true,
-                    modifier = Modifier.fillMaxHeight()
+                    onBaseChange = { viewModel.setBase(it) }
                 )
             }
 
             if (analysisResult == null) {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxHeight().weight(0.6f)) {
-                    Text(stringResource(R.string.invalid_number))
-                }
+                item { Subtitle(text = stringResource(R.string.invalid_number), maxLines = Int.MAX_VALUE) }
             } else {
-                LazyColumn(
-                    modifier = Modifier.weight(0.6f),
-                    contentPadding = PaddingValues(bottom = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    analysisContent(analysisResult, allowApply, onApply)
-                }
-            }
-        }
-    } else {
-        Column(modifier = Modifier.padding(innerPadding)) {
-            InputSection(
-                text = inputText,
-                selectedBase = selectedBase ?: analysisResult?.base ?: 10,
-                supportedBases = analysisResult?.supportedBases ?: emptyList(),
-                onTextChange = { viewModel.setInput(it) },
-                onBaseChange = { viewModel.setBase(it) }
-            )
-
-            if (analysisResult == null) {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                    Text(stringResource(R.string.invalid_number))
-                }
-            } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    analysisContent(analysisResult, allowApply, onApply)
-                }
+                analysisContent(analysisResult, allowApply, onApply)
             }
         }
     }
 }
 
+/**
+ * Adds the analysis sections for [result] to a lazy list.
+ *
+ * @param result Analysis to show; nothing is added when null.
+ * @param allowApply Whether values may replace the selected text.
+ * @param onApply Called with a value to apply.
+ */
 fun LazyListScope.analysisContent(
     result: NumberAnalysisResult?,
     allowApply: Boolean,
     onApply: (String) -> Unit
 ) {
     result?.let { res ->
-        item { SectionHeader(stringResource(R.string.conversions), painterResource(R.drawable.ic_auto_fix_high)) }
-        item {
-            AnalysisSection {
-                res.conversions.toList().forEachIndexed { index, (base, value) ->
-                    ResultItem(
-                        label = "Base $base",
-                        value = value,
-                        allowApply = allowApply,
-                        onApply = onApply
-                    )
-                    if (index < res.conversions.size - 1) {
-                        HorizontalDivider(
-                            color = MaterialTheme.colorScheme.surface,
-                            thickness = 2.dp,
-                            modifier = Modifier.padding(vertical = 8.dp)
-                        )
-                    }
-                }
-            }
+        resultSection(R.string.conversions, res.conversions.toList()) { (base, value) ->
+            ResultItem(label = "Base $base", value = value, allowApply = allowApply, onApply = onApply)
         }
 
-        if (res.mathTransformations.isNotEmpty()) {
-            item { SectionHeader(stringResource(R.string.math_transformations), painterResource(R.drawable.ic_numbers)) }
-            item {
-                AnalysisSection {
-                    res.mathTransformations.toList().forEachIndexed { index, (labelRes, value) ->
-                        val isError = value.startsWith("@string/")
-                        val displayValue = if (isError) {
-                            val resId = when (value) {
-                                "@string/result_too_large" -> R.string.result_too_large
-                                else -> R.string.generic_error
-                            }
-                            stringResource(resId)
-                        } else value
-                        ResultItem(
-                            label = stringResource(labelRes),
-                            value = displayValue,
-                            allowApply = allowApply && !isError,
-                            allowCopy = !isError,
-                            onApply = onApply
-                        )
-                        if (index < res.mathTransformations.size - 1) {
-                            HorizontalDivider(
-                                color = MaterialTheme.colorScheme.surface,
-                                thickness = 2.dp,
-                                modifier = Modifier.padding(vertical = 8.dp)
-                            )
-                        }
-                    }
-                }
-            }
+        resultSection(R.string.math_transformations, res.mathTransformations.toList()) { (labelRes, value) ->
+            val isError = value.startsWith(STRING_REFERENCE_PREFIX)
+            ResultItem(
+                label = stringResource(labelRes),
+                value = resolveValue(value),
+                allowApply = allowApply && !isError,
+                allowCopy = !isError,
+                onApply = onApply
+            )
         }
 
-        if (res.digitDerivations.isNotEmpty()) {
-            item { SectionHeader(stringResource(R.string.digit_derivations), painterResource(R.drawable.ic_bar_chart)) }
-            item {
-                AnalysisSection {
-                    res.digitDerivations.toList().forEachIndexed { index, (labelRes, value) ->
-                        ResultItem(
-                            label = stringResource(labelRes),
-                            value = value,
-                            allowApply = allowApply,
-                            onApply = onApply
-                        )
-                        if (index < res.digitDerivations.size - 1) {
-                            HorizontalDivider(
-                                color = MaterialTheme.colorScheme.surface,
-                                thickness = 2.dp,
-                                modifier = Modifier.padding(vertical = 8.dp)
-                            )
-                        }
-                    }
-                }
-            }
+        resultSection(R.string.digit_derivations, res.digitDerivations.toList()) { (labelRes, value) ->
+            ResultItem(label = stringResource(labelRes), value = value, allowApply = allowApply, onApply = onApply)
         }
 
-        if (res.factors.isNotEmpty()) {
-            item { SectionHeader(stringResource(R.string.factors), painterResource(R.drawable.ic_auto_awesome)) }
-            item {
-                AnalysisSection {
-                    res.factors.toList().forEachIndexed { index, (labelRes, value) ->
-                        ResultItem(
-                            label = stringResource(labelRes),
-                            value = value,
-                            allowApply = allowApply,
-                            onApply = onApply
-                        )
-                        if (index < res.factors.size - 1) {
-                            HorizontalDivider(
-                                color = MaterialTheme.colorScheme.surface,
-                                thickness = 2.dp,
-                                modifier = Modifier.padding(vertical = 8.dp)
-                            )
-                        }
-                    }
-                }
-            }
+        resultSection(R.string.factors, res.factors.toList()) { (labelRes, value) ->
+            ResultItem(label = stringResource(labelRes), value = value, allowApply = allowApply, onApply = onApply)
         }
 
-        if (res.primeInfo.isNotEmpty()) {
-            item { SectionHeader(stringResource(R.string.prime_number), painterResource(R.drawable.ic_auto_fix_high)) }
-            item {
-                AnalysisSection {
-                    res.primeInfo.toList().forEachIndexed { index, (labelRes, value) ->
-                        val isError = value == "@string/result_too_large"
-                        val displayValue = if (value.startsWith("@string/")) {
-                            val resId = when (value) {
-                                "@string/yes" -> R.string.yes
-                                "@string/no" -> R.string.no
-                                "@string/result_too_large" -> R.string.result_too_large
-                                else -> R.string.generic_error
-                            }
-                            stringResource(resId)
-                        } else value
-                        ResultItem(
-                            label = stringResource(labelRes),
-                            value = displayValue,
-                            allowApply = allowApply && !value.startsWith("@string/"),
-                            allowCopy = !isError,
-                            onApply = onApply
-                        )
-                        if (index < res.primeInfo.size - 1) {
-                            HorizontalDivider(
-                                color = MaterialTheme.colorScheme.surface,
-                                thickness = 2.dp,
-                                modifier = Modifier.padding(vertical = 8.dp)
-                            )
-                        }
-                    }
-                }
-            }
+        resultSection(R.string.prime_number, res.primeInfo.toList()) { (labelRes, value) ->
+            ResultItem(
+                label = stringResource(labelRes),
+                value = resolveValue(value),
+                allowApply = allowApply && !value.startsWith(STRING_REFERENCE_PREFIX),
+                allowCopy = value != RESULT_TOO_LARGE,
+                onApply = onApply
+            )
         }
 
-        if (res.languageConversions.isNotEmpty()) {
-            item { SectionHeader(stringResource(R.string.language_conversion), painterResource(R.drawable.ic_title)) }
-            item {
-                AnalysisSection {
-                    res.languageConversions.toList().forEachIndexed { index, (labelRes, value) ->
-                        ResultItem(
-                            label = stringResource(labelRes),
-                            value = value,
-                            allowApply = allowApply,
-                            onApply = onApply
-                        )
-                        if (index < res.languageConversions.size - 1) {
-                            HorizontalDivider(
-                                color = MaterialTheme.colorScheme.surface,
-                                thickness = 2.dp,
-                                modifier = Modifier.padding(vertical = 8.dp)
-                            )
-                        }
-                    }
-                }
+        resultSection(R.string.language_conversion, res.languageConversions.toList()) { (labelRes, value) ->
+            ResultItem(label = stringResource(labelRes), value = value, allowApply = allowApply, onApply = onApply)
+        }
+    }
+}
+
+/** Prefix of values that refer to a string resource instead of holding a result. */
+private const val STRING_REFERENCE_PREFIX = "@string/"
+
+/** Value reporting that a result was too large to compute. */
+private const val RESULT_TOO_LARGE = "@string/result_too_large"
+
+/**
+ * Turns a string resource reference produced by the analysis into its text; other values are
+ * returned unchanged.
+ *
+ * @param value Analysis value.
+ */
+@Composable
+private fun resolveValue(value: String): String {
+    if (!value.startsWith(STRING_REFERENCE_PREFIX)) return value
+    return stringResource(
+        when (value) {
+            "@string/yes" -> R.string.yes
+            "@string/no" -> R.string.no
+            RESULT_TOO_LARGE -> R.string.result_too_large
+            else -> R.string.generic_error
+        }
+    )
+}
+
+/**
+ * Adds a titled section of [entries] to a lazy list; nothing is added when [entries] is empty.
+ *
+ * @param title String resource of the section title.
+ * @param entries Entries to show.
+ * @param itemContent Renders one entry.
+ */
+private fun <T> LazyListScope.resultSection(
+    @StringRes title: Int,
+    entries: List<T>,
+    itemContent: @Composable (T) -> Unit,
+) {
+    if (entries.isEmpty()) return
+
+    item { SectionLabel(stringResource(title), modifier = Modifier.padding(top = TabotaboTheme.dimensions.spacing.l)) }
+    item {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Column(verticalArrangement = Arrangement.spacedBy(TabotaboTheme.dimensions.spacing.s)) {
+                entries.forEach { itemContent(it) }
             }
         }
     }
 }
 
+/**
+ * The number to analyse and the base to read it in.
+ *
+ * @param text Current input.
+ * @param selectedBase Base the input is read in.
+ * @param supportedBases Bases the input is valid in.
+ * @param onTextChange Called when the user edits the input.
+ * @param onBaseChange Called when the user picks a base.
+ * @param modifier Modifier for the section.
+ */
 @Composable
-fun InputSection(
+fun NumberInputSection(
     text: String,
     selectedBase: Int,
     supportedBases: List<Int>,
     onTextChange: (String) -> Unit,
     onBaseChange: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    isWideScreen: Boolean = false
 ) {
-    var expanded by remember { mutableStateOf(false) }
+    val spacing = TabotaboTheme.dimensions.spacing
 
-    Column(modifier = modifier.padding(vertical = 16.dp, horizontal = 16.dp)) {
-        Text(
-            text = stringResource(R.string.input),
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.primary,
-            fontWeight = FontWeight.Bold,
-            fontFamily = BrandFontFamily
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(spacing.m)) {
+        CardTextField(
+            value = text,
+            onValueChange = onTextChange,
+            modifier = Modifier.fillMaxWidth(),
+            label = stringResource(R.string.input),
+            placeholder = stringResource(R.string.enter_text_here),
+            singleLine = true,
+            highlighted = supportedBases.isNotEmpty(),
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Surface(
-            tonalElevation = 8.dp,
-            modifier = Modifier
-                .fillMaxWidth()
-                .then(if (isWideScreen) Modifier.weight(1f) else Modifier),
-            shape = MaterialTheme.shapes.medium
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .then(if (isWideScreen) Modifier.fillMaxHeight() else Modifier)
+        if (supportedBases.isNotEmpty()) {
+            FlowRow(
+                modifier = Modifier.selectableGroup(),
+                horizontalArrangement = Arrangement.spacedBy(spacing.s),
+                verticalArrangement = Arrangement.spacedBy(spacing.s),
             ) {
-                if (isWideScreen) {
-                    TextField(
-                        value = text,
-                        onValueChange = onTextChange,
-                        modifier = Modifier.fillMaxWidth().weight(1f),
-                        placeholder = { Text(stringResource(R.string.enter_text_here)) },
-                        singleLine = false,
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
-                        )
-                    )
-
-                    Box(
-                        modifier = Modifier
-                            .padding(start = 12.dp, bottom = 8.dp)
-                            .align(Alignment.End)
-                    ) {
-                        Surface(
-                            onClick = { expanded = true },
-                            color = MaterialTheme.colorScheme.secondaryContainer,
-                            shape = MaterialTheme.shapes.small
-                        ) {
-                            Text(
-                                text = "Base $selectedBase",
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                                style = MaterialTheme.typography.labelLarge
-                            )
-                        }
-                        DropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false }
-                        ) {
-                            supportedBases.forEach { base ->
-                                DropdownMenuItem(
-                                    text = { Text("Base $base") },
-                                    onClick = {
-                                        onBaseChange(base)
-                                        expanded = false
-                                    }
-                                )
-                            }
-                        }
-                    }
-                } else {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        TextField(
-                            value = text,
-                            onValueChange = onTextChange,
-                            modifier = Modifier.weight(1f),
-                            placeholder = { Text(stringResource(R.string.enter_text_here)) },
-                            singleLine = true,
-                            colors = TextFieldDefaults.colors(
-                                focusedContainerColor = Color.Transparent,
-                                unfocusedContainerColor = Color.Transparent,
-                                focusedIndicatorColor = Color.Transparent,
-                                unfocusedIndicatorColor = Color.Transparent
-                            )
-                        )
-
-                        Box {
-                            Surface(
-                                onClick = { expanded = true },
-                                color = MaterialTheme.colorScheme.secondaryContainer,
-                                shape = MaterialTheme.shapes.small
-                            ) {
-                                Text(
-                                    text = "Base $selectedBase",
-                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                                    style = MaterialTheme.typography.labelLarge
-                                )
-                            }
-                            DropdownMenu(
-                                expanded = expanded,
-                                onDismissRequest = { expanded = false }
-                            ) {
-                                supportedBases.forEach { base ->
-                                    DropdownMenuItem(
-                                        text = { Text("Base $base") },
-                                        onClick = {
-                                            onBaseChange(base)
-                                            expanded = false
-                                        }
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun AnalysisSection(
-    title: String = "",
-    icon: Painter? = null,
-    content: @Composable ColumnScope.() -> Unit
-) {
-    Surface(
-        tonalElevation = 2.dp,
-        shape = MaterialTheme.shapes.medium,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Column {
-            Spacer(modifier = Modifier.height(8.dp))
-            if (icon != null) {
-                Row(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        painter = icon,
-                        contentDescription = title,
-                        modifier = Modifier.size(20.dp),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier.padding(start = 8.dp),
-                        fontFamily = BrandFontFamily
+                supportedBases.forEach { base ->
+                    SelectablePill(
+                        text = "Base $base",
+                        selected = base == selectedBase,
+                        onClick = { onBaseChange(base) },
                     )
                 }
-                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
             }
-            content()
-            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }
 
-@Composable
-fun SectionHeader(title: String, icon: Painter? = null) {
-    Column(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            if (icon != null) {
-                Icon(
-                    painter = icon,
-                    contentDescription = title,
-                    modifier = Modifier.size(20.dp),
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(start = if (icon != null) 8.dp else 0.dp),
-                fontFamily = BrandFontFamily
-            )
-        }
-    }
-}
-
+/**
+ * One analysis value with copy and apply actions.
+ *
+ * @param label Name of the value.
+ * @param value The value.
+ * @param allowApply Whether to show the apply action.
+ * @param allowCopy Whether to show the copy action.
+ * @param onApply Called with [value] when applied.
+ */
 @Composable
 fun ResultItem(
     label: String,
@@ -559,38 +305,29 @@ fun ResultItem(
     onApply: (String) -> Unit
 ) {
     val context = LocalContext.current
+
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(text = label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.outline)
-            Text(text = value, style = MaterialTheme.typography.bodyMedium)
-        }
+        Fact(title = label, value = value, modifier = Modifier.weight(1f))
         if (allowCopy) {
-            IconButton(onClick = {
-                val clipboard =
-                    context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                val clip = ClipData.newPlainText(label, value)
-                clipboard.setPrimaryClip(clip)
-                Toast.makeText(context, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show()
-            }, modifier = Modifier.size(32.dp)) {
-                Icon(
-                    painterResource(R.drawable.ic_copy),
-                    contentDescription = stringResource(R.string.copy_to_clipboard),
-                    modifier = Modifier.size(18.dp)
-                )
+            IconAction(
+                onClick = {
+                    val clipboard =
+                        context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                    val clip = ClipData.newPlainText(label, value)
+                    clipboard.setPrimaryClip(clip)
+                    Toast.makeText(context, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show()
+                },
+                contentDescription = stringResource(R.string.copy_to_clipboard)
+            ) {
+                ButtonIcon(R.drawable.ic_copy)
             }
         }
         if (allowApply) {
-            IconButton(onClick = { onApply(value) }, modifier = Modifier.size(32.dp)) {
-                Icon(
-                    painterResource(R.drawable.ic_done),
-                    contentDescription = stringResource(R.string.apply),
-                    modifier = Modifier.size(18.dp)
-                )
+            IconAction(onClick = { onApply(value) }, contentDescription = stringResource(R.string.apply)) {
+                ButtonIcon(R.drawable.ic_done)
             }
         }
     }

@@ -5,14 +5,12 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.corphish.quicktools.R
-import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.data.Result
+import com.corphish.quicktools.usecases.WhatsappUseCase
 import com.corphish.quicktools.viewmodels.WUPViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
-import androidx.core.net.toUri
-import com.corphish.quicktools.usecases.WhatsappUseCase
 import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 /**
  * WUP (WhatsApp Unknown Phone number) activity handles messaging to

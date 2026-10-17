@@ -8,17 +8,13 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,52 +22,48 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.material3.Badge
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SuggestionChip
-import androidx.compose.material3.Surface
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.corphish.quicktools.R
 import com.corphish.quicktools.data.TextCountResult
-import com.corphish.quicktools.ui.common.CustomTopAppBar
+import com.corphish.quicktools.ui.common.AppScreenHeader
+import com.corphish.quicktools.ui.common.ButtonIcon
+import com.corphish.quicktools.ui.common.CardTextField
 import com.corphish.quicktools.ui.common.PieChart
 import com.corphish.quicktools.ui.common.PieChartData
+import com.corphish.quicktools.ui.common.SectionLabel
 import com.corphish.quicktools.ui.common.pieChartColor
-import com.corphish.quicktools.ui.theme.BrandFontFamily
 import com.corphish.quicktools.ui.theme.AppTheme
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
-import com.corphish.quicktools.ui.theme.TypographyV2
 import com.corphish.quicktools.viewmodels.TextCountViewModel
+import com.tabotabo.ui.button.IconAction
+import com.tabotabo.ui.layout.ScreenScaffold
+import com.tabotabo.ui.surface.Tag
+import com.tabotabo.ui.theme.TabotaboTheme
+import com.tabotabo.ui.typography.body
+import com.tabotabo.ui.typography.caption
+import com.tabotabo.ui.typography.factTitle
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class TextCountActivity : ComponentActivity() {
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         val initialText = if (savedInstanceState == null && intent.hasExtra(Intent.EXTRA_PROCESS_TEXT)) {
             intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT).toString()
         } else {
@@ -79,29 +71,33 @@ class TextCountActivity : ComponentActivity() {
         }
         setContent {
             AppTheme {
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    topBar = {
-                        CustomTopAppBar(
-                            id = R.string.text_count,
-                            onNavigationClick = { finish() }
-                        )
-                    }
-                ) { innerPadding ->
-                    TextCount(
-                        text = initialText,
-                        innerPadding = innerPadding
-                    )
-                }
+                TextCount(
+                    text = initialText,
+                    onBack = { finish() }
+                )
             }
         }
     }
 }
 
+/** Height of the input card at the top of the list. */
+private val InputHeight = 200.dp
+
+/** Size of the pie charts. */
+private val ChartSize = 150.dp
+
+/**
+ * Text count screen: the input followed by statistics, charts, word frequency and advanced
+ * findings, all in one scrolling list.
+ *
+ * @param text Initial text to analyse.
+ * @param onBack Called when the user leaves the screen.
+ * @param viewModel Holds the input and its analysis.
+ */
 @Composable
 fun TextCount(
     text: String,
-    innerPadding: PaddingValues = PaddingValues(),
+    onBack: () -> Unit = {},
     viewModel: TextCountViewModel = hiltViewModel()
 ) {
     val inputText by viewModel.text.collectAsState()
@@ -114,110 +110,56 @@ fun TextCount(
         }
     }
 
-    BoxWithConstraints(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(
-                top = innerPadding.calculateTopPadding(),
-                start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
-                bottom = innerPadding.calculateBottomPadding()
-            )
+    ScreenScaffold(
+        header = { AppScreenHeader(id = R.string.text_count, onBack = onBack) }
     ) {
-        val isWide = maxWidth >= 800.dp
-
-        if (isWide) {
-            Row(modifier = Modifier.fillMaxSize()) {
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(16.dp)
-                ) {
-                    InputSection(inputText) { viewModel.setTextAndProcess(it) }
-                }
-                LazyColumn(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(16.dp)
-                        .testTag("stats_list"),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    statsContent(countResult, context)
-                }
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .testTag("stats_list"),
+            verticalArrangement = Arrangement.spacedBy(TabotaboTheme.dimensions.spacing.m)
+        ) {
+            item {
+                InputSection(inputText) { viewModel.setTextAndProcess(it) }
             }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-                    .testTag("stats_list"),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                item {
-                    InputSection(inputText) { viewModel.setTextAndProcess(it) }
-                }
-                statsContent(countResult, context)
-            }
+            statsContent(countResult, context)
         }
     }
 }
 
+/**
+ * Card holding the text to analyse.
+ *
+ * @param text Current text.
+ * @param onValueChange Called when the user edits the text.
+ */
 @Composable
 fun InputSection(text: String, onValueChange: (String) -> Unit) {
-    Column {
-        Text(
-            text = stringResource(id = R.string.input),
-            style = TypographyV2.labelSmall,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-        Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(300.dp),
-            shape = MaterialTheme.shapes.medium,
-            color = MaterialTheme.colorScheme.surface,
-            tonalElevation = 2.dp
-        ) {
-            TextField(
-                value = text,
-                onValueChange = onValueChange,
-                modifier = Modifier.fillMaxSize(),
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    disabledContainerColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                ),
-                placeholder = { Text(text = stringResource(R.string.input)) }
-            )
-        }
-    }
+    CardTextField(
+        value = text,
+        onValueChange = onValueChange,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(InputHeight),
+        textFieldModifier = Modifier.fillMaxSize(),
+        placeholder = stringResource(R.string.input),
+    )
 }
 
-@OptIn(ExperimentalLayoutApi::class)
+/**
+ * Adds the analysis sections for [result] to a lazy list.
+ *
+ * @param result Analysis to show.
+ * @param context Used to copy values to the clipboard.
+ */
 fun LazyListScope.statsContent(result: TextCountResult, context: Context) {
-    item {
-        Text(
-            text = stringResource(id = R.string.statistics),
-            style = TypographyV2.titleMedium,
-            color = MaterialTheme.colorScheme.primary,
-            fontFamily = BrandFontFamily
-        )
-    }
+    item { SectionLabel(stringResource(id = R.string.statistics), modifier = Modifier.padding(top = TabotaboTheme.dimensions.spacing.l)) }
 
     item {
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.medium,
-            color = MaterialTheme.colorScheme.surface,
-            tonalElevation = 2.dp
-        ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
             FlowRow(
-                modifier = Modifier.padding(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                horizontalArrangement = Arrangement.spacedBy(TabotaboTheme.dimensions.spacing.xl),
+                verticalArrangement = Arrangement.spacedBy(TabotaboTheme.dimensions.spacing.l)
             ) {
                 StatItem(label = stringResource(R.string.characters), value = result.characterCount.toString())
                 StatItem(label = stringResource(R.string.words), value = result.wordCount.toString())
@@ -229,23 +171,11 @@ fun LazyListScope.statsContent(result: TextCountResult, context: Context) {
         }
     }
 
-    item {
-        Text(
-            text = stringResource(R.string.visualizations),
-            style = TypographyV2.labelSmall,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(top = 8.dp)
-        )
-    }
+    item { SectionLabel(stringResource(R.string.visualizations), modifier = Modifier.padding(top = TabotaboTheme.dimensions.spacing.l)) }
 
     item {
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.medium,
-            color = MaterialTheme.colorScheme.surface,
-            tonalElevation = 2.dp
-        ) {
-            Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 PieChart(
                     data = listOf(
                         PieChartData(stringResource(R.string.letters), result.letterCount.toFloat()),
@@ -253,9 +183,9 @@ fun LazyListScope.statsContent(result: TextCountResult, context: Context) {
                         PieChartData(stringResource(R.string.spaces), result.spaceCount.toFloat()),
                         PieChartData(stringResource(R.string.symbols), result.symbolCount.toFloat())
                     ),
-                    modifier = Modifier.size(150.dp)
+                    modifier = Modifier.size(ChartSize)
                 )
-                Column(modifier = Modifier.padding(start = 16.dp)) {
+                Column(modifier = Modifier.padding(start = TabotaboTheme.dimensions.spacing.l)) {
                     LegendItem(stringResource(R.string.letters), pieChartColor(0))
                     LegendItem(stringResource(R.string.digits), pieChartColor(1))
                     LegendItem(stringResource(R.string.spaces), pieChartColor(2))
@@ -266,183 +196,192 @@ fun LazyListScope.statsContent(result: TextCountResult, context: Context) {
     }
 
     if (result.wordFrequency.isNotEmpty()) {
-        item {
-            Text(
-                stringResource(R.string.word_frequency),
-                style = TypographyV2.labelSmall,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(top = 8.dp)
-            )
-        }
+        item { SectionLabel(stringResource(R.string.word_frequency), modifier = Modifier.padding(top = TabotaboTheme.dimensions.spacing.l)) }
+
         item {
             val toastText = stringResource(R.string.copied_to_clipboard)
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.medium,
-                color = MaterialTheme.colorScheme.surface,
-                tonalElevation = 2.dp
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        val topWords = result.wordFrequency.take(8)
-                        PieChart(
-                            data = topWords.map { pair ->
-                                PieChartData(
-                                    pair.first,
-                                    pair.second.toFloat()
-                                )
-                            },
-                            modifier = Modifier.size(150.dp)
-                        )
-                        Column(modifier = Modifier.padding(start = 16.dp)) {
-                            topWords.forEachIndexed { index, pair ->
-                                LegendItem("${pair.first} (${pair.second})", pieChartColor(index))
-                            }
+            val spacing = TabotaboTheme.dimensions.spacing
+
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    val topWords = result.wordFrequency.take(8)
+                    PieChart(
+                        data = topWords.map { pair ->
+                            PieChartData(
+                                pair.first,
+                                pair.second.toFloat()
+                            )
+                        },
+                        modifier = Modifier.size(ChartSize)
+                    )
+                    Column(modifier = Modifier.padding(start = spacing.l)) {
+                        topWords.forEachIndexed { index, pair ->
+                            LegendItem("${pair.first} (${pair.second})", pieChartColor(index))
                         }
                     }
+                }
 
-                    Text(
-                        stringResource(R.string.all_words),
-                        style = TypographyV2.labelSmall,
-                        color = MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
+                SectionLabel(
+                    stringResource(R.string.all_words),
+                    modifier = Modifier.padding(top = spacing.m, bottom = spacing.s)
+                )
 
-                    FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        result.wordFrequency.forEach { (word, count) ->
-                            SuggestionChip(
-                                onClick = { copyToClipboard(context, word, toastText) },
-                                label = {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Text(text = word)
-                                        Spacer(Modifier.size(4.dp))
-                                       Badge(
-                                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                            contentColor = MaterialTheme.colorScheme.primary
-                                        ) {
-                                            Text(
-                                                text = count.toString(),
-                                                style = TypographyV2.labelSmall
-                                            )
-                                        }
-                                    }
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(spacing.s),
+                    verticalArrangement = Arrangement.spacedBy(spacing.s)
+                ) {
+                    result.wordFrequency.forEach { (word, count) ->
+                        Tag(
+                            text = "$word  $count",
+                            color = TabotaboTheme.colors.primary,
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .clickable(onClickLabel = stringResource(R.string.copy)) {
+                                    copyToClipboard(context, word, toastText)
                                 }
-                            )
-                        }
+                        )
                     }
                 }
             }
         }
     }
 
-    item {
-        Text(
-            text = stringResource(R.string.advanced_features),
-            style = TypographyV2.titleMedium,
-            color = MaterialTheme.colorScheme.primary,
-            fontFamily = BrandFontFamily,
-            modifier = Modifier.padding(top = 16.dp)
-        )
-    }
+    item { SectionLabel(stringResource(R.string.advanced_features), modifier = Modifier.padding(top = TabotaboTheme.dimensions.spacing.l)) }
 
     item {
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.medium,
-            color = MaterialTheme.colorScheme.surface,
-            tonalElevation = 2.dp
-        ) {
-            Column {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Column(verticalArrangement = Arrangement.spacedBy(TabotaboTheme.dimensions.spacing.l)) {
                 FeatureItem(stringResource(R.string.longest_repeated_substring), result.longestRepeatedSubstring, context)
-                HorizontalDivider(color = MaterialTheme.colorScheme.surface, thickness = 2.dp)
                 FeatureItem(stringResource(R.string.run_length_encoding), result.runLengthEncoding, context)
-                HorizontalDivider(color = MaterialTheme.colorScheme.surface, thickness = 2.dp)
                 FeatureItem(stringResource(R.string.longest_palindrome), result.longestPalindrome, context)
-                HorizontalDivider(color = MaterialTheme.colorScheme.surface, thickness = 2.dp)
                 FeatureItem(stringResource(R.string.longest_increasing_subsequence), result.longestIncreasingSubsequence, context)
-                HorizontalDivider(color = MaterialTheme.colorScheme.surface, thickness = 2.dp)
                 FeatureListItems(stringResource(R.string.emails), result.emails, context)
-                HorizontalDivider(color = MaterialTheme.colorScheme.surface, thickness = 2.dp)
                 FeatureListItems(stringResource(R.string.phone_numbers), result.phoneNumbers, context)
-                HorizontalDivider(color = MaterialTheme.colorScheme.surface, thickness = 2.dp)
                 FeatureListItems(stringResource(R.string.urls), result.urls, context)
-                HorizontalDivider(color = MaterialTheme.colorScheme.surface, thickness = 2.dp)
                 FeatureListItems(stringResource(R.string.ipv4_addresses), result.ipv4Addresses, context)
-                HorizontalDivider(color = MaterialTheme.colorScheme.surface, thickness = 2.dp)
                 FeatureListItems(stringResource(R.string.ipv6_addresses), result.ipv6Addresses, context)
-                HorizontalDivider(color = MaterialTheme.colorScheme.surface, thickness = 2.dp)
                 FeatureListItems(stringResource(R.string.dates), result.dates, context)
-                HorizontalDivider(color = MaterialTheme.colorScheme.surface, thickness = 2.dp)
                 FeatureListItems(stringResource(R.string.times), result.times, context)
-                HorizontalDivider(color = MaterialTheme.colorScheme.surface, thickness = 2.dp)
                 FeatureListItems(stringResource(R.string.currencies), result.currencies, context)
-                HorizontalDivider(color = MaterialTheme.colorScheme.surface, thickness = 2.dp)
                 FeatureListItems(stringResource(R.string.binary_texts), result.binaryTexts, context)
-                HorizontalDivider(color = MaterialTheme.colorScheme.surface, thickness = 2.dp)
                 FeatureListItems(stringResource(R.string.hex_texts), result.hexTexts, context)
-                HorizontalDivider(color = MaterialTheme.colorScheme.surface, thickness = 2.dp)
                 FeatureListItems(stringResource(R.string.json_blocks), result.jsonTexts, context)
             }
         }
     }
 }
 
+/**
+ * One statistic: a large value above its label.
+ *
+ * @param label What is counted.
+ * @param value The count.
+ */
 @Composable
 fun StatItem(label: String, value: String) {
     Column(horizontalAlignment = Alignment.Start) {
-        Text(text = value, style = TypographyV2.headlineSmall, fontWeight = FontWeight.Bold)
-        Text(text = label, style = TypographyV2.labelSmall)
+        Text(text = value, style = TabotaboTheme.typography.headlineSmall, color = TabotaboTheme.colors.primary)
+        Text(text = label, style = TabotaboTheme.typography.caption, color = TabotaboTheme.colors.muted)
     }
 }
 
+/**
+ * Chart legend entry: a colored dot and its label.
+ *
+ * @param label Label of the slice.
+ * @param color Color of the slice.
+ */
 @Composable
 fun LegendItem(label: String, color: Color) {
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 2.dp)) {
-        Canvas(modifier = Modifier.size(12.dp)) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(vertical = TabotaboTheme.dimensions.spacing.xs / 2)
+    ) {
+        Canvas(modifier = Modifier.size(LegendDotSize)) {
             drawCircle(color)
         }
-        Text(text = label, style = TypographyV2.labelSmall, modifier = Modifier.padding(start = 8.dp))
+        Text(
+            text = label,
+            style = TabotaboTheme.typography.caption,
+            color = TabotaboTheme.colors.accent,
+            modifier = Modifier.padding(start = TabotaboTheme.dimensions.spacing.s)
+        )
     }
 }
 
+/** Size of the colored dot in a legend entry. */
+private val LegendDotSize = 12.dp
+
+/**
+ * A single finding with a copy action when it is not empty.
+ *
+ * @param label Name of the finding.
+ * @param value Found value; "None" is shown when empty.
+ * @param context Used to copy the value.
+ */
 @Composable
 fun FeatureItem(label: String, value: String, context: Context) {
-    val toastText = stringResource(R.string.copied_to_clipboard)
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text(text = label, style = TypographyV2.labelSmall, color = MaterialTheme.colorScheme.secondary)
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = value.ifEmpty { stringResource(R.string.none) },
-                style = TypographyV2.bodyMedium,
-                modifier = Modifier.weight(1f)
-            )
-            if (value.isNotEmpty()) {
-                IconButton(onClick = { copyToClipboard(context, value, toastText) }) {
-                    Icon(painterResource(R.drawable.ic_copy), contentDescription = stringResource(R.string.copy), modifier = Modifier.size(18.dp))
-                }
+    Column {
+        FindingLabel(label)
+        FindingValue(value = value.ifEmpty { stringResource(R.string.none) }, copyable = value.isNotEmpty(), context = context)
+    }
+}
+
+/**
+ * A list of findings, each with a copy action.
+ *
+ * @param label Name of the findings.
+ * @param values Found values; "None" is shown when empty.
+ * @param context Used to copy a value.
+ */
+@Composable
+fun FeatureListItems(label: String, values: List<String>, context: Context) {
+    Column {
+        FindingLabel(label)
+        if (values.isEmpty()) {
+            FindingValue(value = stringResource(R.string.none), copyable = false, context = context)
+        } else {
+            values.forEach { value ->
+                FindingValue(value = value, copyable = true, context = context)
             }
         }
     }
 }
 
+/**
+ * Title of a finding.
+ *
+ * @param label Name of the finding.
+ */
 @Composable
-fun FeatureListItems(label: String, values: List<String>, context: Context) {
+private fun FindingLabel(label: String) {
+    Text(text = label, style = TabotaboTheme.typography.factTitle, color = TabotaboTheme.colors.accent)
+}
+
+/**
+ * One found value, optionally with a copy action.
+ *
+ * @param value Value to show.
+ * @param copyable Whether to show the copy action.
+ * @param context Used to copy the value.
+ */
+@Composable
+private fun FindingValue(value: String, copyable: Boolean, context: Context) {
     val toastText = stringResource(R.string.copied_to_clipboard)
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text(text = label, style = TypographyV2.labelSmall, color = MaterialTheme.colorScheme.secondary)
-        if (values.isEmpty()) {
-            Text(text = stringResource(R.string.none), style = TypographyV2.bodyMedium)
-        } else {
-            values.forEach { value ->
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = value, style = TypographyV2.bodyMedium, modifier = Modifier.weight(1f))
-                    IconButton(onClick = { copyToClipboard(context, value, toastText) }) {
-                        Icon(painterResource(R.drawable.ic_copy), contentDescription = stringResource(R.string.copy), modifier = Modifier.size(18.dp))
-                    }
-                }
+
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            text = value,
+            style = TabotaboTheme.typography.body,
+            color = TabotaboTheme.colors.muted,
+            modifier = Modifier.weight(1f)
+        )
+        if (copyable) {
+            IconAction(
+                onClick = { copyToClipboard(context, value, toastText) },
+                contentDescription = stringResource(R.string.copy)
+            ) {
+                ButtonIcon(R.drawable.ic_copy)
             }
         }
     }

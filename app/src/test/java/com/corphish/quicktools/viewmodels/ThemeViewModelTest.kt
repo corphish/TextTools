@@ -3,6 +3,7 @@ package com.corphish.quicktools.viewmodels
 import android.content.Intent
 import androidx.lifecycle.SavedStateHandle
 import com.corphish.quicktools.data.Appearance
+import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.usecases.ThemeUseCase
 import io.mockk.every
 import io.mockk.mockk
@@ -61,5 +62,41 @@ class ThemeViewModelTest {
 
         assertEquals(10f, viewModel.hue.value, 0f)
         verify(exactly = 0) { themeUseCase.setSessionHue(any()) }
+    }
+
+    @Test
+    fun testInheritedHue_UsedForAppLaunchedTool() {
+        val viewModel = ThemeViewModel(
+            SavedStateHandle(mapOf(Intent.EXTRA_PROCESS_TEXT to "text", Constants.INTENT_HUE to 42f)),
+            themeUseCase
+        )
+
+        assertEquals(42f, viewModel.hue.value, 0f)
+        verify(exactly = 0) { themeUseCase.newToolHue() }
+    }
+
+    @Test
+    fun testInheritedHue_ChangeStaysLocal() {
+        val viewModel = ThemeViewModel(SavedStateHandle(mapOf(Constants.INTENT_HUE to 42f)), themeUseCase)
+        viewModel.onHueChanged(10f)
+
+        assertEquals(10f, viewModel.hue.value, 0f)
+        verify(exactly = 0) { themeUseCase.setSessionHue(any()) }
+    }
+
+    @Test
+    fun testInvalidInheritedHue_FallsBackToRandomForTool() {
+        val viewModel = ThemeViewModel(
+            SavedStateHandle(mapOf(Intent.EXTRA_PROCESS_TEXT to "text", Constants.INTENT_HUE to "red")),
+            themeUseCase
+        )
+
+        assertEquals(270f, viewModel.hue.value, 0f)
+    }
+
+    @Test
+    fun testNonFiniteInheritedHue_Ignored() {
+        val viewModel = ThemeViewModel(SavedStateHandle(mapOf(Constants.INTENT_HUE to Float.NaN)), themeUseCase)
+        assertSame(sessionHue, viewModel.hue)
     }
 }

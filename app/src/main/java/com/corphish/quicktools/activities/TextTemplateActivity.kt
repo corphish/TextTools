@@ -5,61 +5,54 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.corphish.quicktools.R
 import com.corphish.quicktools.data.Constants
-import androidx.compose.foundation.layout.Row
-import androidx.compose.material3.FilterChip
 import com.corphish.quicktools.data.TemplateType
 import com.corphish.quicktools.data.TextTemplate
-import com.corphish.quicktools.ui.common.CustomTopAppBar
-import com.corphish.quicktools.ui.theme.BrandFontFamily
+import com.corphish.quicktools.ui.common.AppScreenHeader
+import com.corphish.quicktools.ui.common.ButtonIcon
+import com.corphish.quicktools.ui.common.FormDialog
 import com.corphish.quicktools.ui.theme.AppTheme
-import com.corphish.quicktools.ui.theme.TypographyV2
 import com.corphish.quicktools.viewmodels.TextTemplateViewModel
+import com.corphish.quicktools.viewmodels.ThemeViewModel
+import com.tabotabo.ui.button.ActionStack
+import com.tabotabo.ui.button.IconAction
+import com.tabotabo.ui.button.PrimaryButton
+import com.tabotabo.ui.layout.CardList
+import com.tabotabo.ui.layout.ScreenScaffold
+import com.tabotabo.ui.settings.SettingsSection
+import com.tabotabo.ui.surface.GlowCard
+import com.tabotabo.ui.surface.SelectablePillRow
+import com.tabotabo.ui.text.Subtitle
+import com.tabotabo.ui.theme.TabotaboTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class TextTemplateActivity : ComponentActivity() {
+
+    // Same instance as the theme's; used to pass this screen's hue to the screens it opens
+    private val themeViewModel: ThemeViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -71,45 +64,46 @@ class TextTemplateActivity : ComponentActivity() {
 
         setContent {
             AppTheme {
-                Scaffold(
-                    topBar = {
-                        CustomTopAppBar(
-                            id = R.string.text_template,
-                            onNavigationClick = { finish() }
-                        )
-                    }
-                ) { padding ->
-                    TextTemplateUI(
-                        paddingValues = padding,
-                        isSelectionMode = isProcessText,
-                        initialText = text,
-                        onTemplateSelected = { result ->
-                            val nextIntent = Intent(this, TextActionActivity::class.java).apply {
-                                putExtra(Intent.EXTRA_PROCESS_TEXT, result)
-                                putExtra(
-                                    Intent.EXTRA_PROCESS_TEXT_READONLY,
-                                    intent.getBooleanExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, true)
-                                )
-                                putExtra(
-                                    Constants.INTENT_FORCE_COPY,
-                                    intent.getBooleanExtra(Constants.INTENT_FORCE_COPY, false)
-                                )
-                            }
-                            startActivity(nextIntent)
-                            finish()
+                TextTemplateUI(
+                    isSelectionMode = isProcessText,
+                    initialText = text,
+                    onBack = { finish() },
+                    onTemplateSelected = { result ->
+                        val nextIntent = Intent(this, TextActionActivity::class.java).apply {
+                            putExtra(Intent.EXTRA_PROCESS_TEXT, result)
+                            putExtra(
+                                Intent.EXTRA_PROCESS_TEXT_READONLY,
+                                intent.getBooleanExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, true)
+                            )
+                            putExtra(
+                                Constants.INTENT_FORCE_COPY,
+                                intent.getBooleanExtra(Constants.INTENT_FORCE_COPY, false)
+                            )
+                            putExtra(Constants.INTENT_HUE, themeViewModel.hue.value)
                         }
-                    )
-                }
+                        startActivity(nextIntent)
+                        finish()
+                    }
+                )
             }
         }
     }
 }
 
+/**
+ * Text template screen. In selection mode (opened with text) tapping a template applies it;
+ * otherwise templates can be created, edited and deleted.
+ *
+ * @param isSelectionMode Whether the screen was opened to apply a template to text.
+ * @param initialText Text to apply templates to in selection mode.
+ * @param onBack Called when the user leaves the screen.
+ * @param onTemplateSelected Called with the result of applying a template.
+ */
 @Composable
 fun TextTemplateUI(
-    paddingValues: PaddingValues,
     isSelectionMode: Boolean,
     initialText: String,
+    onBack: () -> Unit,
     onTemplateSelected: (String) -> Unit
 ) {
     val viewModel: TextTemplateViewModel = hiltViewModel()
@@ -122,101 +116,70 @@ fun TextTemplateUI(
         }
     }
 
-    var showAddDialog by remember { mutableStateOf(false) }
-    var templateToEdit by remember { mutableStateOf<TextTemplate?>(null) }
+    var showAddDialog by rememberSaveable { mutableStateOf(false) }
+    // Keep the id (not the template) so an open edit dialog survives configuration changes
+    var templateToEditId by rememberSaveable { mutableStateOf<String?>(null) }
+    val templateToEdit = templates.firstOrNull { it.id == templateToEditId }
 
-    Box(modifier = Modifier
-        .padding(paddingValues)
-        .fillMaxSize()) {
-        if (templates.isEmpty()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = stringResource(R.string.no_templates),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                if (!isSelectionMode) {
-                    Button(
-                        onClick = { showAddDialog = true },
-                        modifier = Modifier.padding(top = 16.dp)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.create_template),
-                            fontFamily = BrandFontFamily
-                        )
-                    }
-                }
-            }
+    ScreenScaffold(
+        header = { AppScreenHeader(id = R.string.text_template, onBack = onBack) },
+        actions = if (isSelectionMode) {
+            null
         } else {
-            Surface(
-                tonalElevation = 2.dp,
-                shape = RoundedCornerShape(16.dp),
-                color = MaterialTheme.colorScheme.surface,
-                modifier = Modifier.padding(16.dp)
-            ) {
-                LazyColumn(
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    itemsIndexed(templates) { index, template ->
-                        TemplateItem(
-                            template = template,
-                            isSelectionMode = isSelectionMode,
-                            onClick = {
-                                if (isSelectionMode) {
-                                    onTemplateSelected(viewModel.applyTemplate(template))
-                                } else {
-                                    templateToEdit = template
-                                    showAddDialog = true
-                                }
-                            },
-                            onDelete = {
-                                viewModel.deleteTemplate(template.id)
-                            }
-                        )
-                        if (index < templates.size - 1) {
-                            HorizontalDivider(
-                                thickness = 2.dp,
-                                color = MaterialTheme.colorScheme.background
-                            )
-                        }
-                    }
+            {
+                ActionStack {
+                    PrimaryButton(
+                        text = stringResource(R.string.create_template),
+                        onClick = {
+                            templateToEditId = null
+                            showAddDialog = true
+                        },
+                        leadingIcon = { ButtonIcon(R.drawable.ic_edit_note) },
+                    )
                 }
             }
         }
-
-        if (!isSelectionMode) {
-            FloatingActionButton(
-                onClick = {
-                    templateToEdit = null
-                    showAddDialog = true
-                },
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(16.dp)
-            ) {
-                Icon(painterResource(R.drawable.ic_edit_note), contentDescription = stringResource(R.string.add))
+    ) {
+        if (templates.isEmpty()) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Subtitle(text = stringResource(R.string.no_templates), maxLines = Int.MAX_VALUE)
+            }
+        } else {
+            CardList(
+                items = templates,
+                key = { it.id },
+            ) { template ->
+                TemplateItem(
+                    template = template,
+                    isSelectionMode = isSelectionMode,
+                    onClick = {
+                        if (isSelectionMode) {
+                            onTemplateSelected(viewModel.applyTemplate(template))
+                        } else {
+                            templateToEditId = template.id
+                            showAddDialog = true
+                        }
+                    },
+                    onDelete = {
+                        viewModel.deleteTemplate(template.id)
+                    }
+                )
             }
         }
     }
 
-    if (showAddDialog) {
+    if (showAddDialog && (templateToEditId == null || templateToEdit != null)) {
         TemplateDialog(
             template = templateToEdit,
             onDismiss = {
                 showAddDialog = false
-                templateToEdit = null
+                templateToEditId = null
             },
             onSave = { name, template, type ->
                 if (templateToEdit == null) {
                     viewModel.addTemplate(name, template, type)
                 } else {
-                    viewModel.updateTemplate(templateToEdit!!.id, name, template, type)
+                    viewModel.updateTemplate(templateToEdit.id, name, template, type)
                 }
                 showAddDialog = false
             }
@@ -224,6 +187,14 @@ fun TextTemplateUI(
     }
 }
 
+/**
+ * Card of one template: its name and value, with a delete action outside selection mode.
+ *
+ * @param template Template to show.
+ * @param isSelectionMode Whether tapping applies the template (no delete action then).
+ * @param onClick Called when the card is tapped.
+ * @param onDelete Called when the delete action is tapped.
+ */
 @Composable
 fun TemplateItem(
     template: TextTemplate,
@@ -231,116 +202,76 @@ fun TemplateItem(
     onClick: () -> Unit,
     onDelete: () -> Unit
 ) {
-    ListItem(
-        modifier = Modifier.clickable { onClick() },
-        headlineContent = {
-            Text(
-                text = template.name,
-                style = TypographyV2.labelMedium,
-                fontFamily = BrandFontFamily,
-                fontWeight = FontWeight.Bold
-            )
-        },
-        supportingContent = {
-            Text(
-                text = template.template,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 2
-            )
-        },
-        trailingContent = {
+    GlowCard(modifier = Modifier.fillMaxWidth(), onClick = onClick) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = template.name,
+                    style = TabotaboTheme.typography.titleMedium,
+                    color = TabotaboTheme.colors.accent,
+                )
+                Subtitle(text = template.template)
+            }
             if (!isSelectionMode) {
-                IconButton(onClick = onDelete) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_delete),
-                        contentDescription = stringResource(R.string.delete),
-                        tint = MaterialTheme.colorScheme.error
-                    )
+                IconAction(onClick = onDelete, contentDescription = stringResource(R.string.delete)) {
+                    ButtonIcon(R.drawable.ic_delete)
                 }
             }
         }
-    )
+    }
 }
 
+/**
+ * Dialog to create a template or edit [template].
+ *
+ * @param template Template to edit, or null to create one.
+ * @param onDismiss Called when the dialog is cancelled.
+ * @param onSave Called with the name, value and type to save.
+ */
 @Composable
 fun TemplateDialog(
     template: TextTemplate?,
     onDismiss: () -> Unit,
     onSave: (String, String, TemplateType) -> Unit
 ) {
-    var name by remember { mutableStateOf(template?.name ?: "") }
-    var value by remember { mutableStateOf(template?.template ?: "") }
-    var type by remember { mutableStateOf(template?.type ?: TemplateType.PLAIN_TEXT) }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(
-                text = stringResource(if (template == null) R.string.create_template else R.string.edit_template),
-                fontFamily = BrandFontFamily
-            )
-        },
-        text = {
-            Column {
-                OutlinedTextField(
-                    value = name,
-                    onValueChange = { name = it },
-                    label = { Text(stringResource(R.string.template_name)) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                OutlinedTextField(
-                    value = value,
-                    onValueChange = { value = it },
-                    label = { Text(stringResource(R.string.template_value)) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = stringResource(R.string.template_type),
-                    style = MaterialTheme.typography.labelMedium,
-                    fontFamily = BrandFontFamily
-                )
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    TemplateType.entries.forEach { templateType ->
-                        FilterChip(
-                            selected = type == templateType,
-                            onClick = { type = templateType },
-                            label = {
-                                Text(
-                                    text = when (templateType) {
-                                        TemplateType.PLAIN_TEXT -> stringResource(R.string.plain_text)
-                                        TemplateType.URL -> stringResource(R.string.url)
-                                    }
-                                )
-                            }
-                        )
-                    }
-                }
-            }
-        },
-        confirmButton = {
-            Button(
-                onClick = { onSave(name, value, type) },
-                enabled = name.isNotBlank() && value.isNotBlank()
-            ) {
-                Text(
-                    text = stringResource(R.string.save_template),
-                    fontFamily = BrandFontFamily
-                )
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(
-                    text = stringResource(android.R.string.cancel),
-                    fontFamily = BrandFontFamily
-                )
-            }
-        }
+    var name by rememberSaveable { mutableStateOf(template?.name ?: "") }
+    var value by rememberSaveable { mutableStateOf(template?.template ?: "") }
+    var type by rememberSaveable { mutableStateOf(template?.type ?: TemplateType.PLAIN_TEXT) }
+    val spacing = TabotaboTheme.dimensions.spacing
+    val typeLabels = mapOf(
+        TemplateType.PLAIN_TEXT to stringResource(R.string.plain_text),
+        TemplateType.URL to stringResource(R.string.url),
     )
+
+    FormDialog(
+        title = stringResource(if (template == null) R.string.create_template else R.string.edit_template),
+        confirmText = stringResource(R.string.save_template),
+        onConfirm = { onSave(name, value, type) },
+        onDismissRequest = onDismiss,
+        confirmEnabled = name.isNotBlank() && value.isNotBlank(),
+        dismissText = stringResource(android.R.string.cancel),
+    ) {
+        OutlinedTextField(
+            value = name,
+            onValueChange = { name = it },
+            label = { Text(stringResource(R.string.template_name)) },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(spacing.s))
+        OutlinedTextField(
+            value = value,
+            onValueChange = { value = it },
+            label = { Text(stringResource(R.string.template_value)) },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(spacing.l))
+        SettingsSection(title = stringResource(R.string.template_type)) {
+            SelectablePillRow(
+                options = TemplateType.entries,
+                selected = type,
+                onSelect = { type = it },
+                label = { typeLabels.getValue(it) },
+            )
+        }
+    }
 }

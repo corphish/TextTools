@@ -4,74 +4,68 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.basicMarquee
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.window.core.layout.WindowSizeClass
-import com.corphish.quicktools.ui.theme.AppTheme
-import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.R
-import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.features.Feature
 import com.corphish.quicktools.repository.AppMode
 import com.corphish.quicktools.repository.ContextMenuOptionsRepositoryImpl
 import com.corphish.quicktools.repository.FeatureIds
-import com.corphish.quicktools.ui.theme.BrandFontFamily
-import com.corphish.quicktools.ui.theme.Typography
-import com.corphish.quicktools.ui.theme.TypographyV2
+import com.corphish.quicktools.ui.common.ButtonIcon
+import com.corphish.quicktools.ui.common.FocusedLastWord
+import com.corphish.quicktools.ui.theme.AppTheme
+import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.viewmodels.MainViewModel
+import com.tabotabo.ui.button.ActionStack
+import com.tabotabo.ui.button.IconAction
+import com.tabotabo.ui.button.PrimaryButton
+import com.tabotabo.ui.layout.ScreenScaffold
+import com.tabotabo.ui.surface.GlowCard
+import com.tabotabo.ui.surface.TabotaboDialog
+import com.tabotabo.ui.surface.Tag
+import com.tabotabo.ui.text.HeroTitle
+import com.tabotabo.ui.text.Subtitle
+import com.tabotabo.ui.theme.TabotaboTheme
+import com.tabotabo.ui.typography.caption
 import dagger.hilt.android.AndroidEntryPoint
+
+/** Minimum width of a feature tile; the grid fits as many columns as this allows. */
+private val TileMinWidth = 140.dp
+
+/** Size of a feature's icon on its tile. */
+private val FeatureIconSize = 28.dp
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -79,6 +73,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContent {
             AppTheme {
                 Greeting(
@@ -94,409 +89,214 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+/**
+ * Main screen: hero title with edit and settings actions, a grid of feature tiles and a
+ * Simulate button. Tapping a tile shows its details; in edit mode it turns the feature on or
+ * off instead, and enabled features glow.
+ *
+ * @param viewModel Source of enabled features and app mode.
+ */
 @Composable
 fun Greeting(
     viewModel: MainViewModel
 ) {
     val context = LocalContext.current
-    val enabledFeatures = viewModel.enabledFeatures.collectAsState()
-    val appMode = viewModel.appMode.collectAsState()
-    var shouldEdit by remember { mutableStateOf(false) }
+    val enabledFeatures by viewModel.enabledFeatures.collectAsState()
+    val appMode by viewModel.appMode.collectAsState()
+    var shouldEdit by rememberSaveable { mutableStateOf(false) }
+    var detailsFeatureId by rememberSaveable { mutableStateOf<FeatureIds?>(null) }
+    val spacing = TabotaboTheme.dimensions.spacing
 
-    val adaptiveInfo = currentWindowAdaptiveInfo()
-    val isWideScreen =
-        adaptiveInfo.windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
-
-    Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    context.startActivity(Intent(context, SettingsActivity::class.java))
-                },
-            ) {
-                Icon(
-                    painterResource(R.drawable.ic_settings),
-                    stringResource(R.string.title_activity_settings)
-                )
-            }
-        }) { paddingValues ->
-        val commonModifier = Modifier
-            .padding(
-                top = paddingValues.calculateTopPadding().plus(16.dp),
-                bottom = paddingValues.calculateBottomPadding().plus(16.dp),
-                start = paddingValues.calculateStartPadding(LayoutDirection.Ltr).plus(16.dp),
-                end = paddingValues.calculateEndPadding(LayoutDirection.Ltr).plus(16.dp)
+    ScreenScaffold(
+        header = {
+            MainHeader(
+                shouldEdit = shouldEdit,
+                onEditToggle = { shouldEdit = !shouldEdit },
+                onSettings = { context.startActivity(Intent(context, SettingsActivity::class.java)) },
             )
-
-        if (isWideScreen) {
-            Row(
-                modifier = commonModifier.fillMaxSize(),
-                horizontalArrangement = Arrangement.spacedBy(24.dp)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .weight(0.45f)
-                        .fillMaxHeight()
-                        .verticalScroll(rememberScrollState())
-                ) {
-                    AppHeader()
-                    FeaturesSection(
-                        appMode = appMode.value,
-                        enabledFeatures = enabledFeatures.value,
-                        shouldEdit = shouldEdit,
-                        onFeatureEnabledOrDisabled = { id, enabled ->
-                            viewModel.enableOrDisableFeature(id, enabled)
-                        }
-                    )
-                    Spacer(modifier = Modifier.height(64.dp))
-                }
-
-                Column(
-                    modifier = Modifier
-                        .weight(0.55f)
-                        .fillMaxHeight()
-                        .verticalScroll(rememberScrollState())
-                ) {
-                    EditModesSection(
-                        shouldEdit = shouldEdit,
-                        onEditToggle = { shouldEdit = !shouldEdit }
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    SimulateSection()
-                    Spacer(modifier = Modifier.height(16.dp))
-                    OssSection()
-                    Spacer(modifier = Modifier.height(64.dp))
-                }
-            }
-        } else {
-            Column(
-                modifier = commonModifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-            ) {
-                AppHeader()
-                FeaturesSection(
-                    appMode = appMode.value,
-                    enabledFeatures = enabledFeatures.value,
-                    shouldEdit = shouldEdit,
-                    onFeatureEnabledOrDisabled = { id, enabled ->
-                        viewModel.enableOrDisableFeature(id, enabled)
-                    }
+        },
+        actions = {
+            ActionStack {
+                PrimaryButton(
+                    text = stringResource(R.string.simulate),
+                    onClick = { context.startActivity(Intent(context, SimulationActivity::class.java)) },
+                    leadingIcon = { ButtonIcon(R.drawable.ic_simulate) },
                 )
-                Spacer(modifier = Modifier.height(16.dp))
-                EditModesSection(
-                    shouldEdit = shouldEdit,
-                    onEditToggle = { shouldEdit = !shouldEdit }
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                SimulateSection()
-                Spacer(modifier = Modifier.height(16.dp))
-                OssSection()
-                Box(modifier = Modifier.height(64.dp))
             }
         }
-    }
-}
-
-@Composable
-fun AppHeader() {
-    Column(modifier = Modifier.padding(bottom = 16.dp)) {
-        Text(
-            text = stringResource(id = R.string.app_name),
-            style = TypographyV2.headlineMedium,
-            color = MaterialTheme.colorScheme.primary,
-            fontFamily = BrandFontFamily,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-
-        Text(
-            text = stringResource(id = R.string.app_desc), style = Typography.bodyMedium
-        )
-    }
-}
-
-@Composable
-fun FeaturesSection(
-    appMode: AppMode,
-    enabledFeatures: List<FeatureIds>,
-    shouldEdit: Boolean,
-    onFeatureEnabledOrDisabled: (FeatureIds, Boolean) -> Unit
-) {
-    val context = LocalContext.current
-    Text(
-        text = stringResource(id = R.string.features),
-        style = TypographyV2.labelSmall,
-        modifier = Modifier.padding(bottom = 8.dp),
-        fontFamily = BrandFontFamily,
-        color = MaterialTheme.colorScheme.primary
-    )
-
-    Surface(
-        tonalElevation = 2.dp,
-        shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surface
     ) {
-        Column {
-            for ((index, feature) in Feature.LIST.withIndex()) {
-                FeatureItem(
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(minSize = TileMinWidth),
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.spacedBy(spacing.m),
+            verticalArrangement = Arrangement.spacedBy(spacing.m),
+        ) {
+            items(Feature.LIST, key = { it.id }) { feature ->
+                FeatureTile(
                     feature = feature,
-                    appMode = appMode,
-                    enabledFeatures = enabledFeatures,
                     shouldEdit = shouldEdit,
-                    onFeatureEnabledOrDisabled = onFeatureEnabledOrDisabled,
-                    onClick = {
-                        if (feature.id == FeatureIds.TEXT_TEMPLATE) {
-                            context.startActivity(Intent(context, TextTemplateActivity::class.java))
-                        }
-                    }
+                    enabled = enabledFeatures.contains(feature.id),
+                    onFeatureEnabledOrDisabled = viewModel::enableOrDisableFeature,
+                    onClick = { detailsFeatureId = feature.id },
                 )
-
-                if (index < Feature.LIST.size - 1) {
-                    HorizontalDivider(
-                        thickness = 2.dp,
-                        color = MaterialTheme.colorScheme.background
-                    )
-                }
             }
         }
     }
+
+    Feature.LIST.firstOrNull { it.id == detailsFeatureId }?.let { feature ->
+        FeatureDetailsDialog(
+            feature = feature,
+            appMode = appMode,
+            onDismiss = { detailsFeatureId = null },
+            onManageTemplates = {
+                detailsFeatureId = null
+                context.startActivity(Intent(context, TextTemplateActivity::class.java))
+            },
+        )
+    }
 }
 
+/**
+ * Hero title with edit and settings actions, above a short description (or, in edit mode, an
+ * explanation of editing).
+ *
+ * @param shouldEdit Whether the screen is in edit mode.
+ * @param onEditToggle Turns edit mode on or off.
+ * @param onSettings Opens the settings.
+ */
 @Composable
-fun EditModesSection(
+private fun MainHeader(
     shouldEdit: Boolean,
-    onEditToggle: () -> Unit
+    onEditToggle: () -> Unit,
+    onSettings: () -> Unit,
 ) {
-    Column {
-        Text(
-            text = stringResource(id = R.string.edit),
-            style = TypographyV2.labelSmall,
-            fontFamily = BrandFontFamily,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-        Surface(
-            tonalElevation = 2.dp,
-            shape = RoundedCornerShape(16.dp),
-            color = MaterialTheme.colorScheme.surface
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = stringResource(id = R.string.edit_modes),
-                    style = Typography.bodyMedium,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
+    val appName = stringResource(R.string.app_name)
 
-                Button(
-                    onClick = onEditToggle,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Icon(
-                        painterResource(if (shouldEdit) R.drawable.ic_done else R.drawable.ic_edit),
-                        contentDescription = stringResource(if (shouldEdit) R.string.done else R.string.edit)
-                    )
-                    Text(
-                        text = stringResource(id = if (shouldEdit) R.string.done else R.string.edit),
-                        modifier = Modifier.padding(start = 16.dp),
-                        style = TypographyV2.labelMedium,
-                        fontWeight = FontWeight.W600
-                    )
-                }
+    Column(verticalArrangement = Arrangement.spacedBy(TabotaboTheme.dimensions.spacing.s)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            HeroTitle(modifier = Modifier.weight(1f)) { FocusedLastWord(appName) }
+            IconAction(
+                onClick = onEditToggle,
+                contentDescription = stringResource(if (shouldEdit) R.string.done else R.string.edit),
+            ) {
+                ButtonIcon(if (shouldEdit) R.drawable.ic_done else R.drawable.ic_edit)
+            }
+            IconAction(
+                onClick = onSettings,
+                contentDescription = stringResource(R.string.title_activity_settings),
+            ) {
+                ButtonIcon(R.drawable.ic_settings)
             }
         }
+        Subtitle(
+            text = stringResource(if (shouldEdit) R.string.edit_modes else R.string.app_desc_short),
+            maxLines = Int.MAX_VALUE,
+        )
     }
 }
 
+/**
+ * Compact tile of one feature: its icon and name. In edit mode the tile toggles the feature
+ * and glows while it is enabled; otherwise tapping it calls [onClick].
+ *
+ * @param feature Feature to show.
+ * @param shouldEdit Whether the screen is in edit mode.
+ * @param enabled Whether the feature is enabled.
+ * @param onFeatureEnabledOrDisabled Called with the feature and its new state in edit mode.
+ * @param onClick Called when the tile is tapped outside edit mode.
+ */
 @Composable
-fun SimulateSection() {
-    val context = LocalContext.current
-    Column {
-        Text(
-            text = stringResource(id = R.string.simulate),
-            style = TypographyV2.labelSmall,
-            fontFamily = BrandFontFamily,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-        Surface(
-            tonalElevation = 2.dp,
-            shape = RoundedCornerShape(16.dp),
-            color = MaterialTheme.colorScheme.surface
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = stringResource(id = R.string.simulate_desc),
-                    style = Typography.bodyMedium,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
+fun FeatureTile(
+    feature: Feature,
+    shouldEdit: Boolean,
+    enabled: Boolean,
+    onFeatureEnabledOrDisabled: (FeatureIds, Boolean) -> Unit,
+    onClick: () -> Unit,
+) {
+    val colors = TabotaboTheme.colors
+    val dimmed = shouldEdit && !enabled
 
-                Button(
-                    onClick = {
-                        context.startActivity(
-                            Intent(
-                                context,
-                                SimulationActivity::class.java
-                            )
-                        )
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Icon(
-                        painterResource(R.drawable.ic_simulate),
-                        contentDescription = stringResource(R.string.simulate)
-                    )
-                    Text(
-                        text = stringResource(id = R.string.simulate),
-                        modifier = Modifier.padding(start = 16.dp),
-                        style = TypographyV2.labelMedium,
-                        fontWeight = FontWeight.W600
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun OssSection() {
-    val uriHandler = LocalUriHandler.current
-    Column {
-        Text(
-            text = stringResource(id = R.string.oss_info),
-            style = TypographyV2.labelSmall,
-            fontFamily = BrandFontFamily,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-        Surface(
-            tonalElevation = 2.dp,
-            shape = RoundedCornerShape(16.dp),
-            color = MaterialTheme.colorScheme.surface
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = stringResource(id = R.string.oss_desc),
-                    style = Typography.bodyMedium,
-                    modifier = Modifier.padding(bottom = 12.dp)
-                )
-
-                Row(
-                    modifier = Modifier.horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    Button(
-                        onClick = { uriHandler.openUri(Constants.SOURCE_LINK) }
-                    ) {
-                        Icon(
-                            painterResource(id = R.drawable.ic_open_in_new),
-                            contentDescription = stringResource(R.string.oss_check)
-                        )
-                        Text(
-                            text = stringResource(id = R.string.oss_check),
-                            modifier = Modifier.padding(start = 8.dp),
-                            style = TypographyV2.labelMedium,
-                            fontWeight = FontWeight.W600,
-                            maxLines = 1
-                        )
+    GlowCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(
+                if (shouldEdit) {
+                    Modifier.toggleable(value = enabled, role = Role.Checkbox) {
+                        onFeatureEnabledOrDisabled(feature.id, it)
                     }
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    Button(
-                        onClick = { uriHandler.openUri(Constants.CONTRIBUTORS_LINK) }
-                    ) {
-                        Icon(
-                            painterResource(id = R.drawable.ic_open_in_new),
-                            contentDescription = stringResource(R.string.contributors)
-                        )
-                        Text(
-                            text = stringResource(id = R.string.contributors),
-                            modifier = Modifier.padding(start = 8.dp),
-                            style = TypographyV2.labelMedium,
-                            fontWeight = FontWeight.W600,
-                            maxLines = 1
-                        )
-                    }
+                } else {
+                    Modifier
                 }
-            }
-        }
+            ),
+        highlighted = shouldEdit && enabled,
+        onClick = if (shouldEdit) null else onClick,
+    ) {
+        Icon(
+            painterResource(id = feature.icon),
+            contentDescription = null,
+            modifier = Modifier.size(FeatureIconSize),
+            tint = if (dimmed) colors.muted else colors.primary
+        )
+        Spacer(modifier = Modifier.height(TabotaboTheme.dimensions.spacing.m))
+        Text(
+            text = stringResource(id = feature.featureTitle),
+            style = TabotaboTheme.typography.titleSmall,
+            fontWeight = FontWeight.Bold,
+            color = if (dimmed) colors.muted else colors.accent,
+            // Reserve two lines so tiles in a row keep the same height
+            minLines = 2,
+            maxLines = 3,
+        )
     }
 }
 
+/**
+ * Details of a feature: its description and, in multiple-options mode, its context menu
+ * label. The text template feature also offers to manage templates.
+ *
+ * @param feature Feature to describe.
+ * @param appMode Current context menu mode.
+ * @param onDismiss Called when the dialog is closed.
+ * @param onManageTemplates Opens the template manager.
+ */
 @Composable
-fun FeatureItem(
+private fun FeatureDetailsDialog(
     feature: Feature,
     appMode: AppMode,
-    shouldEdit: Boolean = false,
-    enabledFeatures: List<FeatureIds> = emptyList(),
-    onFeatureEnabledOrDisabled: (FeatureIds, Boolean) -> Unit = { _, _ -> },
-    onClick: () -> Unit = {}
+    onDismiss: () -> Unit,
+    onManageTemplates: () -> Unit,
 ) {
-    ListItem(
-        modifier = Modifier.clickable(enabled = !shouldEdit) { onClick() },
-        headlineContent = {
-            Text(
-                text = stringResource(id = feature.featureTitle),
-                style = TypographyV2.labelMedium,
-                fontFamily = BrandFontFamily,
-                fontWeight = FontWeight.W600
-            )
-        },
-        supportingContent = {
-            Column {
-                Text(text = stringResource(id = feature.featureDesc), style = Typography.bodyMedium)
+    val title = stringResource(feature.featureTitle)
+    val isTemplate = feature.id == FeatureIds.TEXT_TEMPLATE
+    val colors = TabotaboTheme.colors
 
-                // Don't show context menu option in single option flavor
-                if (appMode == AppMode.MULTI) {
-                    Row(
-                        modifier = Modifier.padding(top = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.context_menu_option),
-                            style = Typography.labelMedium,
-                        )
-                        Text(
-                            text = stringResource(id = feature.contextMenuText),
-                            style = Typography.bodyMedium.copy(fontWeight = FontWeight.W500),
-                            color = MaterialTheme.colorScheme.primary,
-                            maxLines = 1,
-                            modifier = Modifier
-                                .padding(start = 8.dp)
-                                .basicMarquee()
-                        )
-                    }
-                }
-            }
+    TabotaboDialog(
+        onDismissRequest = onDismiss,
+        confirmText = stringResource(if (isTemplate) R.string.manage_templates else R.string.done),
+        onConfirm = if (isTemplate) onManageTemplates else onDismiss,
+        dismissText = if (isTemplate) stringResource(R.string.done) else null,
+        title = { FocusedLastWord(title) },
+    ) {
+        Subtitle(text = stringResource(feature.featureDesc), maxLines = Int.MAX_VALUE)
 
-        },
-        leadingContent = {
-            if (shouldEdit) {
-                Checkbox(
-                    checked = enabledFeatures.contains(feature.id),
-                    onCheckedChange = {
-                        onFeatureEnabledOrDisabled(feature.id, it)
-                    },
-                    modifier = Modifier.padding(end = 4.dp)
+        // Don't show context menu option in single option flavor
+        if (appMode == AppMode.MULTI) {
+            FlowRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = TabotaboTheme.dimensions.spacing.m),
+                horizontalArrangement = Arrangement.spacedBy(TabotaboTheme.dimensions.spacing.s),
+                itemVerticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = stringResource(id = R.string.context_menu_option).trim(),
+                    style = TabotaboTheme.typography.caption,
+                    color = colors.muted,
                 )
-            } else {
-                Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        painterResource(id = feature.icon),
-                        contentDescription = stringResource(feature.featureTitle),
-                        modifier = Modifier.size(32.dp),
-                        colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onPrimary)
-                    )
-                }
+                Tag(text = stringResource(id = feature.contextMenuText), color = colors.primary)
             }
         }
-    )
+    }
 }
 
 @Preview(showBackground = true)

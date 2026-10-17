@@ -6,11 +6,13 @@ import android.view.View
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
@@ -21,6 +23,14 @@ import com.tabotabo.ui.color.HueState
 import com.tabotabo.ui.color.rememberHueState
 import com.tabotabo.ui.theme.SystemBarsAppearance
 import com.tabotabo.ui.theme.TabotaboTheme
+
+/**
+ * Hue state of the enclosing [QuickToolsTheme], e.g. for a "Shuffle colors" button.
+ * Shuffling it recolors the screen and, under [AppTheme], is saved for the session.
+ */
+val LocalHueState = staticCompositionLocalOf<HueState> {
+    error("LocalHueState is only available inside QuickToolsTheme")
+}
 
 /**
  * App theme for activities. Reads the appearance and hue for the hosting activity from
@@ -54,7 +64,8 @@ fun AppTheme(
 }
 
 /**
- * Tabotabo-based theme without app state, usable from previews.
+ * Tabotabo-based theme without app state, usable from previews. Provides [hueState] as
+ * [LocalHueState].
  *
  * @param darkTheme Whether to use the dark scheme.
  * @param hueState Hue the color scheme is built from.
@@ -76,8 +87,9 @@ fun QuickToolsTheme(
         darkTheme = darkTheme,
         hueState = hueState,
         systemBars = systemBars,
-        content = content
-    )
+    ) {
+        CompositionLocalProvider(LocalHueState provides hueState, content = content)
+    }
 }
 
 /**

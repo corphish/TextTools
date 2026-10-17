@@ -4,32 +4,27 @@ import android.content.Intent
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import com.corphish.quicktools.R
 import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.data.Result
 import com.corphish.quicktools.ui.common.ListDialog
 import com.corphish.quicktools.ui.theme.AppTheme
-import com.corphish.quicktools.ui.theme.TypographyV2
 import com.corphish.quicktools.viewmodels.EvalViewModel
 import com.corphish.quicktools.viewmodels.EvalViewModel.Companion.EVAL_RESULT_APPEND
 import com.corphish.quicktools.viewmodels.EvalViewModel.Companion.EVAL_RESULT_COPY_TO_CLIPBOARD
 import com.corphish.quicktools.viewmodels.EvalViewModel.Companion.EVAL_RESULT_MODE_ASK_NEXT_TIME
 import com.corphish.quicktools.viewmodels.EvalViewModel.Companion.EVAL_RESULT_REPLACE
 import com.corphish.quicktools.viewmodels.EvaluateResult
+import com.tabotabo.ui.surface.SelectablePill
+import com.tabotabo.ui.theme.TabotaboTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -131,12 +126,18 @@ class EvalActivity : NoUIActivity() {
     }
 }
 
+/**
+ * Asks what to do with the evaluated result, with an option to remember the choice.
+ *
+ * @param onSelected Called with the chosen result mode and whether to remember it.
+ * @param onDismiss Called when the dialog is dismissed without a choice.
+ */
 @Composable
 fun UserSelectionDialog(
     onSelected: (Int, Boolean) -> Unit,
     onDismiss: () -> Unit
 ) {
-    val rememberUserChoiceEnabled = remember {
+    val rememberUserChoiceEnabled = rememberSaveable {
         mutableStateOf(false)
     }
 
@@ -155,25 +156,14 @@ fun UserSelectionDialog(
                 stringResource(id = it)
             },
             additionalContent = {
-                Row(
+                SelectablePill(
+                    text = stringResource(id = R.string.remember_this_choice),
+                    selected = rememberUserChoiceEnabled.value,
+                    onClick = { rememberUserChoiceEnabled.value = !rememberUserChoiceEnabled.value },
                     modifier = Modifier
-                        .padding(top = 8.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-
-                    Checkbox(
-                        checked = rememberUserChoiceEnabled.value,
-                        onCheckedChange = { rememberUserChoiceEnabled.value = it },
-                        enabled = true,
-                    )
-
-                    Text(
-                        text = stringResource(id = R.string.remember_this_choice),
-                        style = TypographyV2.bodyMedium
-                    )
-                }
+                        .padding(top = TabotaboTheme.dimensions.spacing.l)
+                        .fillMaxWidth()
+                )
             },
             iconSelector = { R.drawable.ic_numbers },
             onItemSelected = {

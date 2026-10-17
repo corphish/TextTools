@@ -21,4 +21,8 @@ object Constants {
 
     // Intent to force copy instead of applying
     const val INTENT_FORCE_COPY = "force_copy"
+
+    // Hue (degrees, Float) passed to screens opened from within the app, so they keep the
+    // launching screen's colors instead of picking a new random hue
+    const val INTENT_HUE = "hue"
 }

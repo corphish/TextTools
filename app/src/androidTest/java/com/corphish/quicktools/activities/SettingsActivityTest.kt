@@ -37,23 +37,35 @@ class SettingsActivityTest {
         composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.app))
             .performScrollTo()
             .assertIsDisplayed()
-        
-        // Find the title text specifically (ambiguous because of OutlinedTextField label)
-        composeTestRule.onAllNodesWithText(composeTestRule.activity.getString(R.string.mode_select_title))
-            .onFirst()
+
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.mode_select_title))
             .assertIsDisplayed()
 
-        // Test opening the dropdown - click the one that has a click action (the dropdown field)
-        composeTestRule.onAllNodesWithText(composeTestRule.activity.getString(R.string.mode_select_title))
-            .filterToOne(hasClickAction())
+        // Context menu mode is picked with pills; selecting one marks it as selected
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.mode_multi_title))
+            .performScrollTo()
             .performClick()
-        
-        composeTestRule.onAllNodesWithText(composeTestRule.activity.getString(R.string.mode_single_title))
-            .onFirst()
+            .assertIsSelected()
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.mode_single_title))
+            .performClick()
+            .assertIsSelected()
+    }
+
+    @Test
+    fun testAppearanceSetting() {
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.appearance))
+            .performScrollTo()
             .assertIsDisplayed()
-        composeTestRule.onAllNodesWithText(composeTestRule.activity.getString(R.string.mode_multi_title))
-            .onFirst()
-            .assertIsDisplayed()
+
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.appearance_dark))
+            .performClick()
+            .assertIsSelected()
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.appearance_system))
+            .performClick()
+            .assertIsSelected()
+
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.shuffle_colors))
+            .assertHasClickAction()
     }
 
     @Test

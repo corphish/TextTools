@@ -1,15 +1,18 @@
 package com.corphish.quicktools.viewmodels
 
 import com.corphish.quicktools.MainDispatcherRule
+import com.corphish.quicktools.data.Appearance
 import com.corphish.quicktools.repository.AppMode
 import com.corphish.quicktools.repository.ContextMenuOptionsRepository
 import com.corphish.quicktools.repository.SettingsRepository
 import com.corphish.quicktools.usecases.ManageTemplatesUseCase
+import com.corphish.quicktools.usecases.ThemeUseCase
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -28,6 +31,8 @@ class SettingsViewModelTest {
     private val settingsRepository: SettingsRepository = mockk(relaxed = true)
     private val contextMenuOptionsRepository: ContextMenuOptionsRepository = mockk(relaxed = true)
     private val manageTemplatesUseCase: ManageTemplatesUseCase = mockk(relaxed = true)
+    private val themeUseCase: ThemeUseCase = mockk(relaxed = true)
+    private val appearance = MutableStateFlow(Appearance.DARK)
 
     @Before
     fun setUp() {
@@ -36,8 +41,9 @@ class SettingsViewModelTest {
         every { settingsRepository.getDecimalPoints() } returns 2
         every { settingsRepository.getEvaluateResultMode() } returns 0
         every { contextMenuOptionsRepository.getCurrentAppMode() } returns AppMode.SINGLE
+        every { themeUseCase.appearance } returns appearance
         
-        viewModel = SettingsViewModel(settingsRepository, contextMenuOptionsRepository, manageTemplatesUseCase)
+        viewModel = SettingsViewModel(settingsRepository, contextMenuOptionsRepository, manageTemplatesUseCase, themeUseCase)
     }
 
     @Test
@@ -90,5 +96,16 @@ class SettingsViewModelTest {
     fun testClearAllTemplates() = runTest {
         viewModel.clearAllTemplates()
         verify { manageTemplatesUseCase.clearAllTemplates() }
+    }
+
+    @Test
+    fun testAppearance() {
+        assertEquals(Appearance.DARK, viewModel.appearance.value)
+    }
+
+    @Test
+    fun testUpdateAppearance() {
+        viewModel.updateAppearance(Appearance.LIGHT)
+        verify { themeUseCase.setAppearance(Appearance.LIGHT) }
     }
 }

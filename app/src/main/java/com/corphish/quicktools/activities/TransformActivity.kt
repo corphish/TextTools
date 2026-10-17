@@ -1,148 +1,143 @@
 package com.corphish.quicktools.activities
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
+import android.os.SystemClock
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.background
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.corphish.quicktools.R
 import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.data.TextInputType
-import com.corphish.quicktools.ui.common.CustomTopAppBar
-import com.corphish.quicktools.ui.common.InputAndPreviewTextField
-import com.corphish.quicktools.ui.common.ListDialog
-import com.corphish.quicktools.ui.common.MarqueeText
-import com.corphish.quicktools.ui.theme.BrandFontFamily
+import com.corphish.quicktools.ui.common.AppScreenHeader
+import com.corphish.quicktools.ui.common.ButtonIcon
+import com.corphish.quicktools.ui.common.CardTextField
+import com.corphish.quicktools.ui.common.CompactLandscapeLayout
+import com.corphish.quicktools.ui.common.FormDialog
+import com.corphish.quicktools.ui.common.wordCountTextStyle
 import com.corphish.quicktools.ui.theme.AppTheme
-import com.corphish.quicktools.ui.theme.TypographyV2
 import com.corphish.quicktools.viewmodels.TextTransformViewModel
+import com.corphish.quicktools.viewmodels.ThemeViewModel
+import com.tabotabo.ui.button.PrimaryButton
+import com.tabotabo.ui.button.SecondaryButton
+import com.tabotabo.ui.layout.ScreenScaffold
+import com.tabotabo.ui.surface.GlowCard
+import com.tabotabo.ui.surface.SelectablePillRow
+import com.tabotabo.ui.theme.TabotaboTheme
+import com.tabotabo.ui.typography.body
+import com.tabotabo.ui.typography.label
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class TransformActivity : ComponentActivity() {
 
-    @OptIn(ExperimentalMaterial3Api::class)
+    // Same instance as the theme's; used to pass this screen's hue to the screens it opens
+    private val themeViewModel: ThemeViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         if (intent.hasExtra(Intent.EXTRA_PROCESS_TEXT)) {
-            val readonly = intent.getBooleanExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, true)
             val forceCopy = intent.getBooleanExtra(Constants.INTENT_FORCE_COPY, false)
 
             val text = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT).toString()
 
             setContent {
                 AppTheme {
-                    Scaffold(
-                        topBar = {
-                            CustomTopAppBar(
-                                id = R.string.transform_long,
-                                onNavigationClick = { finish() })
-                        }
-                    ) {
-                        TextTransformUI(
-                            textToTransform = text,
-                            paddingValues = it,
-                            allowApply = if (forceCopy) false else !readonly,
-                            allowCopy = true,
-                            onNext = { text ->
-                                val nextIntent = Intent(this, TextActionActivity::class.java)
-                                nextIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, text)
-                                nextIntent.putExtra(
-                                    Intent.EXTRA_PROCESS_TEXT_READONLY, intent.getBooleanExtra(
-                                        Intent.EXTRA_PROCESS_TEXT_READONLY, true
-                                    )
+                    TextTransformUI(
+                        textToTransform = text,
+                        onBack = { finish() },
+                        onNext = { text ->
+                            val nextIntent = Intent(this, TextActionActivity::class.java)
+                            nextIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, text)
+                            nextIntent.putExtra(
+                                Intent.EXTRA_PROCESS_TEXT_READONLY, intent.getBooleanExtra(
+                                    Intent.EXTRA_PROCESS_TEXT_READONLY, true
                                 )
-                                nextIntent.putExtra(Constants.INTENT_FORCE_COPY, forceCopy)
-                                startActivity(nextIntent)
-                                finish()
-                            },
-                        )
-                    }
+                            )
+                            nextIntent.putExtra(Constants.INTENT_FORCE_COPY, forceCopy)
+                            nextIntent.putExtra(Constants.INTENT_HUE, themeViewModel.hue.value)
+                            startActivity(nextIntent)
+                            finish()
+                        },
+                    )
                 }
             }
         } else {
             finish()
         }
-
-        // Do not finish or else the dialog will go away
-        // return false
     }
 }
 
+/** Minimum time between two "preview is read-only" toasts, in milliseconds. */
+private const val READ_ONLY_TOAST_INTERVAL_MS = 2000L
+
+/**
+ * Transform screen: one text card showing the original (editable) or the preview (read-only),
+ * a row with the Original/Preview toggle and a button naming the current transform, and the
+ * Next button. The transform button opens a dialog with every transform option.
+ * - Portrait: text card with the toolbar row and Next button below.
+ * - Landscape: header and Next button in one row, the text card filling the rest, the toolbar
+ *   row underneath.
+ *
+ * @param textToTransform Initial input text.
+ * @param onBack Called when the user leaves the screen.
+ * @param onNext Called with the transformed text to continue to the text actions.
+ */
 @Composable
 fun TextTransformUI(
     textToTransform: String,
-    paddingValues: PaddingValues,
-    allowApply: Boolean,
-    allowCopy: Boolean,
+    onBack: () -> Unit = {},
     onNext: (String) -> Unit = {},
 ) {
     val viewModel: TextTransformViewModel = hiltViewModel()
     val inputText by viewModel.mainText.collectAsState()
     val previewText by viewModel.previewText.collectAsState()
 
-    val selectedPrimaryIndex by viewModel.selectedPrimaryIndex.collectAsState()
-    val secondaryList by viewModel.secondaryOptionList.collectAsState()
-
-    var primaryFunctionExpanded by remember { mutableStateOf(false) }
-    var secondaryFunctionExpanded by remember { mutableStateOf(false) }
-
-    val configuration = LocalConfiguration.current
-    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-    var landscapeOptionsVisible by remember { mutableStateOf(false) }
+    var optionsExpanded by rememberSaveable { mutableStateOf(false) }
+    var showPreview by rememberSaveable { mutableStateOf(false) }
 
     val context = LocalContext.current
 
@@ -156,199 +151,180 @@ fun TextTransformUI(
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues)
-    ) {
-        if (isLandscape) {
-            Row(modifier = Modifier.fillMaxSize()) {
-                InputAndPreviewTextField(
-                    inputText = inputText,
-                    onInputTextChanged = { viewModel.initializeText(it) },
-                    previewText = previewText,
-                    showInput = !landscapeOptionsVisible,
-                    showPreview = true,
-                    isLandscape = true,
-                    modifier = Modifier.weight(1f)
-                )
+    val header: @Composable () -> Unit = {
+        AppScreenHeader(id = R.string.transform_long, onBack = onBack)
+    }
+    val nextButton: @Composable () -> Unit = {
+        PrimaryButton(
+            text = stringResource(id = R.string.next),
+            onClick = { onNext(previewText) },
+            trailingIcon = { ButtonIcon(R.drawable.ic_arrow_right) },
+        )
+    }
+    val toolbar: @Composable () -> Unit = {
+        TransformToolbar(
+            viewModel = viewModel,
+            showPreview = showPreview,
+            onShowPreviewChange = { showPreview = it },
+            onOptionsClick = { optionsExpanded = true },
+        )
+    }
+    val textArea: @Composable (Modifier) -> Unit = { modifier ->
+        TransformTextArea(
+            inputText = inputText,
+            previewText = previewText,
+            showPreview = showPreview,
+            onInputTextChanged = { viewModel.initializeText(it) },
+            modifier = modifier,
+        )
+    }
 
-                if (landscapeOptionsVisible) {
-                    Card(
-                        shape = RoundedCornerShape(
-                            topStart = 16.dp,
-                            bottomStart = 16.dp
-                        ),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                        ),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-                        modifier = Modifier
-                            .width(320.dp)
-                            .fillMaxHeight()
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(end = 8.dp)
-                        ) {
-                            TransformOptionsHeader()
-                            Spacer(modifier = Modifier.weight(1f))
-                            IconButton(onClick = { landscapeOptionsVisible = false }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_arrow_left),
-                                    contentDescription = stringResource(R.string.previous),
-                                    tint = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                        }
-                        TransformOptionsBody(
-                            viewModel = viewModel,
-                            allowApply = allowApply,
-                            allowCopy = allowCopy,
-                            onNext = onNext,
-                            previewText = previewText,
-                            onPrimaryClick = { primaryFunctionExpanded = true },
-                            onSecondaryClick = { secondaryFunctionExpanded = true },
-                            isLandscape = true
-                        )
-                    }
-                } else {
-                    IconButton(
-                        onClick = { landscapeOptionsVisible = true },
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(16.dp)
-                            .background(MaterialTheme.colorScheme.primary, CircleShape)
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_text_transform),
-                            contentDescription = stringResource(R.string.transform),
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
-                }
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        if (maxWidth > maxHeight) {
+            CompactLandscapeLayout(
+                header = header,
+                headerAction = nextButton,
+                bottomBar = toolbar,
+            ) {
+                textArea(
+                    Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                )
             }
         } else {
-            ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-                val (inputAndPreviewTextField, functionSheet) = createRefs()
-
-                InputAndPreviewTextField(
-                    inputText = inputText,
-                    onInputTextChanged = { viewModel.initializeText(it) },
-                    previewText = previewText,
-                    modifier = Modifier.constrainAs(inputAndPreviewTextField) {
-                        top.linkTo(parent.top, margin = 16.dp)
-                        bottom.linkTo(functionSheet.top, margin = 8.dp)
-                        start.linkTo(parent.start, margin = 8.dp)
-                        end.linkTo(parent.end, margin = 8.dp)
-                        height = Dimension.fillToConstraints
-                        width = Dimension.fillToConstraints
-                    }
-                )
-
-                Card(
-                    shape = RoundedCornerShape(
-                        topStart = 16.dp,
-                        topEnd = 16.dp,
-                        bottomEnd = 0.dp,
-                        bottomStart = 0.dp
-                    ),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    ),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-                    modifier = Modifier
-                        .animateContentSize()
-                        .constrainAs(functionSheet) {
-                            bottom.linkTo(parent.bottom)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                            width = Dimension.matchParent
-                        }
-                ) {
-                    TransformOptionsHeader()
-                    TransformOptionsBody(
-                        viewModel = viewModel,
-                        allowApply = allowApply,
-                        allowCopy = allowCopy,
-                        onNext = onNext,
-                        previewText = previewText,
-                        onPrimaryClick = { primaryFunctionExpanded = true },
-                        onSecondaryClick = { secondaryFunctionExpanded = true },
-                        isLandscape = false
-                    )
+            ScreenScaffold(
+                header = header,
+                actions = {
+                    toolbar()
+                    nextButton()
                 }
+            ) {
+                textArea(Modifier.fillMaxSize())
             }
         }
     }
 
-    if (primaryFunctionExpanded) {
-        ListDialog(
-            title = stringResource(R.string.transform_long),
-            message = "",
-            list = TextTransformViewModel.transformOptions,
-            onItemSelected = {
-                viewModel.selectPrimaryIndex(it)
-                primaryFunctionExpanded = false
+    if (optionsExpanded) {
+        TransformOptionsDialog(
+            viewModel = viewModel,
+            onDismiss = {
+                optionsExpanded = false
+                showPreview = true
             },
-            stringSelector = { stringResource(it) },
-            iconSelector = { R.drawable.ic_text_transform },
-            onBackPressed = { primaryFunctionExpanded = false },
-            dismissible = true,
-            onDismissRequest = { primaryFunctionExpanded = false }
-        )
-    }
-
-    if (secondaryFunctionExpanded) {
-        ListDialog(
-            title = stringResource(TextTransformViewModel.transformOptions[selectedPrimaryIndex]),
-            message = "",
-            list = secondaryList,
-            onItemSelected = {
-                viewModel.selectSecondaryIndex(it)
-                secondaryFunctionExpanded = false
-            },
-            stringSelector = { stringResource(it) },
-            iconSelector = { R.drawable.ic_text_transform },
-            onBackPressed = { secondaryFunctionExpanded = false },
-            dismissible = true,
-            onDismissRequest = { secondaryFunctionExpanded = false }
         )
     }
 }
 
+/**
+ * The text card: the original text (editable) or the preview (read-only). Typing while the
+ * preview is shown is ignored and a toast explains how to edit.
+ *
+ * @param inputText Original text.
+ * @param previewText Transformed text.
+ * @param showPreview Whether the preview is shown instead of the original.
+ * @param onInputTextChanged Called when the user edits the original text.
+ * @param modifier Modifier for the card.
+ */
 @Composable
-fun TransformOptionsHeader() {
-    Row(
-        modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            painter = painterResource(R.drawable.ic_text_transform),
-            contentDescription = stringResource(R.string.transform),
-            tint = MaterialTheme.colorScheme.onPrimary,
-            modifier = Modifier.background(MaterialTheme.colorScheme.primary, CircleShape)
-        )
-        Text(
-            text = stringResource(id = R.string.transform),
-            style = TypographyV2.labelSmall,
-            color = MaterialTheme.colorScheme.primary,
-            fontFamily = BrandFontFamily,
-            modifier = Modifier.padding(start = 8.dp)
-        )
-    }
-}
-
-@Composable
-fun TransformOptionsBody(
-    viewModel: TextTransformViewModel,
-    allowApply: Boolean,
-    allowCopy: Boolean,
-    onNext: (String) -> Unit,
+private fun TransformTextArea(
+    inputText: String,
     previewText: String,
-    onPrimaryClick: () -> Unit,
-    onSecondaryClick: () -> Unit,
-    isLandscape: Boolean = false,
+    showPreview: Boolean,
+    onInputTextChanged: (String) -> Unit,
+    modifier: Modifier,
+) {
+    val context = LocalContext.current
+    var lastReadOnlyToastAt by remember { mutableLongStateOf(0L) }
+    val text = if (showPreview) previewText else inputText
+
+    CardTextField(
+        value = text,
+        onValueChange = {
+            if (showPreview) {
+                // Edits only go to the original; tell the user, without stacking toasts
+                val now = SystemClock.elapsedRealtime()
+                if (now - lastReadOnlyToastAt > READ_ONLY_TOAST_INTERVAL_MS) {
+                    lastReadOnlyToastAt = now
+                    Toast.makeText(context, R.string.preview_read_only, Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                onInputTextChanged(it)
+            }
+        },
+        modifier = modifier,
+        textFieldModifier = Modifier.fillMaxSize(),
+        placeholder = stringResource(if (showPreview) R.string.preview_text_placeholder else R.string.enter_text_here),
+        highlighted = showPreview,
+        textStyle = wordCountTextStyle(text),
+    )
+}
+
+/**
+ * Original/Preview toggle beside a button naming the current transform ("transform ·
+ * sub-option"); the button opens the transform options.
+ *
+ * @param viewModel Source of the selected transform.
+ * @param showPreview Whether the preview is shown.
+ * @param onShowPreviewChange Called to switch between original and preview.
+ * @param onOptionsClick Opens the transform options.
+ */
+@Composable
+private fun TransformToolbar(
+    viewModel: TextTransformViewModel,
+    showPreview: Boolean,
+    onShowPreviewChange: (Boolean) -> Unit,
+    onOptionsClick: () -> Unit,
+) {
+    val selectedPrimaryIndex by viewModel.selectedPrimaryIndex.collectAsState()
+    val selectedSecondaryIndex by viewModel.selectedSecondaryIndex.collectAsState()
+    val secondaryList by viewModel.secondaryOptionList.collectAsState()
+
+    val modeLabels = mapOf(
+        false to stringResource(R.string.original),
+        true to stringResource(R.string.preview),
+    )
+    val primaryText = stringResource(TextTransformViewModel.transformOptions[selectedPrimaryIndex])
+    val summary = if (secondaryList.isEmpty()) {
+        primaryText
+    } else {
+        "$primaryText · ${stringResource(secondaryList[selectedSecondaryIndex])}"
+    }
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(TabotaboTheme.dimensions.spacing.s),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        SelectablePillRow(
+            options = listOf(false, true),
+            selected = showPreview,
+            onSelect = onShowPreviewChange,
+            label = { modeLabels.getValue(it) },
+            modifier = Modifier.weight(1f),
+        )
+        // Long summaries scroll as a marquee inside the button
+        SecondaryButton(
+            text = summary,
+            onClick = onOptionsClick,
+            modifier = Modifier.weight(1f),
+            leadingIcon = { ButtonIcon(R.drawable.ic_auto_fix_high) },
+        )
+    }
+}
+
+/**
+ * Dialog with all transform options: a selector for the transform, below it a selector for
+ * its sub-option (if any) and the extra input (if needed). Tapping a selector reveals its
+ * options. Choices apply immediately, so the preview behind the dialog updates live.
+ *
+ * @param viewModel Holds and applies the transform options.
+ * @param onDismiss Called when the dialog is closed.
+ */
+@Composable
+private fun TransformOptionsDialog(
+    viewModel: TextTransformViewModel,
+    onDismiss: () -> Unit,
 ) {
     val selectedPrimaryIndex by viewModel.selectedPrimaryIndex.collectAsState()
     val selectedSecondaryIndex by viewModel.selectedSecondaryIndex.collectAsState()
@@ -360,70 +336,30 @@ fun TransformOptionsBody(
     val secondaryFunctionTextEnabled by viewModel.secondaryFunctionTextEnabled.collectAsState()
     val secondaryFunctionTextVisible by viewModel.secondaryFunctionTextVisible.collectAsState()
 
-    Column {
-        Column(
-            modifier = Modifier.verticalScroll(rememberScrollState())
-        ) {
-            // Function 1
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 4.dp)
-                    .background(
-                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                        shape = RoundedCornerShape(size = 4.dp)
-                    )
-                    .clickable { onPrimaryClick() },
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    painterResource(R.drawable.ic_auto_fix_high),
-                    contentDescription = stringResource(R.string.transform),
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .padding(start = 16.dp, top = 16.dp, bottom = 16.dp)
-                        .size(24.dp)
-                )
+    val spacing = TabotaboTheme.dimensions.spacing
 
-                Text(
-                    stringResource(TextTransformViewModel.transformOptions[selectedPrimaryIndex]),
-                    style = LocalTextStyle.current.copy(
-                        fontSize = 16.sp,
-                        color = MaterialTheme.colorScheme.onSurface
-                    ),
-                    modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 16.dp)
-                )
-            }
+    FormDialog(
+        title = stringResource(R.string.transform_long),
+        confirmText = stringResource(R.string.done),
+        onConfirm = onDismiss,
+        onDismissRequest = onDismiss,
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(spacing.m)) {
+            ExpandableSelector(
+                icon = R.drawable.ic_auto_fix_high,
+                options = TextTransformViewModel.transformOptions,
+                selectedIndex = selectedPrimaryIndex,
+                onSelect = { viewModel.selectPrimaryIndex(it) },
+            )
 
             if (secondaryList.isNotEmpty()) {
-                // Function 2
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 4.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                            shape = RoundedCornerShape(size = 4.dp)
-                        )
-                        .clickable { onSecondaryClick() },
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        painterResource(R.drawable.ic_auto_awesome),
-                        contentDescription = stringResource(R.string.transform),
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier
-                            .padding(start = 16.dp, top = 16.dp, bottom = 16.dp)
-                            .size(24.dp)
-                    )
-
-                    Text(
-                        stringResource(secondaryList[selectedSecondaryIndex]),
-                        style = LocalTextStyle.current.copy(
-                            fontSize = 16.sp,
-                            color = MaterialTheme.colorScheme.onSurface
-                        ),
-                        modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 16.dp)
+                // Keyed so the sub-option card starts collapsed for each transform
+                key(selectedPrimaryIndex) {
+                    ExpandableSelector(
+                        icon = R.drawable.ic_auto_awesome,
+                        options = secondaryList,
+                        selectedIndex = selectedSecondaryIndex,
+                        onSelect = { viewModel.selectSecondaryIndex(it) },
                     )
                 }
             }
@@ -435,30 +371,98 @@ fun TransformOptionsBody(
                     onValueChange = { viewModel.setSecondaryText(it) },
                     keyboardOptions = KeyboardOptions(keyboardType = secondaryFunctionTextInputType.toKeyboardType()),
                     label = { Text(stringResource(id = secondaryFunctionTextLabel)) },
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                        .fillMaxWidth()
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
         }
+    }
+}
 
-        if (isLandscape) {
-            Spacer(modifier = Modifier.weight(1f))
-        }
+/**
+ * Card showing the selected option with a chevron. Tapping it reveals all options inside the
+ * card; picking one selects it and collapses the card again.
+ *
+ * @param icon Drawable resource shown before the selected option.
+ * @param options String resources of the options.
+ * @param selectedIndex Index of the selected option.
+ * @param onSelect Called with the index of the picked option.
+ */
+@Composable
+private fun ExpandableSelector(
+    @DrawableRes icon: Int,
+    options: List<Int>,
+    selectedIndex: Int,
+    onSelect: (Int) -> Unit,
+) {
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    val colors = TabotaboTheme.colors
+    val spacing = TabotaboTheme.dimensions.spacing
+    val chevronRotation by animateFloatAsState(if (expanded) 90f else 0f, label = "chevron")
 
-        Button(
-            onClick = { onNext(previewText) },
+    GlowCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .animateContentSize(),
+        highlighted = expanded,
+        glow = false,
+        contentPadding = PaddingValues(),
+    ) {
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .clickable(role = Role.DropdownList) { expanded = !expanded }
+                .padding(horizontal = spacing.l, vertical = spacing.m),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            MarqueeText(
-                text = stringResource(id = R.string.next),
-                fontFamily = BrandFontFamily
+            ButtonIcon(icon, tint = colors.primary)
+            Text(
+                text = stringResource(options[selectedIndex.coerceIn(options.indices)]),
+                style = TabotaboTheme.typography.body,
+                color = colors.accent,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = spacing.m)
             )
+            Box(modifier = Modifier.rotate(chevronRotation)) {
+                ButtonIcon(R.drawable.ic_arrow_right, tint = colors.muted)
+            }
+        }
+
+        if (expanded) {
+            Column(modifier = Modifier.selectableGroup()) {
+                options.forEachIndexed { index, option ->
+                    val selected = index == selectedIndex
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .selectable(selected = selected, role = Role.RadioButton) {
+                                onSelect(index)
+                                expanded = false
+                            }
+                            .padding(horizontal = spacing.l, vertical = spacing.m),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        // Reserve the check's space so all options line up
+                        Box(modifier = Modifier.size(OptionCheckSize)) {
+                            if (selected) ButtonIcon(R.drawable.ic_done, tint = colors.primary)
+                        }
+                        Text(
+                            text = stringResource(option),
+                            style = TabotaboTheme.typography.body,
+                            fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                            color = if (selected) colors.primary else colors.accent,
+                            modifier = Modifier.padding(start = spacing.m)
+                        )
+                    }
+                }
+            }
         }
     }
 }
+
+/** Space reserved for the check next to each expanded option. */
+private val OptionCheckSize = 20.dp
 
 private fun TextInputType.toKeyboardType(): KeyboardType = when (this) {
     TextInputType.NUMBER -> KeyboardType.Number
@@ -470,8 +474,5 @@ private fun TextInputType.toKeyboardType(): KeyboardType = when (this) {
 fun TextTransformUIPreview() {
     TextTransformUI(
         textToTransform = "Text to transform",
-        allowCopy = true,
-        allowApply = true,
-        paddingValues = PaddingValues(all = 0.dp)
     )
 }

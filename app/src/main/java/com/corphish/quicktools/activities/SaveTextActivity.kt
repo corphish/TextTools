@@ -1,6 +1,5 @@
 package com.corphish.quicktools.activities
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.widget.Toast

@@ -3,11 +3,13 @@ package com.corphish.quicktools.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.corphish.quicktools.BuildConfig
+import com.corphish.quicktools.data.Appearance
 import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.repository.AppMode
 import com.corphish.quicktools.repository.ContextMenuOptionsRepository
 import com.corphish.quicktools.repository.SettingsRepository
 import com.corphish.quicktools.usecases.ManageTemplatesUseCase
+import com.corphish.quicktools.usecases.ThemeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,6 +21,7 @@ class SettingsViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val contextMenuOptionsRepository: ContextMenuOptionsRepository,
     private val manageTemplatesUseCase: ManageTemplatesUseCase,
+    private val themeUseCase: ThemeUseCase,
 ): ViewModel() {
     private val _prependCountryCodeEnabled = MutableStateFlow(settingsRepository.getPrependCountryCodeEnabled())
     private val _prependCountryCode = MutableStateFlow(settingsRepository.getPrependCountryCode())
@@ -37,6 +40,9 @@ class SettingsViewModel @Inject constructor(
     val appVersionName: StateFlow<String> = _appVersionName
     val appVersionCode: StateFlow<Int> = _appVersionCode
     val appMode: StateFlow<AppMode> = _appMode
+
+    /** The user's appearance choice (light, dark or system). */
+    val appearance: StateFlow<Appearance> = themeUseCase.appearance
 
     fun updatePrependCountryCodeEnabled(enabled: Boolean) {
         settingsRepository.setPrependCountryCodeEnabled(enabled)
@@ -82,6 +88,13 @@ class SettingsViewModel @Inject constructor(
             contextMenuOptionsRepository.setCurrentAppMode(mode)
             _appMode.value = mode
         }
+    }
+
+    /**
+     * Persists the [appearance] choice; every open screen picks it up through its theme.
+     */
+    fun updateAppearance(appearance: Appearance) {
+        themeUseCase.setAppearance(appearance)
     }
 
     fun clearAllTemplates() {

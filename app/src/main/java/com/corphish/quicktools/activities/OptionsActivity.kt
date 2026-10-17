@@ -19,11 +19,15 @@ import com.corphish.quicktools.repository.FeatureIds
 import com.corphish.quicktools.ui.common.ListDialog
 import com.corphish.quicktools.ui.theme.AppTheme
 import com.corphish.quicktools.viewmodels.OptionsViewModel
+import com.corphish.quicktools.viewmodels.ThemeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class OptionsActivity : NoUIActivity() {
     private val viewModel: OptionsViewModel by viewModels()
+
+    // Same instance as the theme's; used to pass this screen's hue to the screens it opens
+    private val themeViewModel: ThemeViewModel by viewModels()
 
     private val _options = listOf(
         Option(FeatureIds.WHATSAPP, R.string.whatsapp, R.drawable.ic_whatsapp, WUPActivity::class.java, false),
@@ -70,6 +74,7 @@ class OptionsActivity : NoUIActivity() {
                                 routeIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, text)
                                 routeIntent.putExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, readonly)
                                 routeIntent.putExtra(Constants.INTENT_FORCE_COPY, forceCopy)
+                                routeIntent.putExtra(Constants.INTENT_HUE, themeViewModel.hue.value)
                                 router.launch(routeIntent)
                                 optionDialog.value = false
                             }) {

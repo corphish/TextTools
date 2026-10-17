@@ -281,4 +281,13 @@
     <string name="copy">Copy</string>
     <string name="back">Back</string>
     <string name="previous">Previous</string>
+    <string name="appearance">Appearance</string>
+    <string name="appearance_desc">Choose a light or dark look, or follow the system setting.</string>
+    <string name="appearance_system">System</string>
+    <string name="appearance_light">Light</string>
+    <string name="appearance_dark">Dark</string>
+    <string name="shuffle_colors">Shuffle colors</string>
+    <string name="manage_templates">Manage templates</string>
+    <string name="original">Original</string>
+    <string name="preview_read_only">Switch to Original to edit the text</string>
 </resources>
