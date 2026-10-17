@@ -1,13 +1,13 @@
 [versions]
-agp = "9.4.0"
+agp = "9.4.1"
 hiltNavigationCompose = "1.4.0"
-kotlin = "2.4.20"
-coreKtx = "1.19.0"
+kotlin = "2.4.21"
+coreKtx = "1.19.1"
 lifecycleRuntimeKtx = "2.11.0"
 activityCompose = "1.13.0"
-composeBom = "2026.08.00"
+composeBom = "2026.09.00"
 hilt = "2.60.1"
-composeMaterial3Android = "1.5.0-alpha27"
+composeMaterial3Android = "1.5.0-beta01"
 constraintlayoutCompose = "1.1.2"
 exp4j = "0.4.8"
 ksp = "2.3.11"
@@ -18,7 +18,7 @@ adaptive = "1.3.0"
 androidxTestRunner = "1.7.0"
 androidxTestExtJunit = "1.3.0"
 kotlinMetadataJvm = "2.4.20"
-robolectric = "4.16.1"
+robolectric = "4.17"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
