@@ -40,7 +40,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.corphish.quicktools.R
 import com.corphish.quicktools.data.Appearance
@@ -54,6 +53,7 @@ import com.corphish.quicktools.viewmodels.SettingsViewModel
 import com.tabotabo.ui.button.PrimaryButton
 import com.tabotabo.ui.button.SecondaryButton
 import com.tabotabo.ui.layout.ScreenScaffold
+import com.tabotabo.ui.motion.PopInContent
 import com.tabotabo.ui.settings.AppearanceSetting
 import com.tabotabo.ui.settings.SettingsSection
 import com.tabotabo.ui.settings.ShuffleColorsButton
@@ -341,14 +341,14 @@ fun EvaluateSettings(settingsViewModel: SettingsViewModel) {
             title = stringResource(id = R.string.decimal_points_title),
             description = stringResource(id = R.string.decimal_points_desc),
         ) {
-            Text(
-                text = "$decimalPoints",
-                style = TabotaboTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                color = TabotaboTheme.colors.primary,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
+            PopInContent(targetState = decimalPoints, contentAlignment = Alignment.CenterStart) { points ->
+                Text(
+                    text = "$points",
+                    style = TabotaboTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = TabotaboTheme.colors.primary,
+                )
+            }
             val sliderState = rememberSliderState(value = decimalPoints.toFloat(), steps = 3, trackRange = 1f..5f)
             Slider(
                 state = sliderState,

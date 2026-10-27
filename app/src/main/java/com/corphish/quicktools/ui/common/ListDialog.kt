@@ -36,7 +36,6 @@ import com.tabotabo.ui.button.SecondaryButton
 import com.tabotabo.ui.surface.glowOutline
 import com.tabotabo.ui.text.EmphasisText
 import com.tabotabo.ui.theme.TabotaboTheme
-import com.tabotabo.ui.typography.EmphasisWeights
 import com.tabotabo.ui.typography.body
 
 /** Size of the icon shown in each list item. */
@@ -209,10 +208,7 @@ private fun DialogContainer(
  */
 @Composable
 private fun DialogTitle(title: String) {
-    EmphasisText(
-        style = TabotaboTheme.typography.headlineSmall,
-        weights = EmphasisWeights.Title,
-    ) {
+    EmphasisText(style = TabotaboTheme.typography.headlineSmall) {
         FocusedLastWord(title)
     }
 }

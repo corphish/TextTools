@@ -34,8 +34,9 @@ val LocalHueState = staticCompositionLocalOf<HueState> {
 
 /**
  * App theme for activities. Reads the appearance and hue for the hosting activity from
- * [ThemeViewModel] and applies them through [QuickToolsTheme]. Hue changes made by the UI
- * (e.g. "Shuffle colors") are reported back to the [viewModel].
+ * [ThemeViewModel] and applies them through [QuickToolsTheme], using a single [HueState] whose
+ * hue follows the [viewModel]. Hue changes made by the UI (e.g. "Shuffle colors") are reported
+ * back to the [viewModel].
  *
  * Requires a Hilt entry point (`@AndroidEntryPoint`) activity; previews should use
  * [QuickToolsTheme] directly.
@@ -50,7 +51,12 @@ fun AppTheme(
 ) {
     val appearance by viewModel.appearance.collectAsState()
     val hue by viewModel.hue.collectAsState()
-    val hueState = remember(hue) { HueState(Hue(hue)) }
+    // One HueState for the whole lifetime, so light/dark switches keep the same colors
+    val hueState = remember { HueState(Hue(hue)) }
+
+    LaunchedEffect(hue) {
+        if (hueState.hue.degrees != hue) hueState.hue = Hue(hue)
+    }
 
     LaunchedEffect(hueState) {
         snapshotFlow { hueState.hue.degrees }.collect(viewModel::onHueChanged)
