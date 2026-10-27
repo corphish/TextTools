@@ -103,6 +103,8 @@ fun NumberAnalysisScreen(
     val analysisResult by viewModel.analysisResult.collectAsState()
     val selectedBase by viewModel.selectedBase.collectAsState()
     val spacing = TabotaboTheme.dimensions.spacing
+    // Resolved once here and passed to the result rows inside the lazy list
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         if (initialText.isNotEmpty()) {
@@ -117,7 +119,7 @@ fun NumberAnalysisScreen(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(spacing.m)
         ) {
-            item {
+            item(contentType = "input") {
                 NumberInputSection(
                     text = inputText,
                     selectedBase = selectedBase ?: analysisResult?.base ?: 10,
@@ -128,9 +130,9 @@ fun NumberAnalysisScreen(
             }
 
             if (analysisResult == null) {
-                item { Subtitle(text = stringResource(R.string.invalid_number), maxLines = Int.MAX_VALUE) }
+                item(contentType = "invalid") { Subtitle(text = stringResource(R.string.invalid_number), maxLines = Int.MAX_VALUE) }
             } else {
-                analysisContent(analysisResult, allowApply, onApply)
+                analysisContent(analysisResult, allowApply, context, onApply)
             }
         }
     }
@@ -141,16 +143,18 @@ fun NumberAnalysisScreen(
  *
  * @param result Analysis to show; nothing is added when null.
  * @param allowApply Whether values may replace the selected text.
+ * @param context Context for the copy action, resolved once by the screen rather than per row.
  * @param onApply Called with a value to apply.
  */
 fun LazyListScope.analysisContent(
     result: NumberAnalysisResult?,
     allowApply: Boolean,
+    context: Context,
     onApply: (String) -> Unit
 ) {
     result?.let { res ->
         resultSection(R.string.conversions, res.conversions.toList()) { (base, value) ->
-            ResultItem(label = "Base $base", value = value, allowApply = allowApply, onApply = onApply)
+            ResultItem(label = "Base $base", value = value, allowApply = allowApply, context = context, onApply = onApply)
         }
 
         resultSection(R.string.math_transformations, res.mathTransformations.toList()) { (labelRes, value) ->
@@ -160,16 +164,17 @@ fun LazyListScope.analysisContent(
                 value = resolveValue(value),
                 allowApply = allowApply && !isError,
                 allowCopy = !isError,
+                context = context,
                 onApply = onApply
             )
         }
 
         resultSection(R.string.digit_derivations, res.digitDerivations.toList()) { (labelRes, value) ->
-            ResultItem(label = stringResource(labelRes), value = value, allowApply = allowApply, onApply = onApply)
+            ResultItem(label = stringResource(labelRes), value = value, allowApply = allowApply, context = context, onApply = onApply)
         }
 
         resultSection(R.string.factors, res.factors.toList()) { (labelRes, value) ->
-            ResultItem(label = stringResource(labelRes), value = value, allowApply = allowApply, onApply = onApply)
+            ResultItem(label = stringResource(labelRes), value = value, allowApply = allowApply, context = context, onApply = onApply)
         }
 
         resultSection(R.string.prime_number, res.primeInfo.toList()) { (labelRes, value) ->
@@ -178,12 +183,13 @@ fun LazyListScope.analysisContent(
                 value = resolveValue(value),
                 allowApply = allowApply && !value.startsWith(STRING_REFERENCE_PREFIX),
                 allowCopy = value != RESULT_TOO_LARGE,
+                context = context,
                 onApply = onApply
             )
         }
 
         resultSection(R.string.language_conversion, res.languageConversions.toList()) { (labelRes, value) ->
-            ResultItem(label = stringResource(labelRes), value = value, allowApply = allowApply, onApply = onApply)
+            ResultItem(label = stringResource(labelRes), value = value, allowApply = allowApply, context = context, onApply = onApply)
         }
     }
 }
@@ -227,8 +233,8 @@ private fun <T> LazyListScope.resultSection(
 ) {
     if (entries.isEmpty()) return
 
-    item { SectionLabel(stringResource(title), modifier = Modifier.padding(top = TabotaboTheme.dimensions.spacing.l)) }
-    item {
+    item(contentType = CONTENT_TYPE_SECTION_LABEL) { SectionLabel(stringResource(title), modifier = Modifier.padding(top = TabotaboTheme.dimensions.spacing.l)) }
+    item(contentType = "result_section") {
         Column(modifier = Modifier.fillMaxWidth()) {
             Column(verticalArrangement = Arrangement.spacedBy(TabotaboTheme.dimensions.spacing.s)) {
                 entries.forEach { itemContent(it) }
@@ -294,6 +300,7 @@ fun NumberInputSection(
  * @param value The value.
  * @param allowApply Whether to show the apply action.
  * @param allowCopy Whether to show the copy action.
+ * @param context Context for the copy action, passed in so lazy rows do not each read LocalContext.
  * @param onApply Called with [value] when applied.
  */
 @Composable
@@ -302,10 +309,9 @@ fun ResultItem(
     value: String,
     allowApply: Boolean,
     allowCopy: Boolean = true,
+    context: Context,
     onApply: (String) -> Unit
 ) {
-    val context = LocalContext.current
-
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically

@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -34,11 +35,19 @@ private const val TEXT_LINE_HEIGHT_FACTOR = 1.4f
 @Composable
 fun wordCountTextStyle(text: String): TextStyle {
     val fontSize = determineFontSizeForWordCount(text)
-    return TabotaboTheme.typography.body.copy(fontSize = fontSize, lineHeight = fontSize * TEXT_LINE_HEIGHT_FACTOR)
+    val body = TabotaboTheme.typography.body
+    return remember(body, fontSize) {
+        body.copy(fontSize = fontSize, lineHeight = fontSize * TEXT_LINE_HEIGHT_FACTOR)
+    }
 }
 
+/** Word count above which [determineFontSizeForWordCount] uses its smallest size. */
+private const val LARGEST_WORD_COUNT_TIER = 10
+
 /**
- * Picks a font size for [text] that shrinks as the word count grows.
+ * Picks a font size for [text] that shrinks as the word count grows. Runs on every edit, so it
+ * counts words in place and stops once the count passes the last tier, instead of splitting
+ * the whole text.
  *
  * @param text Text to measure.
  * @return 24sp for up to 3 words, 20sp up to 6, 16sp up to 10 and 14sp beyond.
@@ -46,16 +55,35 @@ fun wordCountTextStyle(text: String): TextStyle {
 fun determineFontSizeForWordCount(
     text: String
 ): TextUnit {
-    // Split words (handle multiple spaces safely)
-    val wordCount = text.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }.size
+    val wordCount = countWords(text, limit = LARGEST_WORD_COUNT_TIER + 1)
 
-    // Determine font size based on number of words
     return when {
         wordCount <= 3 -> 24.sp
         wordCount <= 6 -> 20.sp
-        wordCount <= 10 -> 16.sp
+        wordCount <= LARGEST_WORD_COUNT_TIER -> 16.sp
         else -> 14.sp
     }
+}
+
+/**
+ * Counts whitespace-separated words in [text], stopping early at [limit].
+ *
+ * @param text Text to count words in.
+ * @param limit Count at which to stop scanning.
+ * @return Number of words, at most [limit].
+ */
+internal fun countWords(text: String, limit: Int = Int.MAX_VALUE): Int {
+    var count = 0
+    var inWord = false
+    for (char in text) {
+        if (char.isWhitespace()) {
+            inWord = false
+        } else if (!inWord) {
+            inWord = true
+            if (++count >= limit) return count
+        }
+    }
+    return count
 }
 
 /**

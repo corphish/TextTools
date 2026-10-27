@@ -131,7 +131,7 @@ fun Greeting(
             horizontalArrangement = Arrangement.spacedBy(spacing.m),
             verticalArrangement = Arrangement.spacedBy(spacing.m),
         ) {
-            items(Feature.LIST, key = { it.id }) { feature ->
+            items(Feature.LIST, key = { it.id }, contentType = { "feature_tile" }) { feature ->
                 FeatureTile(
                     feature = feature,
                     shouldEdit = shouldEdit,

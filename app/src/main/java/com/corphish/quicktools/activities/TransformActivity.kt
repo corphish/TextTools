@@ -39,7 +39,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -424,7 +424,8 @@ private fun ExpandableSelector(
                     .weight(1f)
                     .padding(horizontal = spacing.m)
             )
-            Box(modifier = Modifier.rotate(chevronRotation)) {
+            // Rotate in the draw phase so the animation does not recompose the row every frame
+            Box(modifier = Modifier.graphicsLayer { rotationZ = chevronRotation }) {
                 ButtonIcon(R.drawable.ic_arrow_right, tint = colors.muted)
             }
         }

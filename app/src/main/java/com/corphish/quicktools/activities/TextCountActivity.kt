@@ -86,6 +86,9 @@ private val InputHeight = 200.dp
 /** Size of the pie charts. */
 private val ChartSize = 150.dp
 
+/** Lazy item content type shared by section labels, so their compositions can be reused. */
+internal const val CONTENT_TYPE_SECTION_LABEL = "section_label"
+
 /**
  * Text count screen: the input followed by statistics, charts, word frequency and advanced
  * findings, all in one scrolling list.
@@ -119,7 +122,7 @@ fun TextCount(
                 .testTag("stats_list"),
             verticalArrangement = Arrangement.spacedBy(TabotaboTheme.dimensions.spacing.m)
         ) {
-            item {
+            item(contentType = "input") {
                 InputSection(inputText) { viewModel.setTextAndProcess(it) }
             }
             statsContent(countResult, context)
@@ -153,9 +156,9 @@ fun InputSection(text: String, onValueChange: (String) -> Unit) {
  * @param context Used to copy values to the clipboard.
  */
 fun LazyListScope.statsContent(result: TextCountResult, context: Context) {
-    item { SectionLabel(stringResource(id = R.string.statistics), modifier = Modifier.padding(top = TabotaboTheme.dimensions.spacing.l)) }
+    item(contentType = CONTENT_TYPE_SECTION_LABEL) { SectionLabel(stringResource(id = R.string.statistics), modifier = Modifier.padding(top = TabotaboTheme.dimensions.spacing.l)) }
 
-    item {
+    item(contentType = "statistics") {
         Column(modifier = Modifier.fillMaxWidth()) {
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(TabotaboTheme.dimensions.spacing.xl),
@@ -171,9 +174,9 @@ fun LazyListScope.statsContent(result: TextCountResult, context: Context) {
         }
     }
 
-    item { SectionLabel(stringResource(R.string.visualizations), modifier = Modifier.padding(top = TabotaboTheme.dimensions.spacing.l)) }
+    item(contentType = CONTENT_TYPE_SECTION_LABEL) { SectionLabel(stringResource(R.string.visualizations), modifier = Modifier.padding(top = TabotaboTheme.dimensions.spacing.l)) }
 
-    item {
+    item(contentType = "visualizations") {
         Column(modifier = Modifier.fillMaxWidth()) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 PieChart(
@@ -196,10 +199,11 @@ fun LazyListScope.statsContent(result: TextCountResult, context: Context) {
     }
 
     if (result.wordFrequency.isNotEmpty()) {
-        item { SectionLabel(stringResource(R.string.word_frequency), modifier = Modifier.padding(top = TabotaboTheme.dimensions.spacing.l)) }
+        item(contentType = CONTENT_TYPE_SECTION_LABEL) { SectionLabel(stringResource(R.string.word_frequency), modifier = Modifier.padding(top = TabotaboTheme.dimensions.spacing.l)) }
 
-        item {
+        item(contentType = "word_frequency") {
             val toastText = stringResource(R.string.copied_to_clipboard)
+            val copyLabel = stringResource(R.string.copy)
             val spacing = TabotaboTheme.dimensions.spacing
 
             Column(modifier = Modifier.fillMaxWidth()) {
@@ -236,7 +240,7 @@ fun LazyListScope.statsContent(result: TextCountResult, context: Context) {
                             color = TabotaboTheme.colors.primary,
                             modifier = Modifier
                                 .clip(CircleShape)
-                                .clickable(onClickLabel = stringResource(R.string.copy)) {
+                                .clickable(onClickLabel = copyLabel) {
                                     copyToClipboard(context, word, toastText)
                                 }
                         )
@@ -246,9 +250,9 @@ fun LazyListScope.statsContent(result: TextCountResult, context: Context) {
         }
     }
 
-    item { SectionLabel(stringResource(R.string.advanced_features), modifier = Modifier.padding(top = TabotaboTheme.dimensions.spacing.l)) }
+    item(contentType = CONTENT_TYPE_SECTION_LABEL) { SectionLabel(stringResource(R.string.advanced_features), modifier = Modifier.padding(top = TabotaboTheme.dimensions.spacing.l)) }
 
-    item {
+    item(contentType = "advanced_features") {
         Column(modifier = Modifier.fillMaxWidth()) {
             Column(verticalArrangement = Arrangement.spacedBy(TabotaboTheme.dimensions.spacing.l)) {
                 FeatureItem(stringResource(R.string.longest_repeated_substring), result.longestRepeatedSubstring, context)
