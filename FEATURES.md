@@ -10,6 +10,8 @@ Often we find ourselves needing to text/send file/share location to someone for 
 ### Evaluate mathematical expressions inline
 We may often find ourselves to mathematically calculate something while texting someone (probably while making plans). Having an option to perform math calculations in line without needing to open calculator could save time.
 
+Works on both editable and non-editable text. The result is shown in Text Actions with a preview, where it can always be copied. If the selected text is editable, it can also be applied, either replacing the expression or appended to it (`expression = result`). The choice can be remembered (or set in Settings), after which results on editable text are applied instantly without showing Text Actions.
+
 ![Eval Example](assets/eval.gif)
 
 ### Text Transformation
