@@ -407,7 +407,6 @@ fun EvaluateSettings(settingsViewModel: SettingsViewModel) {
         stringResource(id = R.string.eval_mode_ask_next_time),
         stringResource(id = R.string.eval_mode_result),
         stringResource(id = R.string.eval_mode_append),
-        stringResource(id = R.string.eval_mode_copy)
     )
     var expanded by rememberSaveable { mutableStateOf(false) }
     val selectedOptionText by settingsViewModel.evalResultMode.collectAsState()
