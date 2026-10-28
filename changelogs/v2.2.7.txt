@@ -1,0 +1,6 @@
+- Evaluate and Find & Replace now work on non-editable text too. Results can always be copied, and applied when the text is editable.
+- Evaluate now shows its result in Text Actions. Remembered Replace/Append choices still apply instantly on editable text.
+- Removed the redundant "Copy to clipboard" choice from Evaluate.
+- Text Actions now shows a preview of the text it acts on.
+- Fixed Apply not updating the original text after Find & Replace, Transform and Text Templates.
+- Library updates.
