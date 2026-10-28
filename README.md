@@ -25,7 +25,7 @@ The above features are provided as context menu options on selected text. Text T
 - Users can choose between "Multiple options" and "Single option".
 - "Multiple options" will present all the options at once in the context menu.
 - "Single option" will present a single option (as "Text Tools") which will then reveal all the options.
-- If "Single option" is selected, only relevant options (depending on whether the source text is editable or non-editable) will be shown.
+- Every option works on both editable and non-editable text. Results can always be copied, and they can be applied back to the source only when it is editable.
 - In all cases, users can choose which options they would want to see in the context. If a certain feature is not useful to an user, he/she can deselect it in the app and that option will not appear in the context menu (for "Multiple options") or in the dialog that presents the supported options (in case of "Single option").
 
 ### Development methods

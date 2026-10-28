@@ -62,6 +62,13 @@ class SettingsRepositoryImplTest {
     }
 
     @Test
+    fun testEvaluateResultMode_LegacyCopyModeFallsBackToAsk() {
+        // 3 was the removed "copy to clipboard" mode
+        every { sharedPreferences.getInt("eval_result_mode", 0) } returns 3
+        assertEquals(0, repository.getEvaluateResultMode())
+    }
+
+    @Test
     fun testOnboardingDone() {
         every { sharedPreferences.getBoolean("onboarding_done", false) } returns true
         assertEquals(true, repository.getOnboardingDone())

@@ -80,6 +80,7 @@ class TransformActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         if (intent.hasExtra(Intent.EXTRA_PROCESS_TEXT)) {
+            val readonly = intent.getBooleanExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, true)
             val forceCopy = intent.getBooleanExtra(Constants.INTENT_FORCE_COPY, false)
 
             val text = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT).toString()
@@ -90,16 +91,9 @@ class TransformActivity : ComponentActivity() {
                         textToTransform = text,
                         onBack = { finish() },
                         onNext = { text ->
-                            val nextIntent = Intent(this, TextActionActivity::class.java)
-                            nextIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, text)
-                            nextIntent.putExtra(
-                                Intent.EXTRA_PROCESS_TEXT_READONLY, intent.getBooleanExtra(
-                                    Intent.EXTRA_PROCESS_TEXT_READONLY, true
-                                )
+                            startActivity(
+                                TextActionActivity.handOffIntent(this, text, readonly, forceCopy, themeViewModel.hue.value)
                             )
-                            nextIntent.putExtra(Constants.INTENT_FORCE_COPY, forceCopy)
-                            nextIntent.putExtra(Constants.INTENT_HUE, themeViewModel.hue.value)
-                            startActivity(nextIntent)
                             finish()
                         },
                     )

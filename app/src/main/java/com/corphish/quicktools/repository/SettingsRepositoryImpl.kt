@@ -2,6 +2,7 @@ package com.corphish.quicktools.repository
 
 import android.content.Context
 import androidx.core.content.edit
+import com.corphish.quicktools.viewmodels.EvalViewModel.Companion.EVAL_RESULT_APPEND
 import com.corphish.quicktools.viewmodels.EvalViewModel.Companion.EVAL_RESULT_MODE_ASK_NEXT_TIME
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -44,8 +45,15 @@ class SettingsRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getEvaluateResultMode() =
-        _sharedPreferenceManager.getInt(_evaluateResultMode, EVAL_RESULT_MODE_ASK_NEXT_TIME)
+    /**
+     * Returns the saved eval result mode. Unknown values, such as the removed
+     * "copy to clipboard" mode (3) saved by older versions, fall back to
+     * [EVAL_RESULT_MODE_ASK_NEXT_TIME].
+     */
+    override fun getEvaluateResultMode(): Int {
+        val mode = _sharedPreferenceManager.getInt(_evaluateResultMode, EVAL_RESULT_MODE_ASK_NEXT_TIME)
+        return if (mode in EVAL_RESULT_MODE_ASK_NEXT_TIME..EVAL_RESULT_APPEND) mode else EVAL_RESULT_MODE_ASK_NEXT_TIME
+    }
 
     override fun setEvaluateResultMode(mode: Int) {
         _sharedPreferenceManager.edit {

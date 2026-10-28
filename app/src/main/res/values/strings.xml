@@ -15,7 +15,7 @@
     <string name="context_menu_eval">[T\u00B2] Evaluate</string>
     <string name="eval_title">Evaluate mathematical expressions</string>
     <string name="eval_title_small">Evaluate</string>
-    <string name="eval_desc">Evaluate mathematical expressions inline and replace the expression with its result. Works only on text selected that can be edited.</string>
+    <string name="eval_desc">Evaluate mathematical expressions inline. The result can be copied, or applied to the selected text when it is editable.</string>
     <string name="invalid_expression">Invalid mathematical expression</string>
 
     <string name="app_info">App Info</string>

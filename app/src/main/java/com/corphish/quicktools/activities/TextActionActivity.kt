@@ -1,5 +1,6 @@
 package com.corphish.quicktools.activities
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -22,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.corphish.quicktools.R
@@ -30,6 +32,7 @@ import com.corphish.quicktools.functions.IntentAction
 import com.corphish.quicktools.functions.ParsedTextAction
 import com.corphish.quicktools.ui.common.AppScreenHeader
 import com.corphish.quicktools.ui.common.ButtonIcon
+import com.corphish.quicktools.ui.common.SectionLabel
 import com.corphish.quicktools.ui.theme.AppTheme
 import com.corphish.quicktools.viewmodels.TexActionState
 import com.corphish.quicktools.viewmodels.TextActionViewModel
@@ -39,6 +42,7 @@ import com.tabotabo.ui.motion.PopInContent
 import com.tabotabo.ui.surface.GlowCard
 import com.tabotabo.ui.text.Subtitle
 import com.tabotabo.ui.theme.TabotaboTheme
+import com.tabotabo.ui.typography.body
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -89,6 +93,37 @@ class TextActionActivity : ComponentActivity() {
             }
         }
     }
+
+    companion object {
+        /**
+         * Builds the intent a feature uses to hand its result to Text Actions and then finish.
+         *
+         * [Intent.FLAG_ACTIVITY_FORWARD_RESULT] makes Text Actions reply directly to whoever
+         * started that feature (the source app or the options dialog), so Apply reaches the
+         * source even though the feature finishes right after the hand off. The caller must
+         * use startActivity (not start it for result) for the forwarding to work.
+         *
+         * @param context Context used to build the intent.
+         * @param text Text to act on.
+         * @param readonly Whether the source text is read-only.
+         * @param forceCopy Whether only copying should be offered.
+         * @param hue Theme hue of the calling screen, so Text Actions keeps its colors; null
+         *            lets Text Actions pick its own.
+         */
+        fun handOffIntent(
+            context: Context,
+            text: String,
+            readonly: Boolean,
+            forceCopy: Boolean,
+            hue: Float? = null,
+        ) = Intent(context, TextActionActivity::class.java).apply {
+            putExtra(Intent.EXTRA_PROCESS_TEXT, text)
+            putExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, readonly)
+            putExtra(Constants.INTENT_FORCE_COPY, forceCopy)
+            hue?.let { putExtra(Constants.INTENT_HUE, it) }
+            addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT)
+        }
+    }
 }
 
 /**
@@ -125,6 +160,7 @@ fun TextActionUI(
             when (state) {
                 is TexActionState.Loading -> LoadingLayout()
                 is TexActionState.Result -> ActionsLayout(
+                    text = text,
                     actions = state.actions,
                     onApply = onApply,
                     onAction = {
@@ -153,14 +189,16 @@ fun LoadingLayout() {
 }
 
 /**
- * Description followed by one card per detected action.
+ * Description and a preview of the text, followed by one card per detected action.
  *
+ * @param text Text the actions apply to, shown as a preview.
  * @param actions Detected actions.
  * @param onApply Called with the text for the apply action.
  * @param onAction Called for any other action.
  */
 @Composable
 fun ActionsLayout(
+    text: String,
     actions: List<ParsedTextAction>,
     onApply: (String) -> Unit,
     onAction: (ParsedTextAction) -> Unit
@@ -174,6 +212,8 @@ fun ActionsLayout(
             modifier = Modifier.padding(bottom = spacing.l)
         )
 
+        TextPreview(text = text, modifier = Modifier.padding(bottom = spacing.l))
+
         CardList(items = actions, modifier = Modifier.weight(1f)) { item ->
             ActionItem(
                 action = item,
@@ -184,6 +224,31 @@ fun ActionsLayout(
                         onAction(item)
                     }
                 }
+            )
+        }
+    }
+}
+
+/**
+ * Shows the text the actions apply to, so the user can check it (e.g. an evaluated
+ * result) before copying or applying it. Long text is truncated to keep the actions
+ * visible in landscape and small multi-window sizes.
+ *
+ * @param text Text to preview.
+ * @param modifier Modifier for the card.
+ */
+@Composable
+fun TextPreview(text: String, modifier: Modifier = Modifier) {
+    GlowCard(modifier = modifier.fillMaxWidth(), glow = false) {
+        Column {
+            SectionLabel(text = stringResource(id = R.string.preview))
+            Text(
+                text = text,
+                style = TabotaboTheme.typography.body,
+                color = TabotaboTheme.colors.accent,
+                maxLines = 4,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(top = TabotaboTheme.dimensions.spacing.s)
             )
         }
     }

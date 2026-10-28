@@ -2,7 +2,6 @@ package com.corphish.quicktools.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -58,14 +57,9 @@ class FindAndReplaceActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         if (intent.hasExtra(Intent.EXTRA_PROCESS_TEXT)) {
-            val readonly = intent.getBooleanExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, false)
+            // Treat a missing flag as read-only, so we never offer Apply when it cannot work
+            val readonly = intent.getBooleanExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, true)
             val forceCopy = intent.getBooleanExtra(Constants.INTENT_FORCE_COPY, false)
-
-            if (readonly) {
-                // We are only interested in editable text
-                Toast.makeText(this, R.string.editable_error, Toast.LENGTH_LONG).show()
-                finish()
-            }
 
             val text = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT).toString()
             viewModel.initializeWith(text)
@@ -76,13 +70,9 @@ class FindAndReplaceActivity : ComponentActivity() {
                         viewModel = viewModel,
                         onBack = { finish() },
                         onComplete = { finalText ->
-                            val resultIntent = Intent(this, TextActionActivity::class.java)
-                            resultIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, finalText)
-                            resultIntent.putExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, readonly)
-                            resultIntent.putExtra(Constants.INTENT_FORCE_COPY, forceCopy)
-                            resultIntent.putExtra(Constants.INTENT_HUE, themeViewModel.hue.value)
-                            startActivity(resultIntent)
-
+                            startActivity(
+                                TextActionActivity.handOffIntent(this, finalText, readonly, forceCopy, themeViewModel.hue.value)
+                            )
                             finish()
                         }
                     )

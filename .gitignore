@@ -11,5 +11,4 @@ local.properties
 *.jks
 *.apk
 app/release/
-app/singleOption/
-app/multipleOptions/
+.kotlin

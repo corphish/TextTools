@@ -333,7 +333,6 @@ fun EvaluateSettings(settingsViewModel: SettingsViewModel) {
         stringResource(id = R.string.eval_mode_ask_next_time),
         stringResource(id = R.string.eval_mode_result),
         stringResource(id = R.string.eval_mode_append),
-        stringResource(id = R.string.eval_mode_copy)
     )
 
     SettingsGroup(title = R.string.eval_title_small, icon = R.drawable.ic_numbers) {
