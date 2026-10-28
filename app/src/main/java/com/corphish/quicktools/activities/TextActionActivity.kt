@@ -1,5 +1,6 @@
 package com.corphish.quicktools.activities
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -103,6 +104,29 @@ class TextActionActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    companion object {
+        /**
+         * Builds the intent a feature uses to hand its result to Text Actions and then finish.
+         *
+         * [Intent.FLAG_ACTIVITY_FORWARD_RESULT] makes Text Actions reply directly to whoever
+         * started that feature (the source app or the options dialog), so Apply reaches the
+         * source even though the feature finishes right after the hand off. The caller must
+         * use startActivity (not start it for result) for the forwarding to work.
+         *
+         * @param context Context used to build the intent.
+         * @param text Text to act on.
+         * @param readonly Whether the source text is read-only.
+         * @param forceCopy Whether only copying should be offered.
+         */
+        fun handOffIntent(context: Context, text: String, readonly: Boolean, forceCopy: Boolean) =
+            Intent(context, TextActionActivity::class.java).apply {
+                putExtra(Intent.EXTRA_PROCESS_TEXT, text)
+                putExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, readonly)
+                putExtra(Constants.INTENT_FORCE_COPY, forceCopy)
+                addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT)
+            }
     }
 }
 
