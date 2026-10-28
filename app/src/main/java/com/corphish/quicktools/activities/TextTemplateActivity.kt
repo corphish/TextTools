@@ -84,18 +84,14 @@ class TextTemplateActivity : ComponentActivity() {
                         isSelectionMode = isProcessText,
                         initialText = text,
                         onTemplateSelected = { result ->
-                            val nextIntent = Intent(this, TextActionActivity::class.java).apply {
-                                putExtra(Intent.EXTRA_PROCESS_TEXT, result)
-                                putExtra(
-                                    Intent.EXTRA_PROCESS_TEXT_READONLY,
-                                    intent.getBooleanExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, true)
+                            startActivity(
+                                TextActionActivity.handOffIntent(
+                                    context = this,
+                                    text = result,
+                                    readonly = intent.getBooleanExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, true),
+                                    forceCopy = intent.getBooleanExtra(Constants.INTENT_FORCE_COPY, false)
                                 )
-                                putExtra(
-                                    Constants.INTENT_FORCE_COPY,
-                                    intent.getBooleanExtra(Constants.INTENT_FORCE_COPY, false)
-                                )
-                            }
-                            startActivity(nextIntent)
+                            )
                             finish()
                         }
                     )
