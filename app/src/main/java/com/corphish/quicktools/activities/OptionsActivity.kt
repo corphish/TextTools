@@ -26,15 +26,15 @@ class OptionsActivity : NoUIActivity() {
     private val viewModel: OptionsViewModel by viewModels()
 
     private val _options = listOf(
-        Option(FeatureIds.WHATSAPP, R.string.whatsapp, R.drawable.ic_whatsapp, WUPActivity::class.java, false),
-        Option(FeatureIds.EVAL, R.string.eval_title_small, R.drawable.ic_numbers, EvalActivity::class.java, true),
-        Option(FeatureIds.TRANSFORM, R.string.transform_long, R.drawable.ic_text_transform, TransformActivity::class.java, false),
-        Option(FeatureIds.TEXT_COUNT, R.string.text_count, R.drawable.ic_text_count, TextCountActivity::class.java, false),
-        Option(FeatureIds.SAVE_TEXT, R.string.save_text_title, R.drawable.ic_save, SaveTextActivity::class.java, false),
-        Option(FeatureIds.FIND_AND_REPLACE, R.string.title_activity_find_and_replace, R.drawable.ic_find_and_replace, FindAndReplaceActivity::class.java, true),
-        Option(FeatureIds.NUMBER_ANALYSIS, R.string.number_analysis, R.drawable.ic_numbers, NumberAnalysisActivity::class.java, false),
-        Option(FeatureIds.TEXT_TEMPLATE, R.string.text_template, R.drawable.ic_edit_note, TextTemplateActivity::class.java, false),
-        Option(FeatureIds.TEXT_ACTION, R.string.text_actions, R.drawable.ic_auto_awesome, TextActionActivity::class.java, false)
+        Option(FeatureIds.WHATSAPP, R.string.whatsapp, R.drawable.ic_whatsapp, WUPActivity::class.java),
+        Option(FeatureIds.EVAL, R.string.eval_title_small, R.drawable.ic_numbers, EvalActivity::class.java),
+        Option(FeatureIds.TRANSFORM, R.string.transform_long, R.drawable.ic_text_transform, TransformActivity::class.java),
+        Option(FeatureIds.TEXT_COUNT, R.string.text_count, R.drawable.ic_text_count, TextCountActivity::class.java),
+        Option(FeatureIds.SAVE_TEXT, R.string.save_text_title, R.drawable.ic_save, SaveTextActivity::class.java),
+        Option(FeatureIds.FIND_AND_REPLACE, R.string.title_activity_find_and_replace, R.drawable.ic_find_and_replace, FindAndReplaceActivity::class.java),
+        Option(FeatureIds.NUMBER_ANALYSIS, R.string.number_analysis, R.drawable.ic_numbers, NumberAnalysisActivity::class.java),
+        Option(FeatureIds.TEXT_TEMPLATE, R.string.text_template, R.drawable.ic_edit_note, TextTemplateActivity::class.java),
+        Option(FeatureIds.TEXT_ACTION, R.string.text_actions, R.drawable.ic_auto_awesome, TextActionActivity::class.java)
     )
 
     private val router = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -58,7 +58,7 @@ class OptionsActivity : NoUIActivity() {
                     }
 
                     if (optionDialog.value) {
-                        val list = _options.filter { enabledFeatures.contains(it.id) && (!readonly || !it.requiresEditable) }
+                        val list = _options.filter { enabledFeatures.contains(it.id) }
                         ListDialog(
                             title = stringResource(id = R.string.app_name),
                             message = stringResource(id = R.string.app_single_op, text.truncate()),
@@ -108,11 +108,5 @@ class OptionsActivity : NoUIActivity() {
          * Activity that handles the option function.
          */
         val handlingClass: Class<out Activity>,
-
-        /**
-         * Boolean indicating whether this option requires editable
-         * text input.
-         */
-        val requiresEditable: Boolean
     )
 }
