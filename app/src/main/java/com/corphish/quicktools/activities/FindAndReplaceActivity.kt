@@ -3,7 +3,6 @@ package com.corphish.quicktools.activities
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -77,12 +76,6 @@ class FindAndReplaceActivity : ComponentActivity() {
         if (intent.hasExtra(Intent.EXTRA_PROCESS_TEXT)) {
             val readonly = intent.getBooleanExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, false)
             val forceCopy = intent.getBooleanExtra(Constants.INTENT_FORCE_COPY, false)
-
-            if (readonly) {
-                // We are only interested in editable text
-                Toast.makeText(this, R.string.editable_error, Toast.LENGTH_LONG).show()
-                finish()
-            }
 
             val text = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT).toString()
             viewModel.initializeWith(text)
