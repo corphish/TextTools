@@ -98,15 +98,7 @@ class TransformActivity : ComponentActivity() {
                             allowApply = if (forceCopy) false else !readonly,
                             allowCopy = true,
                             onNext = { text ->
-                                val nextIntent = Intent(this, TextActionActivity::class.java)
-                                nextIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, text)
-                                nextIntent.putExtra(
-                                    Intent.EXTRA_PROCESS_TEXT_READONLY, intent.getBooleanExtra(
-                                        Intent.EXTRA_PROCESS_TEXT_READONLY, true
-                                    )
-                                )
-                                nextIntent.putExtra(Constants.INTENT_FORCE_COPY, forceCopy)
-                                startActivity(nextIntent)
+                                startActivity(TextActionActivity.handOffIntent(this, text, readonly, forceCopy))
                                 finish()
                             },
                         )
