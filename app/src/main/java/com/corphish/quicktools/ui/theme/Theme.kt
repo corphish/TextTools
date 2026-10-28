@@ -21,8 +21,19 @@ import com.corphish.quicktools.viewmodels.ThemeViewModel
 import com.tabotabo.ui.color.Hue
 import com.tabotabo.ui.color.HueState
 import com.tabotabo.ui.color.rememberHueState
+import com.tabotabo.ui.layout.TabotaboDimensions
 import com.tabotabo.ui.theme.SystemBarsAppearance
 import com.tabotabo.ui.theme.TabotaboTheme
+
+/**
+ * App dimensions: Tabotabo's defaults with narrower side margins between the content and the
+ * screen edges (about 16dp in portrait and 33dp in landscape on a typical phone, instead of
+ * about 33dp and 58dp).
+ */
+private val AppDimensions = TabotaboDimensions(
+    portraitMarginFraction = 0.04f,
+    landscapeMarginFraction = 0.08f,
+)
 
 /**
  * Hue state of the enclosing [QuickToolsTheme], e.g. for a "Shuffle colors" button.
@@ -71,7 +82,7 @@ fun AppTheme(
 
 /**
  * Tabotabo-based theme without app state, usable from previews. Provides [hueState] as
- * [LocalHueState].
+ * [LocalHueState] and uses the app's narrower screen margins.
  *
  * @param darkTheme Whether to use the dark scheme.
  * @param hueState Hue the color scheme is built from.
@@ -92,6 +103,7 @@ fun QuickToolsTheme(
     TabotaboTheme(
         darkTheme = darkTheme,
         hueState = hueState,
+        dimensions = AppDimensions,
         systemBars = systemBars,
     ) {
         CompositionLocalProvider(LocalHueState provides hueState, content = content)

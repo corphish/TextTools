@@ -43,7 +43,7 @@ fun CompactLandscapeLayout(
             .fillMaxSize()
             .background(TabotaboTheme.colors.background)
             .windowInsetsPadding(WindowInsets.safeDrawing)
-            .padding(horizontal = spacing.xl, vertical = spacing.m),
+            .padding(horizontal = spacing.l, vertical = spacing.m),
         verticalArrangement = Arrangement.spacedBy(spacing.m),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
