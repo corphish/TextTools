@@ -117,23 +117,18 @@ class FindAndReplaceActivityTest {
     }
 
     @Test
-    fun testReadOnlyErrorFinishesActivity() {
+    fun testReadOnlyTextIsSupported() {
+        val readOnlyText = "Readonly text"
         val intent = Intent(ApplicationProvider.getApplicationContext(), FindAndReplaceActivity::class.java).apply {
-            putExtra(Intent.EXTRA_PROCESS_TEXT, "Readonly text")
+            putExtra(Intent.EXTRA_PROCESS_TEXT, readOnlyText)
             putExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, true)
         }
-        
+
         ActivityScenario.launch<FindAndReplaceActivity>(intent).use { scenario ->
-            // In Android, we can check activity state
-            // But ActivityScenario.state is more reliable
-            // We expect it to finish, so state should be DESTROYED soon
-            // But Toast is shown.
-            
-            // Testing finish() is hard with just compose rules.
-            // But we can check if it stays CREATED or goes to DESTROYED.
-            // Give it some time to finish
-            Thread.sleep(500)
-            assert(scenario.state == Lifecycle.State.DESTROYED)
+            // Read-only text opens normally; only applying the result is unavailable later
+            composeTestRule.onNodeWithTag("main_input")
+                .assertTextContains(readOnlyText)
+            assert(scenario.state.isAtLeast(Lifecycle.State.STARTED))
         }
     }
 }
