@@ -40,7 +40,7 @@ Directly save the selected text for future reference. You can save the content a
 https://github.com/user-attachments/assets/8eadb102-a2f0-4cc6-ab3d-ada103229f52
 
 ### Find and Replace
-Perform search and replace operations within the selected block of text. This feature supports case-sensitive or case-insensitive matching and allows you to replace individual occurrences or all instances at once. It provides a convenient way to perform batch edits on text selection before applying it back to the original field.
+Perform search and replace operations within the selected block of text. This feature supports case-sensitive or case-insensitive matching and allows you to replace individual occurrences or all instances at once. It provides a convenient way to perform batch edits on text selection before applying it back to the original field. It also works on non-editable text, where the result can be copied.
 
 https://github.com/user-attachments/assets/6d31ec98-5cb6-4f90-aa74-e16b988709f0
 

@@ -1,6 +1,7 @@
 package com.corphish.quicktools.activities
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -74,7 +75,8 @@ class FindAndReplaceActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         if (intent.hasExtra(Intent.EXTRA_PROCESS_TEXT)) {
-            val readonly = intent.getBooleanExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, false)
+            // Treat a missing flag as read-only, so we never offer Apply when it cannot work
+            val readonly = intent.getBooleanExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, true)
             val forceCopy = intent.getBooleanExtra(Constants.INTENT_FORCE_COPY, false)
 
             val text = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT).toString()
@@ -95,12 +97,7 @@ class FindAndReplaceActivity : ComponentActivity() {
                             defaultPadding = it,
                             viewModel = viewModel,
                             onComplete = { finalText ->
-                                val resultIntent = Intent(this, TextActionActivity::class.java)
-                                resultIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, finalText)
-                                resultIntent.putExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, readonly)
-                                resultIntent.putExtra(Constants.INTENT_FORCE_COPY, forceCopy)
-                                startActivity(resultIntent)
-
+                                startActivity(textActionsIntent(this, finalText, readonly, forceCopy))
                                 finish()
                             }
                         )
@@ -110,6 +107,28 @@ class FindAndReplaceActivity : ComponentActivity() {
         } else {
             finish()
         }
+    }
+
+    companion object {
+        /**
+         * Builds the intent that hands the find and replace result to Text Actions.
+         *
+         * [Intent.FLAG_ACTIVITY_FORWARD_RESULT] makes Text Actions reply directly to whoever
+         * started Find and Replace (the source app or the options dialog), so Apply reaches the
+         * source even though this activity finishes right after the hand off.
+         *
+         * @param context Context used to build the intent.
+         * @param text Text after find and replace.
+         * @param readonly Whether the source text is read-only.
+         * @param forceCopy Whether only copying should be offered.
+         */
+        fun textActionsIntent(context: Context, text: String, readonly: Boolean, forceCopy: Boolean) =
+            Intent(context, TextActionActivity::class.java).apply {
+                putExtra(Intent.EXTRA_PROCESS_TEXT, text)
+                putExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, readonly)
+                putExtra(Constants.INTENT_FORCE_COPY, forceCopy)
+                addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT)
+            }
     }
 }
 
