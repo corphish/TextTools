@@ -37,6 +37,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -139,6 +140,8 @@ fun TextActionUI(
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
+        TextPreview(text = text)
+
         when (actionState) {
             is TexActionState.Loading -> LoadingLayout()
             is TexActionState.Result -> ActionsLayout(
@@ -155,6 +158,38 @@ fun TextActionUI(
                 }
             )
         }
+    }
+}
+
+/**
+ * Shows the text the actions apply to, so the user can check it (e.g. an evaluated
+ * result) before copying or applying it. Long text is truncated to keep the actions
+ * visible in landscape and small multi-window sizes.
+ */
+@Composable
+fun TextPreview(text: String) {
+    Column(
+        modifier = Modifier
+            .padding(bottom = 16.dp)
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp))
+            .padding(16.dp)
+    ) {
+        Text(
+            text = stringResource(id = R.string.preview),
+            style = TypographyV2.labelMedium,
+            color = MaterialTheme.colorScheme.primary,
+            fontFamily = BrandFontFamily,
+        )
+        Text(
+            text = text,
+            style = Typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 4,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(top = 4.dp)
+        )
     }
 }
 
