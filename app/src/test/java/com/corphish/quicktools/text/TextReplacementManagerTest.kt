@@ -61,15 +61,11 @@ class TextReplacementManagerTest {
         m.updateText("2") // Action("1", "2"), ptr=2
         m.undo() // current="1", ptr=1
         
-        m.updateText("3") // Overwrites Action("1", "2") with Action("1", "3"), ptr=2
-        assertEquals("3", m.redo()) // Wait, redo should not be possible if we just added a new action at ptr
-        // Actually the implementation says:
-        // mActionList.add(mActionPointer, action)
-        // mActionList.subList(mActionPointer + 1, mActionList.size).clear()
-        // mActionPointer += 1
-        // So if we were at ptr=1, we add at 1, clear everything after 1, ptr becomes 2.
-        
+        m.updateText("3") // Replaces the undone Action("1", "2") with Action("1", "3"), ptr=2
+
+        // The undone action is gone, so there is nothing to redo
         assertFalse(m.canRedo())
+        assertEquals("3", m.redo())
         assertEquals("1", m.undo())
     }
 }

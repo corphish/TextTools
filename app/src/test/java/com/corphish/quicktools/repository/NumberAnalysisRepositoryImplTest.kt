@@ -36,8 +36,6 @@ class NumberAnalysisRepositoryImplTest {
         every { numberFunctions.sqrtBD(any<BigDecimal>()) } returns BigDecimal.valueOf(3.16)
         every { numberFunctions.cbrtBD(any<BigDecimal>()) } returns BigDecimal.valueOf(2.15)
         every { numberFunctions.bigDecimalToString(any(), any(), any()) } returns "3.16"
-        every { numberFunctions.sqrtBI(any<BigInteger>()) } returns BigInteger.valueOf(3)
-        every { numberFunctions.cbrtBI(any<BigInteger>()) } returns BigInteger.valueOf(2)
         every { numberFunctions.abs(any<BigInteger>()) } returns BigInteger.TEN
         every { numberFunctions.factorial(any<Int>()) } returns BigInteger.valueOf(3628800)
         every { numberFunctions.log(any<BigDecimal>()) } returns BigDecimal.ONE

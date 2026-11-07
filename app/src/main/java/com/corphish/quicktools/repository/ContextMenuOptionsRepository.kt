@@ -1,5 +1,7 @@
 package com.corphish.quicktools.repository
 
+import android.content.pm.PackageManager
+
 /**
  * Repository for the context menu options.
  */
@@ -12,7 +14,7 @@ interface ContextMenuOptionsRepository {
 
     /**
      * Sets the current app mode.
-     * Suspends because this enables/disables activity-alias components via [android.content.pm.PackageManager],
+     * Suspends because this enables/disables activity-alias components via [PackageManager],
      * which performs blocking IPC and should not run on the main thread.
      */
     suspend fun setCurrentAppMode(mode: AppMode)

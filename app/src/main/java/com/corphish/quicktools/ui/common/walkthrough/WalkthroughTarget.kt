@@ -11,6 +11,7 @@ import androidx.compose.ui.node.CompositionLocalConsumerModifierNode
 import androidx.compose.ui.node.GlobalPositionAwareModifierNode
 import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.node.currentValueOf
+import com.corphish.quicktools.data.WalkthroughStep
 
 /**
  * Window bounds of the walkthrough targets on screen, keyed by target id. Only visible targets
@@ -49,7 +50,7 @@ internal val LocalWalkthroughRegistry = staticCompositionLocalOf<WalkthroughTarg
  * Ids must be unique on the screen; targets in dialogs or popups are not supported, as they
  * live in a separate window.
  *
- * @param id Target id used by [com.corphish.quicktools.data.WalkthroughStep.targetId].
+ * @param id Target id used by [WalkthroughStep.targetId].
  */
 fun Modifier.walkthroughTarget(id: String): Modifier = this then WalkthroughTargetElement(id)
 

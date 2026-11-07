@@ -4,7 +4,6 @@ import com.corphish.quicktools.data.TextCountResult
 import com.corphish.quicktools.repository.TextAnalysisRepository
 import io.mockk.coEvery
 import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals

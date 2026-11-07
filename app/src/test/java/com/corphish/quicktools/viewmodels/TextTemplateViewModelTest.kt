@@ -41,12 +41,6 @@ class TextTemplateViewModelTest {
     }
 
     @Test
-    fun testSetUserInput() = runTest {
-        viewModel.setUserInput("World")
-        assertEquals("World", viewModel.userInput.value)
-    }
-
-    @Test
     fun testAddTemplate() = runTest {
         viewModel.addTemplate("New Template", "Welcome %s", TemplateType.PLAIN_TEXT)
         verify { manageTemplatesUseCase.saveTemplate(any()) }

@@ -1,8 +1,5 @@
 package com.corphish.quicktools.activities
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -26,7 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -110,8 +107,15 @@ fun NumberAnalysisScreen(
     val analysisResult by viewModel.analysisResult.collectAsState()
     val selectedBase by viewModel.selectedBase.collectAsState()
     val spacing = TabotaboTheme.dimensions.spacing
-    // Resolved once here and passed to the result rows inside the lazy list
     val context = LocalContext.current
+    val copiedText = stringResource(R.string.copied_to_clipboard)
+    // Built once here and passed to the result rows inside the lazy list
+    val onCopy: (String) -> Unit = remember(viewModel, context, copiedText) {
+        { value ->
+            viewModel.copyToClipboard(value)
+            Toast.makeText(context, copiedText, Toast.LENGTH_SHORT).show()
+        }
+    }
 
     LaunchedEffect(Unit) {
         if (initialText.isNotEmpty()) {
@@ -139,7 +143,7 @@ fun NumberAnalysisScreen(
             if (analysisResult == null) {
                 item(contentType = "invalid") { Subtitle(text = stringResource(R.string.invalid_number), maxLines = Int.MAX_VALUE) }
             } else {
-                analysisContent(analysisResult, allowApply, context, onApply)
+                analysisContent(analysisResult, allowApply, onCopy, onApply)
             }
         }
     }
@@ -150,13 +154,13 @@ fun NumberAnalysisScreen(
  *
  * @param result Analysis to show; nothing is added when null.
  * @param allowApply Whether values may replace the selected text.
- * @param context Context for the copy action, resolved once by the screen rather than per row.
+ * @param onCopy Copies a value to the clipboard.
  * @param onApply Called with a value to apply.
  */
 fun LazyListScope.analysisContent(
     result: NumberAnalysisResult?,
     allowApply: Boolean,
-    context: Context,
+    onCopy: (String) -> Unit,
     onApply: (String) -> Unit
 ) {
     result?.let { res ->
@@ -165,7 +169,7 @@ fun LazyListScope.analysisContent(
             entries = res.conversions.toList(),
             modifier = Modifier.walkthroughTarget(WalkthroughTargets.NUMBER_ANALYSIS_RESULTS),
         ) { (base, value) ->
-            ResultItem(label = "Base $base", value = value, allowApply = allowApply, context = context, onApply = onApply)
+            ResultItem(label = "Base $base", value = value, allowApply = allowApply, onCopy = onCopy, onApply = onApply)
         }
 
         resultSection(R.string.math_transformations, res.mathTransformations.toList()) { (labelRes, value) ->
@@ -175,17 +179,17 @@ fun LazyListScope.analysisContent(
                 value = resolveValue(value),
                 allowApply = allowApply && !isError,
                 allowCopy = !isError,
-                context = context,
+                onCopy = onCopy,
                 onApply = onApply
             )
         }
 
         resultSection(R.string.digit_derivations, res.digitDerivations.toList()) { (labelRes, value) ->
-            ResultItem(label = stringResource(labelRes), value = value, allowApply = allowApply, context = context, onApply = onApply)
+            ResultItem(label = stringResource(labelRes), value = value, allowApply = allowApply, onCopy = onCopy, onApply = onApply)
         }
 
         resultSection(R.string.factors, res.factors.toList()) { (labelRes, value) ->
-            ResultItem(label = stringResource(labelRes), value = value, allowApply = allowApply, context = context, onApply = onApply)
+            ResultItem(label = stringResource(labelRes), value = value, allowApply = allowApply, onCopy = onCopy, onApply = onApply)
         }
 
         resultSection(R.string.prime_number, res.primeInfo.toList()) { (labelRes, value) ->
@@ -194,13 +198,13 @@ fun LazyListScope.analysisContent(
                 value = resolveValue(value),
                 allowApply = allowApply && !value.startsWith(STRING_REFERENCE_PREFIX),
                 allowCopy = value != RESULT_TOO_LARGE,
-                context = context,
+                onCopy = onCopy,
                 onApply = onApply
             )
         }
 
         resultSection(R.string.language_conversion, res.languageConversions.toList()) { (labelRes, value) ->
-            ResultItem(label = stringResource(labelRes), value = value, allowApply = allowApply, context = context, onApply = onApply)
+            ResultItem(label = stringResource(labelRes), value = value, allowApply = allowApply, onCopy = onCopy, onApply = onApply)
         }
     }
 }
@@ -317,7 +321,7 @@ fun NumberInputSection(
  * @param value The value.
  * @param allowApply Whether to show the apply action.
  * @param allowCopy Whether to show the copy action.
- * @param context Context for the copy action, passed in so lazy rows do not each read LocalContext.
+ * @param onCopy Called with [value] when copied.
  * @param onApply Called with [value] when applied.
  */
 @Composable
@@ -326,7 +330,7 @@ fun ResultItem(
     value: String,
     allowApply: Boolean,
     allowCopy: Boolean = true,
-    context: Context,
+    onCopy: (String) -> Unit,
     onApply: (String) -> Unit
 ) {
     Row(
@@ -336,13 +340,7 @@ fun ResultItem(
         Fact(title = label, value = value, modifier = Modifier.weight(1f))
         if (allowCopy) {
             IconAction(
-                onClick = {
-                    val clipboard =
-                        context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                    val clip = ClipData.newPlainText(label, value)
-                    clipboard.setPrimaryClip(clip)
-                    Toast.makeText(context, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show()
-                },
+                onClick = { onCopy(value) },
                 contentDescription = stringResource(R.string.copy_to_clipboard)
             ) {
                 ButtonIcon(R.drawable.ic_copy)

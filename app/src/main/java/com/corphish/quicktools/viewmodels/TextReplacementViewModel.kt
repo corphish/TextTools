@@ -1,8 +1,8 @@
 package com.corphish.quicktools.viewmodels
 
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.corphish.quicktools.repository.TextReplacementRepository
-import com.corphish.quicktools.usecases.ClipboardUseCase
 import com.corphish.quicktools.usecases.FindOccurrencesUseCase
 import com.corphish.quicktools.usecases.ReplaceTextUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,8 +19,7 @@ class TextReplacementViewModel @Inject constructor(
     private val textReplacementRepository: TextReplacementRepository,
     private val findOccurrencesUseCase: FindOccurrencesUseCase,
     private val replaceTextUseCase: ReplaceTextUseCase,
-    clipboardUseCase: ClipboardUseCase
-) : ClipboardCopyViewModel(clipboardUseCase) {
+) : ViewModel() {
 
     // Main text state from repository
     val mainText = textReplacementRepository.state.map { it.currentText }.stateIn(

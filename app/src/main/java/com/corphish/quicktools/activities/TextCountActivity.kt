@@ -1,8 +1,5 @@
 package com.corphish.quicktools.activities
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -28,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -113,6 +111,13 @@ fun TextCount(
     val inputText by viewModel.text.collectAsState()
     val countResult by viewModel.countResult.collectAsState()
     val context = LocalContext.current
+    val copiedText = stringResource(R.string.copied_to_clipboard)
+    val onCopy: (String) -> Unit = remember(viewModel, context, copiedText) {
+        { value ->
+            viewModel.copyToClipboard(value)
+            Toast.makeText(context, copiedText, Toast.LENGTH_SHORT).show()
+        }
+    }
 
     LaunchedEffect(text) {
         if (text.isNotEmpty()) {
@@ -136,7 +141,7 @@ fun TextCount(
                     modifier = Modifier.walkthroughTarget(WalkthroughTargets.TEXT_ANALYSIS_INPUT),
                 )
             }
-            statsContent(countResult, context)
+            statsContent(countResult, onCopy)
         }
     }
 }
@@ -165,9 +170,9 @@ fun InputSection(text: String, onValueChange: (String) -> Unit, modifier: Modifi
  * Adds the analysis sections for [result] to a lazy list.
  *
  * @param result Analysis to show.
- * @param context Used to copy values to the clipboard.
+ * @param onCopy Copies a value to the clipboard.
  */
-fun LazyListScope.statsContent(result: TextCountResult, context: Context) {
+fun LazyListScope.statsContent(result: TextCountResult, onCopy: (String) -> Unit) {
     item(contentType = CONTENT_TYPE_SECTION_LABEL) { SectionLabel(stringResource(id = R.string.statistics), modifier = Modifier.padding(top = TabotaboTheme.dimensions.spacing.l)) }
 
     item(contentType = "statistics") {
@@ -218,7 +223,6 @@ fun LazyListScope.statsContent(result: TextCountResult, context: Context) {
         item(contentType = CONTENT_TYPE_SECTION_LABEL) { SectionLabel(stringResource(R.string.word_frequency), modifier = Modifier.padding(top = TabotaboTheme.dimensions.spacing.l)) }
 
         item(contentType = "word_frequency") {
-            val toastText = stringResource(R.string.copied_to_clipboard)
             val copyLabel = stringResource(R.string.copy)
             val spacing = TabotaboTheme.dimensions.spacing
 
@@ -256,9 +260,7 @@ fun LazyListScope.statsContent(result: TextCountResult, context: Context) {
                             color = TabotaboTheme.colors.primary,
                             modifier = Modifier
                                 .clip(CircleShape)
-                                .clickable(onClickLabel = copyLabel) {
-                                    copyToClipboard(context, word, toastText)
-                                }
+                                .clickable(onClickLabel = copyLabel) { onCopy(word) }
                         )
                     }
                 }
@@ -271,21 +273,21 @@ fun LazyListScope.statsContent(result: TextCountResult, context: Context) {
     item(contentType = "advanced_features") {
         Column(modifier = Modifier.fillMaxWidth()) {
             Column(verticalArrangement = Arrangement.spacedBy(TabotaboTheme.dimensions.spacing.l)) {
-                FeatureItem(stringResource(R.string.longest_repeated_substring), result.longestRepeatedSubstring, context)
-                FeatureItem(stringResource(R.string.run_length_encoding), result.runLengthEncoding, context)
-                FeatureItem(stringResource(R.string.longest_palindrome), result.longestPalindrome, context)
-                FeatureItem(stringResource(R.string.longest_increasing_subsequence), result.longestIncreasingSubsequence, context)
-                FeatureListItems(stringResource(R.string.emails), result.emails, context)
-                FeatureListItems(stringResource(R.string.phone_numbers), result.phoneNumbers, context)
-                FeatureListItems(stringResource(R.string.urls), result.urls, context)
-                FeatureListItems(stringResource(R.string.ipv4_addresses), result.ipv4Addresses, context)
-                FeatureListItems(stringResource(R.string.ipv6_addresses), result.ipv6Addresses, context)
-                FeatureListItems(stringResource(R.string.dates), result.dates, context)
-                FeatureListItems(stringResource(R.string.times), result.times, context)
-                FeatureListItems(stringResource(R.string.currencies), result.currencies, context)
-                FeatureListItems(stringResource(R.string.binary_texts), result.binaryTexts, context)
-                FeatureListItems(stringResource(R.string.hex_texts), result.hexTexts, context)
-                FeatureListItems(stringResource(R.string.json_blocks), result.jsonTexts, context)
+                FeatureItem(stringResource(R.string.longest_repeated_substring), result.longestRepeatedSubstring, onCopy)
+                FeatureItem(stringResource(R.string.run_length_encoding), result.runLengthEncoding, onCopy)
+                FeatureItem(stringResource(R.string.longest_palindrome), result.longestPalindrome, onCopy)
+                FeatureItem(stringResource(R.string.longest_increasing_subsequence), result.longestIncreasingSubsequence, onCopy)
+                FeatureListItems(stringResource(R.string.emails), result.emails, onCopy)
+                FeatureListItems(stringResource(R.string.phone_numbers), result.phoneNumbers, onCopy)
+                FeatureListItems(stringResource(R.string.urls), result.urls, onCopy)
+                FeatureListItems(stringResource(R.string.ipv4_addresses), result.ipv4Addresses, onCopy)
+                FeatureListItems(stringResource(R.string.ipv6_addresses), result.ipv6Addresses, onCopy)
+                FeatureListItems(stringResource(R.string.dates), result.dates, onCopy)
+                FeatureListItems(stringResource(R.string.times), result.times, onCopy)
+                FeatureListItems(stringResource(R.string.currencies), result.currencies, onCopy)
+                FeatureListItems(stringResource(R.string.binary_texts), result.binaryTexts, onCopy)
+                FeatureListItems(stringResource(R.string.hex_texts), result.hexTexts, onCopy)
+                FeatureListItems(stringResource(R.string.json_blocks), result.jsonTexts, onCopy)
             }
         }
     }
@@ -337,13 +339,13 @@ private val LegendDotSize = 12.dp
  *
  * @param label Name of the finding.
  * @param value Found value; "None" is shown when empty.
- * @param context Used to copy the value.
+ * @param onCopy Copies the value.
  */
 @Composable
-fun FeatureItem(label: String, value: String, context: Context) {
+fun FeatureItem(label: String, value: String, onCopy: (String) -> Unit) {
     Column {
         FindingLabel(label)
-        FindingValue(value = value.ifEmpty { stringResource(R.string.none) }, copyable = value.isNotEmpty(), context = context)
+        FindingValue(value = value.ifEmpty { stringResource(R.string.none) }, copyable = value.isNotEmpty(), onCopy = onCopy)
     }
 }
 
@@ -352,17 +354,17 @@ fun FeatureItem(label: String, value: String, context: Context) {
  *
  * @param label Name of the findings.
  * @param values Found values; "None" is shown when empty.
- * @param context Used to copy a value.
+ * @param onCopy Copies a value.
  */
 @Composable
-fun FeatureListItems(label: String, values: List<String>, context: Context) {
+fun FeatureListItems(label: String, values: List<String>, onCopy: (String) -> Unit) {
     Column {
         FindingLabel(label)
         if (values.isEmpty()) {
-            FindingValue(value = stringResource(R.string.none), copyable = false, context = context)
+            FindingValue(value = stringResource(R.string.none), copyable = false, onCopy = onCopy)
         } else {
             values.forEach { value ->
-                FindingValue(value = value, copyable = true, context = context)
+                FindingValue(value = value, copyable = true, onCopy = onCopy)
             }
         }
     }
@@ -383,12 +385,10 @@ private fun FindingLabel(label: String) {
  *
  * @param value Value to show.
  * @param copyable Whether to show the copy action.
- * @param context Used to copy the value.
+ * @param onCopy Copies the value.
  */
 @Composable
-private fun FindingValue(value: String, copyable: Boolean, context: Context) {
-    val toastText = stringResource(R.string.copied_to_clipboard)
-
+private fun FindingValue(value: String, copyable: Boolean, onCopy: (String) -> Unit) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text(
             text = value,
@@ -398,20 +398,13 @@ private fun FindingValue(value: String, copyable: Boolean, context: Context) {
         )
         if (copyable) {
             IconAction(
-                onClick = { copyToClipboard(context, value, toastText) },
+                onClick = { onCopy(value) },
                 contentDescription = stringResource(R.string.copy)
             ) {
                 ButtonIcon(R.drawable.ic_copy)
             }
         }
     }
-}
-
-fun copyToClipboard(context: Context, text: String, toastText: String) {
-    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-    val clip = ClipData.newPlainText("Copied Text", text)
-    clipboard.setPrimaryClip(clip)
-    Toast.makeText(context, toastText, Toast.LENGTH_SHORT).show()
 }
 
 @Preview(showBackground = true)

@@ -1,8 +1,8 @@
 package com.corphish.quicktools.viewmodels
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.corphish.quicktools.data.TextCountResult
+import com.corphish.quicktools.usecases.ClipboardUseCase
 import com.corphish.quicktools.usecases.TextCountUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,8 +12,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TextCountViewModel @Inject constructor(
-    private val textCountUseCase: TextCountUseCase
-) : ViewModel() {
+    private val textCountUseCase: TextCountUseCase,
+    clipboardUseCase: ClipboardUseCase,
+) : ClipboardCopyViewModel(clipboardUseCase) {
     private val _text = MutableStateFlow("")
     val text = _text.asStateFlow()
 

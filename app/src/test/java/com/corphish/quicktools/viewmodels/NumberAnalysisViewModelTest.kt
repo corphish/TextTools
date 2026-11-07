@@ -3,6 +3,7 @@ package com.corphish.quicktools.viewmodels
 import com.corphish.quicktools.MainDispatcherRule
 import com.corphish.quicktools.data.NumberAnalysisResult
 import com.corphish.quicktools.repository.SettingsRepository
+import com.corphish.quicktools.usecases.ClipboardUseCase
 import com.corphish.quicktools.usecases.NumberAnalysisUseCase
 import io.mockk.every
 import io.mockk.mockk
@@ -10,7 +11,6 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -30,6 +30,7 @@ class NumberAnalysisViewModelTest {
 
     private val numberAnalysisUseCase: NumberAnalysisUseCase = mockk()
     private val settingsRepository: SettingsRepository = mockk()
+    private val clipboardUseCase: ClipboardUseCase = mockk(relaxed = true)
     private lateinit var viewModel: NumberAnalysisViewModel
 
     @Before
@@ -37,7 +38,7 @@ class NumberAnalysisViewModelTest {
         mockkStatic(Dispatchers::class)
         every { Dispatchers.Default } returns testDispatcher
         every { settingsRepository.getDecimalPoints() } returns 2
-        viewModel = NumberAnalysisViewModel(numberAnalysisUseCase, settingsRepository)
+        viewModel = NumberAnalysisViewModel(numberAnalysisUseCase, settingsRepository, clipboardUseCase)
     }
 
     @After

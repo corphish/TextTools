@@ -2,9 +2,7 @@ package com.corphish.quicktools.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.data.Result
-import com.corphish.quicktools.repository.SettingsRepository
 import com.corphish.quicktools.usecases.WhatsappUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

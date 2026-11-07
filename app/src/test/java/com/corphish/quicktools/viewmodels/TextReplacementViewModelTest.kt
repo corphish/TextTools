@@ -3,10 +3,8 @@ package com.corphish.quicktools.viewmodels
 import com.corphish.quicktools.MainDispatcherRule
 import com.corphish.quicktools.functions.TextFunctions
 import com.corphish.quicktools.repository.TextReplacementRepositoryImpl
-import com.corphish.quicktools.usecases.ClipboardUseCase
 import com.corphish.quicktools.usecases.FindOccurrencesUseCase
 import com.corphish.quicktools.usecases.ReplaceTextUseCase
-import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -26,7 +24,6 @@ class TextReplacementViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     private lateinit var viewModel: TextReplacementViewModel
-    private val clipboardUseCase: ClipboardUseCase = mockk(relaxed = true)
     
     // Real implementations for testing logic
     private val textFunctions = TextFunctions()
@@ -40,7 +37,6 @@ class TextReplacementViewModelTest {
             repository,
             findOccurrencesUseCase,
             replaceTextUseCase,
-            clipboardUseCase
         )
     }
 

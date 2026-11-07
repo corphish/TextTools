@@ -1,6 +1,7 @@
 package com.corphish.quicktools.viewmodels
 
 import android.content.res.Resources
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.corphish.quicktools.R
 import com.corphish.quicktools.data.Result
@@ -16,7 +17,6 @@ import com.corphish.quicktools.data.TextTransformIndex.INDEX_REPEAT_TEXT
 import com.corphish.quicktools.data.TextTransformIndex.INDEX_REPLACE_WHITESPACE
 import com.corphish.quicktools.data.TextTransformIndex.INDEX_SQUEEZE
 import com.corphish.quicktools.data.TextTransformIndex.INDEX_WRAP_TEXT
-import com.corphish.quicktools.usecases.ClipboardUseCase
 import com.corphish.quicktools.usecases.TextTransformUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -29,8 +29,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TextTransformViewModel @Inject constructor (
     private val textTransformUseCase: TextTransformUseCase,
-    clipboardUseCase: ClipboardUseCase
-) : ClipboardCopyViewModel(clipboardUseCase) {
+) : ViewModel() {
 
     private val _mainText = MutableStateFlow("")
     val mainText = _mainText.asStateFlow()

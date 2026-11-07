@@ -2,9 +2,9 @@ package com.corphish.quicktools.viewmodels
 
 import com.corphish.quicktools.MainDispatcherRule
 import com.corphish.quicktools.data.TextCountResult
+import com.corphish.quicktools.usecases.ClipboardUseCase
 import com.corphish.quicktools.usecases.TextCountUseCase
 import io.mockk.coEvery
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -20,11 +20,12 @@ class TextCountViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     private val textCountUseCase: TextCountUseCase = mockk()
+    private val clipboardUseCase: ClipboardUseCase = mockk(relaxed = true)
     private lateinit var viewModel: TextCountViewModel
 
     @Before
     fun setUp() {
-        viewModel = TextCountViewModel(textCountUseCase)
+        viewModel = TextCountViewModel(textCountUseCase, clipboardUseCase)
     }
 
     @Test

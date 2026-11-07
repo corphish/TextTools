@@ -1,6 +1,5 @@
 package com.corphish.quicktools.functions
 
-import androidx.compose.ui.text.capitalize
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.MathContext
@@ -159,45 +158,6 @@ class NumberFunctions @Inject constructor() {
     // Mathematical Transformations
     fun square(n: BigInteger): BigInteger = n.multiply(n)
     fun cube(n: BigInteger): BigInteger = n.multiply(n).multiply(n)
-    fun sqrtBI(n: BigInteger): BigInteger {
-        if (n < BigInteger.ZERO) return BigInteger.ZERO
-        if (n < BigInteger.valueOf(2)) return n
-        var y = n.divide(BigInteger.valueOf(2)).add(BigInteger.valueOf(1))
-        var x = n.divide(y).add(y).divide(BigInteger.valueOf(2))
-        while (x < y) {
-            y = x
-            x = n.divide(y).add(y).divide(BigInteger.valueOf(2))
-        }
-        return y
-    }
-    fun cbrtBI(n: BigInteger): BigInteger {
-        if (n == BigInteger.ZERO) return BigInteger.ZERO
-        val isNegative = n < BigInteger.ZERO
-        val absN = n.abs()
-        var low = BigInteger.ZERO
-        var high = absN
-        var ans = BigInteger.ZERO
-        while (low <= high) {
-            val mid = low.add(high).shiftRight(1)
-            if (mid == BigInteger.ZERO) {
-                low = BigInteger.ONE
-                continue
-            }
-            val midCube = mid.multiply(mid).multiply(mid)
-            if (midCube == absN) {
-                ans = mid
-                break
-            }
-            if (midCube < absN) {
-                ans = mid
-                low = mid.add(BigInteger.ONE)
-            } else {
-                high = mid.subtract(BigInteger.ONE)
-            }
-        }
-        return if (isNegative) ans.negate() else ans
-    }
-    
     fun factorial(n: Int): BigInteger {
         if (n < 0) return BigInteger.ZERO
         var res = BigInteger.ONE

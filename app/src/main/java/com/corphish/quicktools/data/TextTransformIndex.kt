@@ -1,9 +1,12 @@
 package com.corphish.quicktools.data
 
+import com.corphish.quicktools.repository.TextTransformRepositoryImpl
+import com.corphish.quicktools.viewmodels.TextTransformViewModel
+
 /**
  * Single source of truth for the primary text-transform option indices.
- * Both [com.corphish.quicktools.repository.TextTransformRepositoryImpl] (which maps an index to
- * the actual transformation) and [com.corphish.quicktools.viewmodels.TextTransformViewModel]
+ * Both [TextTransformRepositoryImpl] (which maps an index to
+ * the actual transformation) and [TextTransformViewModel]
  * (which maps an index to its UI options) must agree on this mapping, so it is defined once here
  * instead of being duplicated as separate companion objects in each class.
  */

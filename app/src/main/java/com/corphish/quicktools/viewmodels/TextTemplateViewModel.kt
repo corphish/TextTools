@@ -23,8 +23,8 @@ class TextTemplateViewModel @Inject constructor(
     private val _templates = MutableStateFlow<List<TextTemplate>>(emptyList())
     val templates: StateFlow<List<TextTemplate>> = _templates.asStateFlow()
 
-    private val _userInput = MutableStateFlow("")
-    val userInput: StateFlow<String> = _userInput.asStateFlow()
+    /** Text the templates are applied to; only read when applying, so it is not observable. */
+    private var userInput = ""
 
     fun loadTemplates() {
         viewModelScope.launch {
@@ -32,8 +32,9 @@ class TextTemplateViewModel @Inject constructor(
         }
     }
 
+    /** Sets the text the templates are applied to. */
     fun setUserInput(input: String) {
-        _userInput.value = input
+        userInput = input
     }
 
     fun addTemplate(name: String, template: String, type: TemplateType) {
@@ -59,6 +60,6 @@ class TextTemplateViewModel @Inject constructor(
     }
 
     fun applyTemplate(template: TextTemplate): String {
-        return applyTemplateUseCase.execute(template.template, _userInput.value, template.type)
+        return applyTemplateUseCase.execute(template.template, userInput, template.type)
     }
 }

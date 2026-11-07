@@ -3,9 +3,7 @@ package com.corphish.quicktools.viewmodels
 import com.corphish.quicktools.MainDispatcherRule
 import com.corphish.quicktools.functions.TextFunctions
 import com.corphish.quicktools.repository.TextTransformRepositoryImpl
-import com.corphish.quicktools.usecases.ClipboardUseCase
 import com.corphish.quicktools.usecases.TextTransformUseCase
-import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -23,7 +21,6 @@ class TextTransformViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     private lateinit var viewModel: TextTransformViewModel
-    private val clipboardUseCase: ClipboardUseCase = mockk(relaxed = true)
     
     // Real implementations for testing logic
     private val textFunctions = TextFunctions()
@@ -32,10 +29,7 @@ class TextTransformViewModelTest {
 
     @Before
     fun setUp() {
-        viewModel = TextTransformViewModel(
-            textTransformUseCase,
-            clipboardUseCase
-        )
+        viewModel = TextTransformViewModel(textTransformUseCase)
     }
 
     @Test

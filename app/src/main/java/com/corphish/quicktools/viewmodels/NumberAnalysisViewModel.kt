@@ -1,9 +1,9 @@
 package com.corphish.quicktools.viewmodels
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.corphish.quicktools.data.NumberAnalysisResult
 import com.corphish.quicktools.repository.SettingsRepository
+import com.corphish.quicktools.usecases.ClipboardUseCase
 import com.corphish.quicktools.usecases.NumberAnalysisUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -15,8 +15,9 @@ import javax.inject.Inject
 @HiltViewModel
 class NumberAnalysisViewModel @Inject constructor(
     private val numberAnalysisUseCase: NumberAnalysisUseCase,
-    private val settingsRepository: SettingsRepository
-) : ViewModel() {
+    private val settingsRepository: SettingsRepository,
+    clipboardUseCase: ClipboardUseCase,
+) : ClipboardCopyViewModel(clipboardUseCase) {
 
     private val _analysisResult = MutableStateFlow<NumberAnalysisResult?>(null)
     val analysisResult: StateFlow<NumberAnalysisResult?> = _analysisResult
