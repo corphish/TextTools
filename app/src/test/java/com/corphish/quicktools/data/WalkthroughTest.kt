@@ -30,5 +30,6 @@ class WalkthroughTest {
         assertEquals(keys.size, keys.toSet().size)
         assertTrue(Walkthroughs.ALL.contains(Walkthroughs.MAIN))
         assertTrue(Walkthroughs.ALL.contains(Walkthroughs.SIMULATION))
+        assertTrue(Walkthroughs.ALL.contains(Walkthroughs.TRANSFORM))
     }
 }

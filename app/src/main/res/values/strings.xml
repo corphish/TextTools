@@ -294,7 +294,7 @@
     <string name="shuffle_colors">Shuffle colors</string>
     <string name="manage_templates">Manage templates</string>
     <string name="original">Original</string>
-    <string name="preview_read_only">Switch to Original to edit the text</string>
+    <string name="preview_read_only">Turn off the preview to edit the text</string>
     <string name="walkthrough_step_count">%1$d of %2$d</string>
     <string name="walkthrough_skip">Skip</string>
     <string name="walkthrough_main_tile_title">Explore the tools</string>
@@ -311,6 +311,14 @@
     <string name="walkthrough_simulation_run_body">Opens the text selection tools for this text. Any text a tool produces is copied to the clipboard.</string>
     <string name="walkthrough_simulation_info_title">More details</string>
     <string name="walkthrough_simulation_info_body">Tap here anytime to learn more about simulation.</string>
+    <string name="walkthrough_transform_text_title">Your text</string>
+    <string name="walkthrough_transform_text_body">This is the selected text. You can edit it before transforming.</string>
+    <string name="walkthrough_transform_options_title">Pick a transform</string>
+    <string name="walkthrough_transform_options_body">Choose how to change the text, like changing its case, sorting lines or adding a prefix.</string>
+    <string name="walkthrough_transform_preview_title">Preview the result</string>
+    <string name="walkthrough_transform_preview_body">Tap the eye to switch between the original and the transformed text.</string>
+    <string name="walkthrough_transform_next_title">Use the result</string>
+    <string name="walkthrough_transform_next_body">Continue with the transformed text to choose what to do with it.</string>
     <string name="walkthrough_reset_title">Tips</string>
     <string name="walkthrough_reset_desc">Show the guided tips of each screen again.</string>
     <string name="walkthrough_reset">Show tips again</string>

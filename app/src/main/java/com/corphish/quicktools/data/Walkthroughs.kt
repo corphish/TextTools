@@ -24,6 +24,18 @@ object WalkthroughTargets {
 
     /** Info action on the simulation screen. */
     const val SIMULATION_INFO = "simulation_info"
+
+    /** Text card on the transform screen. */
+    const val TRANSFORM_TEXT = "transform_text"
+
+    /** Transform options button on the transform screen. */
+    const val TRANSFORM_OPTIONS = "transform_options"
+
+    /** Preview toggle on the transform screen. */
+    const val TRANSFORM_PREVIEW = "transform_preview"
+
+    /** Next button on the transform screen. */
+    const val TRANSFORM_NEXT = "transform_next"
 }
 
 /** All walkthroughs of the app. */
@@ -49,6 +61,17 @@ object Walkthroughs {
         ),
     )
 
+    /** Tour of the transform screen: text, transform options, preview and Next. */
+    val TRANSFORM = Walkthrough(
+        key = "transform",
+        steps = listOf(
+            WalkthroughStep(WalkthroughTargets.TRANSFORM_TEXT, R.string.walkthrough_transform_text_title, R.string.walkthrough_transform_text_body),
+            WalkthroughStep(WalkthroughTargets.TRANSFORM_OPTIONS, R.string.walkthrough_transform_options_title, R.string.walkthrough_transform_options_body),
+            WalkthroughStep(WalkthroughTargets.TRANSFORM_PREVIEW, R.string.walkthrough_transform_preview_title, R.string.walkthrough_transform_preview_body),
+            WalkthroughStep(WalkthroughTargets.TRANSFORM_NEXT, R.string.walkthrough_transform_next_title, R.string.walkthrough_transform_next_body),
+        ),
+    )
+
     /** Every walkthrough of the app; keys must be unique. */
-    val ALL = listOf(MAIN, SIMULATION)
+    val ALL = listOf(MAIN, SIMULATION, TRANSFORM)
 }

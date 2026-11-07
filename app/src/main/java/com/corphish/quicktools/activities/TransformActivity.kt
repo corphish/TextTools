@@ -16,12 +16,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.text.KeyboardOptions
@@ -43,6 +45,9 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,20 +56,24 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.corphish.quicktools.R
 import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.data.TextInputType
+import com.corphish.quicktools.data.WalkthroughTargets
+import com.corphish.quicktools.data.Walkthroughs
 import com.corphish.quicktools.ui.common.AppScreenHeader
 import com.corphish.quicktools.ui.common.ButtonIcon
 import com.corphish.quicktools.ui.common.CardTextField
 import com.corphish.quicktools.ui.common.CompactLandscapeLayout
 import com.corphish.quicktools.ui.common.FormDialog
+import com.corphish.quicktools.ui.common.walkthrough.WalkthroughHost
+import com.corphish.quicktools.ui.common.walkthrough.walkthroughTarget
 import com.corphish.quicktools.ui.common.wordCountTextStyle
 import com.corphish.quicktools.ui.theme.AppTheme
 import com.corphish.quicktools.viewmodels.TextTransformViewModel
 import com.corphish.quicktools.viewmodels.ThemeViewModel
 import com.tabotabo.ui.button.PrimaryButton
 import com.tabotabo.ui.button.SecondaryButton
+import com.tabotabo.ui.button.TabotaboButtonDefaults
 import com.tabotabo.ui.layout.ScreenScaffold
 import com.tabotabo.ui.surface.GlowCard
-import com.tabotabo.ui.surface.SelectablePillRow
 import com.tabotabo.ui.theme.TabotaboTheme
 import com.tabotabo.ui.typography.body
 import com.tabotabo.ui.typography.label
@@ -87,16 +96,18 @@ class TransformActivity : ComponentActivity() {
 
             setContent {
                 AppTheme {
-                    TextTransformUI(
-                        textToTransform = text,
-                        onBack = { finish() },
-                        onNext = { text ->
-                            startActivity(
-                                TextActionActivity.handOffIntent(this, text, readonly, forceCopy, themeViewModel.hue.value)
-                            )
-                            finish()
-                        },
-                    )
+                    WalkthroughHost(walkthroughs = listOf(Walkthroughs.TRANSFORM)) {
+                        TextTransformUI(
+                            textToTransform = text,
+                            onBack = { finish() },
+                            onNext = { text ->
+                                startActivity(
+                                    TextActionActivity.handOffIntent(this, text, readonly, forceCopy, themeViewModel.hue.value)
+                                )
+                                finish()
+                            },
+                        )
+                    }
                 }
             }
         } else {
@@ -105,13 +116,17 @@ class TransformActivity : ComponentActivity() {
     }
 }
 
+/** Padding around the preview toggle's icon. */
+private val PreviewTogglePadding = 14.dp
+
 /** Minimum time between two "preview is read-only" toasts, in milliseconds. */
 private const val READ_ONLY_TOAST_INTERVAL_MS = 2000L
 
 /**
  * Transform screen: one text card showing the original (editable) or the preview (read-only),
- * a row with the Original/Preview toggle and a button naming the current transform, and the
- * Next button. The transform button opens a dialog with every transform option.
+ * a row with a button naming the current transform and the preview toggle, and the Next
+ * button. The transform button opens a dialog with every transform option. The text card,
+ * both toolbar buttons and the Next button are targets of [Walkthroughs.TRANSFORM].
  * - Portrait: text card with the toolbar row and Next button below.
  * - Landscape: header and Next button in one row, the text card filling the rest, the toolbar
  *   row underneath.
@@ -152,6 +167,7 @@ fun TextTransformUI(
         PrimaryButton(
             text = stringResource(id = R.string.next),
             onClick = { onNext(previewText) },
+            modifier = Modifier.walkthroughTarget(WalkthroughTargets.TRANSFORM_NEXT),
             trailingIcon = { ButtonIcon(R.drawable.ic_arrow_right) },
         )
     }
@@ -169,7 +185,7 @@ fun TextTransformUI(
             previewText = previewText,
             showPreview = showPreview,
             onInputTextChanged = { viewModel.initializeText(it) },
-            modifier = modifier,
+            modifier = modifier.walkthroughTarget(WalkthroughTargets.TRANSFORM_TEXT),
         )
     }
 
@@ -255,8 +271,8 @@ private fun TransformTextArea(
 }
 
 /**
- * Original/Preview toggle beside a button naming the current transform ("transform ·
- * sub-option"); the button opens the transform options.
+ * A button naming the current transform ("transform · sub-option"), taking all the width it
+ * can, followed by the preview toggle. The button opens the transform options.
  *
  * @param viewModel Source of the selected transform.
  * @param showPreview Whether the preview is shown.
@@ -274,10 +290,6 @@ private fun TransformToolbar(
     val selectedSecondaryIndex by viewModel.selectedSecondaryIndex.collectAsState()
     val secondaryList by viewModel.secondaryOptionList.collectAsState()
 
-    val modeLabels = mapOf(
-        false to stringResource(R.string.original),
-        true to stringResource(R.string.preview),
-    )
     val primaryText = stringResource(TextTransformViewModel.transformOptions[selectedPrimaryIndex])
     val summary = if (secondaryList.isEmpty()) {
         primaryText
@@ -290,20 +302,59 @@ private fun TransformToolbar(
         horizontalArrangement = Arrangement.spacedBy(TabotaboTheme.dimensions.spacing.s),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        SelectablePillRow(
-            options = listOf(false, true),
-            selected = showPreview,
-            onSelect = onShowPreviewChange,
-            label = { modeLabels.getValue(it) },
-            modifier = Modifier.weight(1f),
-        )
         // Long summaries scroll as a marquee inside the button
         SecondaryButton(
             text = summary,
             onClick = onOptionsClick,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f)
+                .walkthroughTarget(WalkthroughTargets.TRANSFORM_OPTIONS),
             leadingIcon = { ButtonIcon(R.drawable.ic_auto_fix_high) },
         )
+        PreviewToggle(
+            selected = showPreview,
+            onSelectedChange = onShowPreviewChange,
+            modifier = Modifier.walkthroughTarget(WalkthroughTargets.TRANSFORM_PREVIEW),
+        )
+    }
+}
+
+/**
+ * Square eye button that switches between the original (unselected, outlined) and the
+ * preview (selected, filled with the primary color). It is as wide as its icon and padding:
+ * buttons in the scaffold's actions are stretched to the full width, so a box sized to the
+ * button's intrinsic width holds it to that.
+ *
+ * @param selected Whether the preview is shown.
+ * @param onSelectedChange Called with the new state when tapped.
+ * @param modifier Modifier for the button.
+ */
+@Composable
+private fun PreviewToggle(
+    selected: Boolean,
+    onSelectedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val colors = TabotaboTheme.colors
+    val description = stringResource(R.string.preview)
+    val buttonColors = if (selected) {
+        TabotaboButtonDefaults.primaryColors().copy(container = colors.primary, content = colors.onPrimary)
+    } else {
+        TabotaboButtonDefaults.secondaryColors()
+    }
+
+    Box(modifier.width(IntrinsicSize.Min)) {
+        SecondaryButton(
+            onClick = { onSelectedChange(!selected) },
+            modifier = Modifier.semantics {
+                contentDescription = description
+                this.selected = selected
+            },
+            colors = buttonColors,
+            contentPadding = PaddingValues(PreviewTogglePadding),
+        ) {
+            ButtonIcon(R.drawable.ic_visibility)
+        }
     }
 }
 
