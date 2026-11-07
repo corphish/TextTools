@@ -337,6 +337,19 @@
     <string name="walkthrough_find_replace_tools_body">Ignore letter case, undo or redo changes, or reset to the original text.</string>
     <string name="walkthrough_find_replace_next_title">Use the result</string>
     <string name="walkthrough_find_replace_next_body">Continue with the edited text to choose what to do with it.</string>
+    <string name="walkthrough_template_create_title">Create a template</string>
+    <string name="walkthrough_template_create_body">Write text with %s where the selected text should go. URL templates encode the text, which suits links like search pages.</string>
+    <string name="walkthrough_template_edit_title">Manage templates</string>
+    <string name="walkthrough_template_edit_body">Tap a template to edit it, or the bin to delete it.</string>
+    <string name="walkthrough_template_apply_title">Apply a template</string>
+    <string name="walkthrough_template_apply_body">Tap a template to put the selected text into it, then choose what to do with the result.</string>
+    <string name="template_selected_text">Selected text</string>
+    <string name="template_help_title">How templates work</string>
+    <string name="template_help_body" formatted="false">Write %s where the selected text should go. URL templates encode the text so it works in links. To keep a literal %s, write %%s.</string>
+    <string name="template_example_template">Template</string>
+    <string name="template_example_text">Text</string>
+    <string name="template_example_result">Result</string>
+    <string name="template_example_input">hello world</string>
     <string name="walkthrough_reset_title">Tips</string>
     <string name="walkthrough_reset_desc">Show the guided tips of each screen again.</string>
     <string name="walkthrough_reset">Show tips again</string>

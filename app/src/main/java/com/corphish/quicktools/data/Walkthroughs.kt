@@ -66,6 +66,12 @@ object WalkthroughTargets {
 
     /** Next button on the find and replace screen. */
     const val FIND_REPLACE_NEXT = "find_replace_next"
+
+    /** Create template button on the text template screen. */
+    const val TEMPLATE_CREATE = "template_create"
+
+    /** First template card on the text template screen. */
+    const val TEMPLATE_FIRST = "template_first"
 }
 
 /** All walkthroughs of the app. */
@@ -139,6 +145,46 @@ object Walkthroughs {
         ),
     )
 
+    /** Text template screen, managing templates without any yet: how to create one. */
+    val TEMPLATE_CREATE = Walkthrough(
+        key = "template_create",
+        steps = listOf(
+            WalkthroughStep(WalkthroughTargets.TEMPLATE_CREATE, R.string.walkthrough_template_create_title, R.string.walkthrough_template_create_body),
+        ),
+    )
+
+    /** Text template screen, managing templates: editing and deleting, once a template exists. */
+    val TEMPLATE_EDIT = Walkthrough(
+        key = "template_edit",
+        steps = listOf(
+            WalkthroughStep(WalkthroughTargets.TEMPLATE_FIRST, R.string.walkthrough_template_edit_title, R.string.walkthrough_template_edit_body),
+        ),
+    )
+
+    /**
+     * Text template screen, managing existing templates: [TEMPLATE_CREATE] and [TEMPLATE_EDIT]
+     * in one walkthrough. Which of these is shown is decided by
+     * `TextTemplateViewModel.manageWalkthroughs`.
+     */
+    val TEMPLATE_MANAGE = Walkthrough(
+        key = "template_manage",
+        steps = listOf(
+            WalkthroughStep(WalkthroughTargets.TEMPLATE_CREATE, R.string.walkthrough_template_create_title, R.string.walkthrough_template_create_body),
+            WalkthroughStep(WalkthroughTargets.TEMPLATE_FIRST, R.string.walkthrough_template_edit_title, R.string.walkthrough_template_edit_body),
+        ),
+    )
+
+    /** Text template screen, opened with selected text: applying a template. */
+    val TEMPLATE_APPLY = Walkthrough(
+        key = "template_apply",
+        steps = listOf(
+            WalkthroughStep(WalkthroughTargets.TEMPLATE_FIRST, R.string.walkthrough_template_apply_title, R.string.walkthrough_template_apply_body),
+        ),
+    )
+
     /** Every walkthrough of the app; keys must be unique. */
-    val ALL = listOf(MAIN, SIMULATION, TRANSFORM, TEXT_ANALYSIS, NUMBER_ANALYSIS, FIND_REPLACE)
+    val ALL = listOf(
+        MAIN, SIMULATION, TRANSFORM, TEXT_ANALYSIS, NUMBER_ANALYSIS, FIND_REPLACE,
+        TEMPLATE_CREATE, TEMPLATE_EDIT, TEMPLATE_MANAGE, TEMPLATE_APPLY,
+    )
 }
