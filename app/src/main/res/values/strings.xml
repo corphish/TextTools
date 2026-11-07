@@ -319,6 +319,10 @@
     <string name="walkthrough_transform_preview_body">Tap the eye to switch between the original and the transformed text.</string>
     <string name="walkthrough_transform_next_title">Use the result</string>
     <string name="walkthrough_transform_next_body">Continue with the transformed text to choose what to do with it.</string>
+    <string name="walkthrough_text_analysis_input_title">Your text</string>
+    <string name="walkthrough_text_analysis_input_body">Edit the text here and the analysis updates as you type.</string>
+    <string name="walkthrough_text_analysis_stats_title">See the numbers</string>
+    <string name="walkthrough_text_analysis_stats_body">Counts of characters, words and more. Scroll down for charts, word frequency and findings like emails, links and dates. Tap a word or a copy icon to copy it.</string>
     <string name="walkthrough_reset_title">Tips</string>
     <string name="walkthrough_reset_desc">Show the guided tips of each screen again.</string>
     <string name="walkthrough_reset">Show tips again</string>

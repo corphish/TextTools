@@ -36,6 +36,12 @@ object WalkthroughTargets {
 
     /** Next button on the transform screen. */
     const val TRANSFORM_NEXT = "transform_next"
+
+    /** Text input on the text analysis screen. */
+    const val TEXT_ANALYSIS_INPUT = "text_analysis_input"
+
+    /** Statistics on the text analysis screen. */
+    const val TEXT_ANALYSIS_STATS = "text_analysis_stats"
 }
 
 /** All walkthroughs of the app. */
@@ -72,6 +78,18 @@ object Walkthroughs {
         ),
     )
 
+    /**
+     * Tour of the text analysis screen. Only the input and the statistics are on screen when it
+     * opens, so the last step points to the sections further down.
+     */
+    val TEXT_ANALYSIS = Walkthrough(
+        key = "text_analysis",
+        steps = listOf(
+            WalkthroughStep(WalkthroughTargets.TEXT_ANALYSIS_INPUT, R.string.walkthrough_text_analysis_input_title, R.string.walkthrough_text_analysis_input_body),
+            WalkthroughStep(WalkthroughTargets.TEXT_ANALYSIS_STATS, R.string.walkthrough_text_analysis_stats_title, R.string.walkthrough_text_analysis_stats_body),
+        ),
+    )
+
     /** Every walkthrough of the app; keys must be unique. */
-    val ALL = listOf(MAIN, SIMULATION, TRANSFORM)
+    val ALL = listOf(MAIN, SIMULATION, TRANSFORM, TEXT_ANALYSIS)
 }

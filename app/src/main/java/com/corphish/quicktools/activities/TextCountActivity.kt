@@ -40,6 +40,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.corphish.quicktools.R
 import com.corphish.quicktools.data.TextCountResult
+import com.corphish.quicktools.data.WalkthroughTargets
+import com.corphish.quicktools.data.Walkthroughs
 import com.corphish.quicktools.ui.common.AppScreenHeader
 import com.corphish.quicktools.ui.common.ButtonIcon
 import com.corphish.quicktools.ui.common.CardTextField
@@ -47,6 +49,8 @@ import com.corphish.quicktools.ui.common.PieChart
 import com.corphish.quicktools.ui.common.PieChartData
 import com.corphish.quicktools.ui.common.SectionLabel
 import com.corphish.quicktools.ui.common.pieChartColor
+import com.corphish.quicktools.ui.common.walkthrough.WalkthroughHost
+import com.corphish.quicktools.ui.common.walkthrough.walkthroughTarget
 import com.corphish.quicktools.ui.theme.AppTheme
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.viewmodels.TextCountViewModel
@@ -71,10 +75,12 @@ class TextCountActivity : ComponentActivity() {
         }
         setContent {
             AppTheme {
-                TextCount(
-                    text = initialText,
-                    onBack = { finish() }
-                )
+                WalkthroughHost(walkthroughs = listOf(Walkthroughs.TEXT_ANALYSIS)) {
+                    TextCount(
+                        text = initialText,
+                        onBack = { finish() }
+                    )
+                }
             }
         }
     }
@@ -91,7 +97,8 @@ internal const val CONTENT_TYPE_SECTION_LABEL = "section_label"
 
 /**
  * Text count screen: the input followed by statistics, charts, word frequency and advanced
- * findings, all in one scrolling list.
+ * findings, all in one scrolling list. The input and the statistics, both on screen when it
+ * opens, are targets of [Walkthroughs.TEXT_ANALYSIS].
  *
  * @param text Initial text to analyse.
  * @param onBack Called when the user leaves the screen.
@@ -123,7 +130,11 @@ fun TextCount(
             verticalArrangement = Arrangement.spacedBy(TabotaboTheme.dimensions.spacing.m)
         ) {
             item(contentType = "input") {
-                InputSection(inputText) { viewModel.setTextAndProcess(it) }
+                InputSection(
+                    text = inputText,
+                    onValueChange = { viewModel.setTextAndProcess(it) },
+                    modifier = Modifier.walkthroughTarget(WalkthroughTargets.TEXT_ANALYSIS_INPUT),
+                )
             }
             statsContent(countResult, context)
         }
@@ -135,13 +146,14 @@ fun TextCount(
  *
  * @param text Current text.
  * @param onValueChange Called when the user edits the text.
+ * @param modifier Modifier for the card.
  */
 @Composable
-fun InputSection(text: String, onValueChange: (String) -> Unit) {
+fun InputSection(text: String, onValueChange: (String) -> Unit, modifier: Modifier = Modifier) {
     CardTextField(
         value = text,
         onValueChange = onValueChange,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(InputHeight),
         textFieldModifier = Modifier.fillMaxSize(),
@@ -159,7 +171,11 @@ fun LazyListScope.statsContent(result: TextCountResult, context: Context) {
     item(contentType = CONTENT_TYPE_SECTION_LABEL) { SectionLabel(stringResource(id = R.string.statistics), modifier = Modifier.padding(top = TabotaboTheme.dimensions.spacing.l)) }
 
     item(contentType = "statistics") {
-        Column(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .walkthroughTarget(WalkthroughTargets.TEXT_ANALYSIS_STATS)
+        ) {
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(TabotaboTheme.dimensions.spacing.xl),
                 verticalArrangement = Arrangement.spacedBy(TabotaboTheme.dimensions.spacing.l)
