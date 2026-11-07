@@ -7,6 +7,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -45,6 +47,7 @@ import com.corphish.quicktools.features.Feature
 import com.corphish.quicktools.repository.AppMode
 import com.corphish.quicktools.repository.ContextMenuOptionsRepositoryImpl
 import com.corphish.quicktools.repository.FeatureIds
+import com.corphish.quicktools.ui.common.AppScreenScaffold
 import com.corphish.quicktools.ui.common.ButtonIcon
 import com.corphish.quicktools.ui.common.FocusedLastWord
 import com.corphish.quicktools.ui.common.walkthrough.WalkthroughHost
@@ -52,10 +55,8 @@ import com.corphish.quicktools.ui.common.walkthrough.walkthroughTarget
 import com.corphish.quicktools.ui.theme.AppTheme
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.viewmodels.MainViewModel
-import com.tabotabo.ui.button.ActionStack
 import com.tabotabo.ui.button.IconAction
 import com.tabotabo.ui.button.PrimaryButton
-import com.tabotabo.ui.layout.ScreenScaffold
 import com.tabotabo.ui.surface.GlowCard
 import com.tabotabo.ui.surface.TabotaboDialog
 import com.tabotabo.ui.surface.Tag
@@ -65,8 +66,8 @@ import com.tabotabo.ui.theme.TabotaboTheme
 import com.tabotabo.ui.typography.caption
 import dagger.hilt.android.AndroidEntryPoint
 
-/** Minimum width of a feature tile; the grid fits as many columns as this allows. */
-private val TileMinWidth = 140.dp
+/** Number of feature tiles per row, in every orientation and window size. */
+private const val TILE_COLUMNS = 2
 
 /** Size of a feature's icon on its tile. */
 private val FeatureIconSize = 28.dp
@@ -98,8 +99,10 @@ class MainActivity : ComponentActivity() {
 /**
  * Main screen: screen title with edit and settings actions, a grid of feature tiles and a
  * Simulate button. Tapping a tile shows its details; in edit mode it turns the feature on or
- * off instead, and enabled features glow. The first tile, the actions and the Simulate button
- * are targets of [Walkthroughs.MAIN].
+ * off instead, and enabled features glow. The grid always has two columns. In landscape the
+ * header and Simulate button sit at the bottom of the right pane (see [AppScreenScaffold]).
+ * The first tile, the actions and the Simulate button are
+ * targets of [Walkthroughs.MAIN].
  *
  * @param viewModel Source of enabled features and app mode.
  */
@@ -114,27 +117,24 @@ fun Greeting(
     var detailsFeatureId by rememberSaveable { mutableStateOf<FeatureIds?>(null) }
     val spacing = TabotaboTheme.dimensions.spacing
 
-    ScreenScaffold(
-        header = {
-            MainHeader(
-                shouldEdit = shouldEdit,
-                onEditToggle = { shouldEdit = !shouldEdit },
-                onSettings = { context.startActivity(Intent(context, SettingsActivity::class.java)) },
-            )
-        },
-        actions = {
-            ActionStack {
-                PrimaryButton(
-                    text = stringResource(R.string.simulate),
-                    onClick = { context.startActivity(Intent(context, SimulationActivity::class.java)) },
-                    modifier = Modifier.walkthroughTarget(WalkthroughTargets.MAIN_SIMULATE),
-                    leadingIcon = { ButtonIcon(R.drawable.ic_simulate) },
-                )
-            }
-        }
-    ) {
+    val header: @Composable () -> Unit = {
+        MainHeader(
+            shouldEdit = shouldEdit,
+            onEditToggle = { shouldEdit = !shouldEdit },
+            onSettings = { context.startActivity(Intent(context, SettingsActivity::class.java)) },
+        )
+    }
+    val actions: @Composable ColumnScope.() -> Unit = {
+        PrimaryButton(
+            text = stringResource(R.string.simulate),
+            onClick = { context.startActivity(Intent(context, SimulationActivity::class.java)) },
+            modifier = Modifier.walkthroughTarget(WalkthroughTargets.MAIN_SIMULATE),
+            leadingIcon = { ButtonIcon(R.drawable.ic_simulate) },
+        )
+    }
+    val grid: @Composable BoxScope.() -> Unit = {
         LazyVerticalGrid(
-            columns = GridCells.Adaptive(minSize = TileMinWidth),
+            columns = GridCells.Fixed(TILE_COLUMNS),
             modifier = Modifier.fillMaxSize(),
             horizontalArrangement = Arrangement.spacedBy(spacing.m),
             verticalArrangement = Arrangement.spacedBy(spacing.m),
@@ -155,6 +155,13 @@ fun Greeting(
             }
         }
     }
+
+    AppScreenScaffold(
+        header = header,
+        actions = actions,
+        landscapePaneArrangement = Arrangement.Bottom,
+        content = grid,
+    )
 
     Feature.LIST.firstOrNull { it.id == detailsFeatureId }?.let { feature ->
         FeatureDetailsDialog(
