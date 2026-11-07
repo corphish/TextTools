@@ -32,5 +32,6 @@ class WalkthroughTest {
         assertTrue(Walkthroughs.ALL.contains(Walkthroughs.SIMULATION))
         assertTrue(Walkthroughs.ALL.contains(Walkthroughs.TRANSFORM))
         assertTrue(Walkthroughs.ALL.contains(Walkthroughs.TEXT_ANALYSIS))
+        assertTrue(Walkthroughs.ALL.contains(Walkthroughs.NUMBER_ANALYSIS))
     }
 }

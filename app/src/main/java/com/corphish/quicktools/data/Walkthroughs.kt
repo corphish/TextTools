@@ -42,6 +42,15 @@ object WalkthroughTargets {
 
     /** Statistics on the text analysis screen. */
     const val TEXT_ANALYSIS_STATS = "text_analysis_stats"
+
+    /** Number input on the number analysis screen. */
+    const val NUMBER_ANALYSIS_INPUT = "number_analysis_input"
+
+    /** Base pills on the number analysis screen. */
+    const val NUMBER_ANALYSIS_BASES = "number_analysis_bases"
+
+    /** First result section (conversions) on the number analysis screen. */
+    const val NUMBER_ANALYSIS_RESULTS = "number_analysis_results"
 }
 
 /** All walkthroughs of the app. */
@@ -90,6 +99,19 @@ object Walkthroughs {
         ),
     )
 
+    /**
+     * Tour of the number analysis screen: input, base and results. It starts once the input is
+     * a valid number, as the bases and results only show then.
+     */
+    val NUMBER_ANALYSIS = Walkthrough(
+        key = "number_analysis",
+        steps = listOf(
+            WalkthroughStep(WalkthroughTargets.NUMBER_ANALYSIS_INPUT, R.string.walkthrough_number_analysis_input_title, R.string.walkthrough_number_analysis_input_body),
+            WalkthroughStep(WalkthroughTargets.NUMBER_ANALYSIS_BASES, R.string.walkthrough_number_analysis_bases_title, R.string.walkthrough_number_analysis_bases_body),
+            WalkthroughStep(WalkthroughTargets.NUMBER_ANALYSIS_RESULTS, R.string.walkthrough_number_analysis_results_title, R.string.walkthrough_number_analysis_results_body),
+        ),
+    )
+
     /** Every walkthrough of the app; keys must be unique. */
-    val ALL = listOf(MAIN, SIMULATION, TRANSFORM, TEXT_ANALYSIS)
+    val ALL = listOf(MAIN, SIMULATION, TRANSFORM, TEXT_ANALYSIS, NUMBER_ANALYSIS)
 }

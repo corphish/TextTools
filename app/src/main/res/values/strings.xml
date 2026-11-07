@@ -323,6 +323,12 @@
     <string name="walkthrough_text_analysis_input_body">Edit the text here and the analysis updates as you type.</string>
     <string name="walkthrough_text_analysis_stats_title">See the numbers</string>
     <string name="walkthrough_text_analysis_stats_body">Counts of characters, words and more. Scroll down for charts, word frequency and findings like emails, links and dates. Tap a word or a copy icon to copy it.</string>
+    <string name="walkthrough_number_analysis_input_title">Your number</string>
+    <string name="walkthrough_number_analysis_input_body">Edit the number here and the results update as you type.</string>
+    <string name="walkthrough_number_analysis_bases_title">Pick a base</string>
+    <string name="walkthrough_number_analysis_bases_body">Choose the base the number is written in. Only the bases it is valid in are shown.</string>
+    <string name="walkthrough_number_analysis_results_title">Use the results</string>
+    <string name="walkthrough_number_analysis_results_body">Copy any result. When the selected text can be edited, tap the check to replace it with a result. Scroll down for math, digits, factors and more.</string>
     <string name="walkthrough_reset_title">Tips</string>
     <string name="walkthrough_reset_desc">Show the guided tips of each screen again.</string>
     <string name="walkthrough_reset">Show tips again</string>

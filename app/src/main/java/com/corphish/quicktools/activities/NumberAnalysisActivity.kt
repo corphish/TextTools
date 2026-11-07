@@ -35,10 +35,14 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.corphish.quicktools.R
 import com.corphish.quicktools.data.Constants
 import com.corphish.quicktools.data.NumberAnalysisResult
+import com.corphish.quicktools.data.WalkthroughTargets
+import com.corphish.quicktools.data.Walkthroughs
 import com.corphish.quicktools.ui.common.AppScreenHeader
 import com.corphish.quicktools.ui.common.ButtonIcon
 import com.corphish.quicktools.ui.common.CardTextField
 import com.corphish.quicktools.ui.common.SectionLabel
+import com.corphish.quicktools.ui.common.walkthrough.WalkthroughHost
+import com.corphish.quicktools.ui.common.walkthrough.walkthroughTarget
 import com.corphish.quicktools.ui.theme.AppTheme
 import com.corphish.quicktools.viewmodels.NumberAnalysisViewModel
 import com.tabotabo.ui.button.IconAction
@@ -65,17 +69,19 @@ class NumberAnalysisActivity : ComponentActivity() {
 
         setContent {
             AppTheme {
-                NumberAnalysisScreen(
-                    initialText = initialText,
-                    allowApply = allowApply,
-                    onBack = { finish() },
-                    onApply = { text ->
-                        val resultIntent = Intent()
-                        resultIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, text)
-                        setResult(RESULT_OK, resultIntent)
-                        finish()
-                    }
-                )
+                WalkthroughHost(walkthroughs = listOf(Walkthroughs.NUMBER_ANALYSIS)) {
+                    NumberAnalysisScreen(
+                        initialText = initialText,
+                        allowApply = allowApply,
+                        onBack = { finish() },
+                        onApply = { text ->
+                            val resultIntent = Intent()
+                            resultIntent.putExtra(Intent.EXTRA_PROCESS_TEXT, text)
+                            setResult(RESULT_OK, resultIntent)
+                            finish()
+                        }
+                    )
+                }
             }
         }
     }
@@ -83,7 +89,8 @@ class NumberAnalysisActivity : ComponentActivity() {
 
 /**
  * Number analysis screen: the number and its base, followed by conversions and other derived
- * values, each of which can be copied or applied.
+ * values, each of which can be copied or applied. The input, the base pills and the
+ * conversions are targets of [Walkthroughs.NUMBER_ANALYSIS].
  *
  * @param initialText Text to analyse initially.
  * @param allowApply Whether values may replace the selected text.
@@ -153,7 +160,11 @@ fun LazyListScope.analysisContent(
     onApply: (String) -> Unit
 ) {
     result?.let { res ->
-        resultSection(R.string.conversions, res.conversions.toList()) { (base, value) ->
+        resultSection(
+            title = R.string.conversions,
+            entries = res.conversions.toList(),
+            modifier = Modifier.walkthroughTarget(WalkthroughTargets.NUMBER_ANALYSIS_RESULTS),
+        ) { (base, value) ->
             ResultItem(label = "Base $base", value = value, allowApply = allowApply, context = context, onApply = onApply)
         }
 
@@ -224,18 +235,20 @@ private fun resolveValue(value: String): String {
  *
  * @param title String resource of the section title.
  * @param entries Entries to show.
+ * @param modifier Modifier for the entries, e.g. to make them a walkthrough target.
  * @param itemContent Renders one entry.
  */
 private fun <T> LazyListScope.resultSection(
     @StringRes title: Int,
     entries: List<T>,
+    modifier: Modifier = Modifier,
     itemContent: @Composable (T) -> Unit,
 ) {
     if (entries.isEmpty()) return
 
     item(contentType = CONTENT_TYPE_SECTION_LABEL) { SectionLabel(stringResource(title), modifier = Modifier.padding(top = TabotaboTheme.dimensions.spacing.l)) }
     item(contentType = "result_section") {
-        Column(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = modifier.fillMaxWidth()) {
             Column(verticalArrangement = Arrangement.spacedBy(TabotaboTheme.dimensions.spacing.s)) {
                 entries.forEach { itemContent(it) }
             }
@@ -268,7 +281,9 @@ fun NumberInputSection(
         CardTextField(
             value = text,
             onValueChange = onTextChange,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .walkthroughTarget(WalkthroughTargets.NUMBER_ANALYSIS_INPUT),
             label = stringResource(R.string.input),
             placeholder = stringResource(R.string.enter_text_here),
             singleLine = true,
@@ -277,7 +292,9 @@ fun NumberInputSection(
 
         if (supportedBases.isNotEmpty()) {
             FlowRow(
-                modifier = Modifier.selectableGroup(),
+                modifier = Modifier
+                    .selectableGroup()
+                    .walkthroughTarget(WalkthroughTargets.NUMBER_ANALYSIS_BASES),
                 horizontalArrangement = Arrangement.spacedBy(spacing.s),
                 verticalArrangement = Arrangement.spacedBy(spacing.s),
             ) {
