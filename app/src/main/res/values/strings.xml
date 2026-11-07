@@ -350,6 +350,10 @@
     <string name="template_example_text">Text</string>
     <string name="template_example_result">Result</string>
     <string name="template_example_input">hello world</string>
+    <string name="walkthrough_text_actions_preview_title">Check the result</string>
+    <string name="walkthrough_text_actions_preview_body">This is the text the actions use, after any changes the tool made.</string>
+    <string name="walkthrough_text_actions_list_title">Pick an action</string>
+    <string name="walkthrough_text_actions_list_body">Apply replaces the selected text when it can be edited, and Copy puts it on the clipboard. Links, emails, phone numbers, places, flights and dates found in the text can be opened directly.</string>
     <string name="walkthrough_reset_title">Tips</string>
     <string name="walkthrough_reset_desc">Show the guided tips of each screen again.</string>
     <string name="walkthrough_reset">Show tips again</string>

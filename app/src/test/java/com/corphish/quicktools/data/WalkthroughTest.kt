@@ -35,5 +35,6 @@ class WalkthroughTest {
         assertTrue(Walkthroughs.ALL.contains(Walkthroughs.NUMBER_ANALYSIS))
         assertTrue(Walkthroughs.ALL.contains(Walkthroughs.FIND_REPLACE))
         assertTrue(Walkthroughs.ALL.containsAll(listOf(Walkthroughs.TEMPLATE_CREATE, Walkthroughs.TEMPLATE_EDIT, Walkthroughs.TEMPLATE_MANAGE, Walkthroughs.TEMPLATE_APPLY)))
+        assertTrue(Walkthroughs.ALL.contains(Walkthroughs.TEXT_ACTIONS))
     }
 }

@@ -72,6 +72,12 @@ object WalkthroughTargets {
 
     /** First template card on the text template screen. */
     const val TEMPLATE_FIRST = "template_first"
+
+    /** Text preview on the text actions screen. */
+    const val TEXT_ACTIONS_PREVIEW = "text_actions_preview"
+
+    /** Action cards on the text actions screen. */
+    const val TEXT_ACTIONS_LIST = "text_actions_list"
 }
 
 /** All walkthroughs of the app. */
@@ -182,9 +188,18 @@ object Walkthroughs {
         ),
     )
 
+    /** Tour of the text actions screen: the preview, then the actions. */
+    val TEXT_ACTIONS = Walkthrough(
+        key = "text_actions",
+        steps = listOf(
+            WalkthroughStep(WalkthroughTargets.TEXT_ACTIONS_PREVIEW, R.string.walkthrough_text_actions_preview_title, R.string.walkthrough_text_actions_preview_body),
+            WalkthroughStep(WalkthroughTargets.TEXT_ACTIONS_LIST, R.string.walkthrough_text_actions_list_title, R.string.walkthrough_text_actions_list_body),
+        ),
+    )
+
     /** Every walkthrough of the app; keys must be unique. */
     val ALL = listOf(
         MAIN, SIMULATION, TRANSFORM, TEXT_ANALYSIS, NUMBER_ANALYSIS, FIND_REPLACE,
-        TEMPLATE_CREATE, TEMPLATE_EDIT, TEMPLATE_MANAGE, TEMPLATE_APPLY,
+        TEMPLATE_CREATE, TEMPLATE_EDIT, TEMPLATE_MANAGE, TEMPLATE_APPLY, TEXT_ACTIONS,
     )
 }
