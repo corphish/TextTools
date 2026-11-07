@@ -35,6 +35,7 @@ import com.corphish.quicktools.data.NumberAnalysisResult
 import com.corphish.quicktools.data.WalkthroughTargets
 import com.corphish.quicktools.data.Walkthroughs
 import com.corphish.quicktools.ui.common.AppScreenHeader
+import com.corphish.quicktools.ui.common.AppScreenScaffold
 import com.corphish.quicktools.ui.common.ButtonIcon
 import com.corphish.quicktools.ui.common.CardTextField
 import com.corphish.quicktools.ui.common.SectionLabel
@@ -43,7 +44,7 @@ import com.corphish.quicktools.ui.common.walkthrough.walkthroughTarget
 import com.corphish.quicktools.ui.theme.AppTheme
 import com.corphish.quicktools.viewmodels.NumberAnalysisViewModel
 import com.tabotabo.ui.button.IconAction
-import com.tabotabo.ui.layout.ScreenScaffold
+import com.tabotabo.ui.layout.LocalScreenLayoutInfo
 import com.tabotabo.ui.surface.SelectablePill
 import com.tabotabo.ui.text.Fact
 import com.tabotabo.ui.text.Subtitle
@@ -86,8 +87,11 @@ class NumberAnalysisActivity : ComponentActivity() {
 
 /**
  * Number analysis screen: the number and its base, followed by conversions and other derived
- * values, each of which can be copied or applied. The input, the base pills and the
- * conversions are targets of [Walkthroughs.NUMBER_ANALYSIS].
+ * values, each of which can be copied or applied.
+ * - Portrait: the number and base pills followed by the results, all in one scrolling list.
+ * - Landscape: the results on the left; the header, number and base pills at the bottom of the
+ *   right pane (see [AppScreenScaffold]).
+ * The input, the base pills and the conversions are targets of [Walkthroughs.NUMBER_ANALYSIS].
  *
  * @param initialText Text to analyse initially.
  * @param allowApply Whether values may replace the selected text.
@@ -123,21 +127,30 @@ fun NumberAnalysisScreen(
         }
     }
 
-    ScreenScaffold(
-        header = { AppScreenHeader(id = R.string.title_activity_number_analysis, onBack = onBack) }
+    val input: @Composable () -> Unit = {
+        NumberInputSection(
+            text = inputText,
+            selectedBase = selectedBase ?: analysisResult?.base ?: 10,
+            supportedBases = analysisResult?.supportedBases ?: emptyList(),
+            onTextChange = { viewModel.setInput(it) },
+            onBaseChange = { viewModel.setBase(it) }
+        )
+    }
+
+    AppScreenScaffold(
+        header = { AppScreenHeader(id = R.string.title_activity_number_analysis, onBack = onBack) },
+        // The scaffold reports the orientation to its slots: the input and bases sit in the
+        // right pane in landscape, and at the top of the list in portrait
+        actions = { if (LocalScreenLayoutInfo.current.isLandscape) input() },
+        landscapePaneArrangement = Arrangement.Bottom,
     ) {
+        val isLandscape = LocalScreenLayoutInfo.current.isLandscape
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(spacing.m)
         ) {
-            item(contentType = "input") {
-                NumberInputSection(
-                    text = inputText,
-                    selectedBase = selectedBase ?: analysisResult?.base ?: 10,
-                    supportedBases = analysisResult?.supportedBases ?: emptyList(),
-                    onTextChange = { viewModel.setInput(it) },
-                    onBaseChange = { viewModel.setBase(it) }
-                )
+            if (!isLandscape) {
+                item(contentType = "input") { input() }
             }
 
             if (analysisResult == null) {
