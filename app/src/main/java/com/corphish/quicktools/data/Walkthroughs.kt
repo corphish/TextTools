@@ -51,6 +51,21 @@ object WalkthroughTargets {
 
     /** First result section (conversions) on the number analysis screen. */
     const val NUMBER_ANALYSIS_RESULTS = "number_analysis_results"
+
+    /** Text card on the find and replace screen. */
+    const val FIND_REPLACE_TEXT = "find_replace_text"
+
+    /** Find row on the find and replace screen. */
+    const val FIND_REPLACE_FIND = "find_replace_find"
+
+    /** Replace row on the find and replace screen. */
+    const val FIND_REPLACE_REPLACE = "find_replace_replace"
+
+    /** Editing tools row on the find and replace screen. */
+    const val FIND_REPLACE_TOOLS = "find_replace_tools"
+
+    /** Next button on the find and replace screen. */
+    const val FIND_REPLACE_NEXT = "find_replace_next"
 }
 
 /** All walkthroughs of the app. */
@@ -112,6 +127,18 @@ object Walkthroughs {
         ),
     )
 
+    /** Tour of the find and replace screen: text, find, replace, tools and Next. */
+    val FIND_REPLACE = Walkthrough(
+        key = "find_replace",
+        steps = listOf(
+            WalkthroughStep(WalkthroughTargets.FIND_REPLACE_TEXT, R.string.walkthrough_find_replace_text_title, R.string.walkthrough_find_replace_text_body),
+            WalkthroughStep(WalkthroughTargets.FIND_REPLACE_FIND, R.string.walkthrough_find_replace_find_title, R.string.walkthrough_find_replace_find_body),
+            WalkthroughStep(WalkthroughTargets.FIND_REPLACE_REPLACE, R.string.walkthrough_find_replace_replace_title, R.string.walkthrough_find_replace_replace_body),
+            WalkthroughStep(WalkthroughTargets.FIND_REPLACE_TOOLS, R.string.walkthrough_find_replace_tools_title, R.string.walkthrough_find_replace_tools_body),
+            WalkthroughStep(WalkthroughTargets.FIND_REPLACE_NEXT, R.string.walkthrough_find_replace_next_title, R.string.walkthrough_find_replace_next_body),
+        ),
+    )
+
     /** Every walkthrough of the app; keys must be unique. */
-    val ALL = listOf(MAIN, SIMULATION, TRANSFORM, TEXT_ANALYSIS, NUMBER_ANALYSIS)
+    val ALL = listOf(MAIN, SIMULATION, TRANSFORM, TEXT_ANALYSIS, NUMBER_ANALYSIS, FIND_REPLACE)
 }

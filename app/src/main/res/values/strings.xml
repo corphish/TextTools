@@ -327,6 +327,16 @@
     <string name="walkthrough_number_analysis_bases_body">Choose the base the number is written in. Only the bases it is valid in are shown.</string>
     <string name="walkthrough_number_analysis_results_title">Use the results</string>
     <string name="walkthrough_number_analysis_results_body">Copy any result. When the selected text can be edited, tap the check to replace it with a result. Scroll down for math, digits, factors and more.</string>
+    <string name="walkthrough_find_replace_text_title">Your text</string>
+    <string name="walkthrough_find_replace_text_body">Matches are highlighted here. You can also edit the text directly.</string>
+    <string name="walkthrough_find_replace_find_title">Find matches</string>
+    <string name="walkthrough_find_replace_find_body">Type what to look for, then use the arrows to move between matches.</string>
+    <string name="walkthrough_find_replace_replace_title">Replace them</string>
+    <string name="walkthrough_find_replace_replace_body">Type the replacement, then replace the current match or all matches at once.</string>
+    <string name="walkthrough_find_replace_tools_title">Fine-tune</string>
+    <string name="walkthrough_find_replace_tools_body">Ignore letter case, undo or redo changes, or reset to the original text.</string>
+    <string name="walkthrough_find_replace_next_title">Use the result</string>
+    <string name="walkthrough_find_replace_next_body">Continue with the edited text to choose what to do with it.</string>
     <string name="walkthrough_reset_title">Tips</string>
     <string name="walkthrough_reset_desc">Show the guided tips of each screen again.</string>
     <string name="walkthrough_reset">Show tips again</string>

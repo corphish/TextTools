@@ -31,16 +31,19 @@ import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import com.corphish.quicktools.R
 import com.corphish.quicktools.data.Constants
+import com.corphish.quicktools.data.WalkthroughTargets
+import com.corphish.quicktools.data.Walkthroughs
 import com.corphish.quicktools.ui.common.AppScreenHeader
+import com.corphish.quicktools.ui.common.AppScreenScaffold
 import com.corphish.quicktools.ui.common.ButtonIcon
 import com.corphish.quicktools.ui.common.CardTextField
+import com.corphish.quicktools.ui.common.walkthrough.WalkthroughHost
+import com.corphish.quicktools.ui.common.walkthrough.walkthroughTarget
 import com.corphish.quicktools.ui.theme.AppTheme
 import com.corphish.quicktools.viewmodels.TextReplacementViewModel
 import com.corphish.quicktools.viewmodels.ThemeViewModel
-import com.tabotabo.ui.button.ActionStack
 import com.tabotabo.ui.button.IconAction
 import com.tabotabo.ui.button.PrimaryButton
-import com.tabotabo.ui.layout.ScreenScaffold
 import com.tabotabo.ui.surface.SelectablePill
 import com.tabotabo.ui.theme.TabotaboTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -66,16 +69,18 @@ class FindAndReplaceActivity : ComponentActivity() {
 
             setContent {
                 AppTheme {
-                    FindAndReplace(
-                        viewModel = viewModel,
-                        onBack = { finish() },
-                        onComplete = { finalText ->
-                            startActivity(
-                                TextActionActivity.handOffIntent(this, finalText, readonly, forceCopy, themeViewModel.hue.value)
-                            )
-                            finish()
-                        }
-                    )
+                    WalkthroughHost(walkthroughs = listOf(Walkthroughs.FIND_REPLACE)) {
+                        FindAndReplace(
+                            viewModel = viewModel,
+                            onBack = { finish() },
+                            onComplete = { finalText ->
+                                startActivity(
+                                    TextActionActivity.handOffIntent(this, finalText, readonly, forceCopy, themeViewModel.hue.value)
+                                )
+                                finish()
+                            }
+                        )
+                    }
                 }
             }
         } else {
@@ -86,7 +91,9 @@ class FindAndReplaceActivity : ComponentActivity() {
 
 /**
  * Find and replace screen: the text being edited (with matches highlighted) as content; find,
- * replace, editing tools and the Next button as actions.
+ * replace, editing tools and the Next button as actions. In landscape the header and actions
+ * sit at the bottom of the right pane (see [AppScreenScaffold]). The text, the find and replace
+ * rows, the tools and the Next button are targets of [Walkthroughs.FIND_REPLACE].
  *
  * @param viewModel Holds the text, the search state and the edit history.
  * @param onBack Called when the user leaves the screen.
@@ -125,62 +132,72 @@ fun FindAndReplace(
         )
     }
 
-    ScreenScaffold(
+    AppScreenScaffold(
         header = { AppScreenHeader(id = R.string.title_activity_find_and_replace, onBack = onBack) },
         actions = {
-            ActionStack {
-                Column(verticalArrangement = Arrangement.spacedBy(TabotaboTheme.dimensions.spacing.s)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        CardTextField(
-                            value = findText,
-                            onValueChange = { viewModel.setFindText(it) },
-                            modifier = Modifier.weight(1f),
-                            textFieldModifier = Modifier.testTag("find_input"),
-                            label = stringResource(id = R.string.find),
-                            singleLine = true,
-                            highlighted = counterTotal > 0,
-                            suffix = {
-                                if (findText.isNotEmpty()) {
-                                    Text(text = "(${minOf(counterTotal, counterIndex + 1)}/$counterTotal)")
-                                }
+            Column(verticalArrangement = Arrangement.spacedBy(TabotaboTheme.dimensions.spacing.s)) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.walkthroughTarget(WalkthroughTargets.FIND_REPLACE_FIND),
+                ) {
+                    CardTextField(
+                        value = findText,
+                        onValueChange = { viewModel.setFindText(it) },
+                        modifier = Modifier.weight(1f),
+                        textFieldModifier = Modifier.testTag("find_input"),
+                        label = stringResource(id = R.string.find),
+                        singleLine = true,
+                        highlighted = counterTotal > 0,
+                        suffix = {
+                            if (findText.isNotEmpty()) {
+                                Text(text = "(${minOf(counterTotal, counterIndex + 1)}/$counterTotal)")
                             }
-                        )
-                        FindButtons(viewModel, findText)
-                    }
-
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        CardTextField(
-                            value = replaceText,
-                            onValueChange = { viewModel.setReplaceText(it) },
-                            modifier = Modifier.weight(1f),
-                            textFieldModifier = Modifier.testTag("replace_input"),
-                            label = stringResource(id = R.string.replace),
-                            singleLine = true,
-                        )
-                        ReplaceButtons(viewModel, replaceText, counterTotal)
-                    }
-
-                    ActionButtons(
-                        viewModel = viewModel,
-                        ignoreCase = ignoreCase,
-                        undoState = undoState,
-                        redoState = redoState,
+                        }
                     )
+                    FindButtons(viewModel, findText)
                 }
 
-                PrimaryButton(
-                    text = stringResource(R.string.next),
-                    onClick = { onComplete(mainTextState) },
-                    modifier = Modifier.testTag("complete_button"),
-                    trailingIcon = { ButtonIcon(R.drawable.ic_arrow_right) },
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.walkthroughTarget(WalkthroughTargets.FIND_REPLACE_REPLACE),
+                ) {
+                    CardTextField(
+                        value = replaceText,
+                        onValueChange = { viewModel.setReplaceText(it) },
+                        modifier = Modifier.weight(1f),
+                        textFieldModifier = Modifier.testTag("replace_input"),
+                        label = stringResource(id = R.string.replace),
+                        singleLine = true,
+                    )
+                    ReplaceButtons(viewModel, replaceText, counterTotal)
+                }
+
+                ActionButtons(
+                    viewModel = viewModel,
+                    ignoreCase = ignoreCase,
+                    undoState = undoState,
+                    redoState = redoState,
+                    modifier = Modifier.walkthroughTarget(WalkthroughTargets.FIND_REPLACE_TOOLS),
                 )
             }
-        }
+
+            PrimaryButton(
+                text = stringResource(R.string.next),
+                onClick = { onComplete(mainTextState) },
+                modifier = Modifier
+                    .testTag("complete_button")
+                    .walkthroughTarget(WalkthroughTargets.FIND_REPLACE_NEXT),
+                trailingIcon = { ButtonIcon(R.drawable.ic_arrow_right) },
+            )
+        },
+        landscapePaneArrangement = Arrangement.Bottom,
     ) {
         CardTextField(
             value = mainTextState,
             onValueChange = { viewModel.updateMainText(it) },
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .walkthroughTarget(WalkthroughTargets.FIND_REPLACE_TEXT),
             textFieldModifier = Modifier
                 .fillMaxSize()
                 .testTag("main_input"),
@@ -258,6 +275,7 @@ fun ReplaceButtons(viewModel: TextReplacementViewModel, replaceText: String, cou
  * @param ignoreCase Whether matching ignores case.
  * @param undoState Whether undo is available.
  * @param redoState Whether redo is available.
+ * @param modifier Modifier for the row.
  */
 @Composable
 fun ActionButtons(
@@ -265,10 +283,11 @@ fun ActionButtons(
     ignoreCase: Boolean,
     undoState: Boolean,
     redoState: Boolean,
+    modifier: Modifier = Modifier,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ) {
         SelectablePill(
             text = stringResource(R.string.ignore_case),
