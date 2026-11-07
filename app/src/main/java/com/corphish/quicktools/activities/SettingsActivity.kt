@@ -200,12 +200,14 @@ fun SettingsGroup(
 }
 
 /**
- * App-wide settings: appearance, color shuffle and how context menu options appear.
+ * App-wide settings: appearance, color shuffle, how context menu options appear and showing
+ * the walkthrough tips again.
  *
  * @param settingsViewModel Source and sink of the settings.
  */
 @Composable
 fun AppSettings(settingsViewModel: SettingsViewModel) {
+    val context = LocalContext.current
     val appMode by settingsViewModel.appMode.collectAsState()
     val appearance by settingsViewModel.appearance.collectAsState()
     val appearanceLabels = mapOf(
@@ -244,6 +246,19 @@ fun AppSettings(settingsViewModel: SettingsViewModel) {
                 selected = appMode,
                 onSelect = settingsViewModel::updateAppMode,
                 label = { modeLabels.getValue(it) },
+            )
+        }
+
+        SettingsSection(
+            title = stringResource(R.string.walkthrough_reset_title),
+            description = stringResource(R.string.walkthrough_reset_desc),
+        ) {
+            SecondaryButton(
+                text = stringResource(R.string.walkthrough_reset),
+                onClick = {
+                    settingsViewModel.resetWalkthroughs()
+                    Toast.makeText(context, R.string.walkthrough_reset_done, Toast.LENGTH_SHORT).show()
+                },
             )
         }
     }

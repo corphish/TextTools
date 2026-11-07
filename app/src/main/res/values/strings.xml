@@ -295,4 +295,18 @@
     <string name="manage_templates">Manage templates</string>
     <string name="original">Original</string>
     <string name="preview_read_only">Switch to Original to edit the text</string>
+    <string name="walkthrough_step_count">%1$d of %2$d</string>
+    <string name="walkthrough_skip">Skip</string>
+    <string name="walkthrough_main_tile_title">Explore the tools</string>
+    <string name="walkthrough_main_tile_body">Tap a tool to see what it does and how to find it in the text selection menu.</string>
+    <string name="walkthrough_main_edit_title">Choose your tools</string>
+    <string name="walkthrough_main_edit_body">Turn tools on or off. Only the tools you turn on appear in the text selection menu.</string>
+    <string name="walkthrough_main_simulate_title">Try them out</string>
+    <string name="walkthrough_main_simulate_body">Paste any text here to try the tools without leaving the app.</string>
+    <string name="walkthrough_main_settings_title">Make it yours</string>
+    <string name="walkthrough_main_settings_body">Change the appearance, how menu options appear, and other settings.</string>
+    <string name="walkthrough_reset_title">Tips</string>
+    <string name="walkthrough_reset_desc">Show the guided tips of each screen again.</string>
+    <string name="walkthrough_reset">Show tips again</string>
+    <string name="walkthrough_reset_done">Tips will be shown again</string>
 </resources>

@@ -10,6 +10,7 @@ import com.corphish.quicktools.repository.ContextMenuOptionsRepository
 import com.corphish.quicktools.repository.SettingsRepository
 import com.corphish.quicktools.usecases.ManageTemplatesUseCase
 import com.corphish.quicktools.usecases.ThemeUseCase
+import com.corphish.quicktools.usecases.WalkthroughUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,6 +23,7 @@ class SettingsViewModel @Inject constructor(
     private val contextMenuOptionsRepository: ContextMenuOptionsRepository,
     private val manageTemplatesUseCase: ManageTemplatesUseCase,
     private val themeUseCase: ThemeUseCase,
+    private val walkthroughUseCase: WalkthroughUseCase,
 ): ViewModel() {
     private val _prependCountryCodeEnabled = MutableStateFlow(settingsRepository.getPrependCountryCodeEnabled())
     private val _prependCountryCode = MutableStateFlow(settingsRepository.getPrependCountryCode())
@@ -99,5 +101,10 @@ class SettingsViewModel @Inject constructor(
 
     fun clearAllTemplates() {
         manageTemplatesUseCase.clearAllTemplates()
+    }
+
+    /** Makes every walkthrough show again on its screen. */
+    fun resetWalkthroughs() {
+        walkthroughUseCase.resetAll()
     }
 }

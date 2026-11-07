@@ -39,12 +39,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.corphish.quicktools.R
+import com.corphish.quicktools.data.WalkthroughTargets
+import com.corphish.quicktools.data.Walkthroughs
 import com.corphish.quicktools.features.Feature
 import com.corphish.quicktools.repository.AppMode
 import com.corphish.quicktools.repository.ContextMenuOptionsRepositoryImpl
 import com.corphish.quicktools.repository.FeatureIds
 import com.corphish.quicktools.ui.common.ButtonIcon
 import com.corphish.quicktools.ui.common.FocusedLastWord
+import com.corphish.quicktools.ui.common.walkthrough.WalkthroughHost
+import com.corphish.quicktools.ui.common.walkthrough.walkthroughTarget
 import com.corphish.quicktools.ui.theme.AppTheme
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.viewmodels.MainViewModel
@@ -76,9 +80,11 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AppTheme {
-                Greeting(
-                    viewModel = viewModel
-                )
+                WalkthroughHost(walkthroughs = listOf(Walkthroughs.MAIN)) {
+                    Greeting(
+                        viewModel = viewModel
+                    )
+                }
             }
         }
     }
@@ -92,7 +98,8 @@ class MainActivity : ComponentActivity() {
 /**
  * Main screen: screen title with edit and settings actions, a grid of feature tiles and a
  * Simulate button. Tapping a tile shows its details; in edit mode it turns the feature on or
- * off instead, and enabled features glow.
+ * off instead, and enabled features glow. The first tile, the actions and the Simulate button
+ * are targets of [Walkthroughs.MAIN].
  *
  * @param viewModel Source of enabled features and app mode.
  */
@@ -120,6 +127,7 @@ fun Greeting(
                 PrimaryButton(
                     text = stringResource(R.string.simulate),
                     onClick = { context.startActivity(Intent(context, SimulationActivity::class.java)) },
+                    modifier = Modifier.walkthroughTarget(WalkthroughTargets.MAIN_SIMULATE),
                     leadingIcon = { ButtonIcon(R.drawable.ic_simulate) },
                 )
             }
@@ -138,6 +146,11 @@ fun Greeting(
                     enabled = enabledFeatures.contains(feature.id),
                     onFeatureEnabledOrDisabled = viewModel::enableOrDisableFeature,
                     onClick = { detailsFeatureId = feature.id },
+                    modifier = if (feature == Feature.LIST.first()) {
+                        Modifier.walkthroughTarget(WalkthroughTargets.MAIN_FEATURE_TILE)
+                    } else {
+                        Modifier
+                    },
                 )
             }
         }
@@ -178,12 +191,14 @@ private fun MainHeader(
             IconAction(
                 onClick = onEditToggle,
                 contentDescription = stringResource(if (shouldEdit) R.string.done else R.string.edit),
+                modifier = Modifier.walkthroughTarget(WalkthroughTargets.MAIN_EDIT),
             ) {
                 ButtonIcon(if (shouldEdit) R.drawable.ic_done else R.drawable.ic_edit)
             }
             IconAction(
                 onClick = onSettings,
                 contentDescription = stringResource(R.string.title_activity_settings),
+                modifier = Modifier.walkthroughTarget(WalkthroughTargets.MAIN_SETTINGS),
             ) {
                 ButtonIcon(R.drawable.ic_settings)
             }
@@ -204,6 +219,7 @@ private fun MainHeader(
  * @param enabled Whether the feature is enabled.
  * @param onFeatureEnabledOrDisabled Called with the feature and its new state in edit mode.
  * @param onClick Called when the tile is tapped outside edit mode.
+ * @param modifier Modifier for the tile, e.g. to make it a walkthrough target.
  */
 @Composable
 fun FeatureTile(
@@ -212,12 +228,13 @@ fun FeatureTile(
     enabled: Boolean,
     onFeatureEnabledOrDisabled: (FeatureIds, Boolean) -> Unit,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val colors = TabotaboTheme.colors
     val dimmed = shouldEdit && !enabled
 
     GlowCard(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .then(
                 if (shouldEdit) {

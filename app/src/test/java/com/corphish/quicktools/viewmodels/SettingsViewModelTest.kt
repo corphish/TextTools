@@ -7,6 +7,7 @@ import com.corphish.quicktools.repository.ContextMenuOptionsRepository
 import com.corphish.quicktools.repository.SettingsRepository
 import com.corphish.quicktools.usecases.ManageTemplatesUseCase
 import com.corphish.quicktools.usecases.ThemeUseCase
+import com.corphish.quicktools.usecases.WalkthroughUseCase
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
@@ -32,6 +33,7 @@ class SettingsViewModelTest {
     private val contextMenuOptionsRepository: ContextMenuOptionsRepository = mockk(relaxed = true)
     private val manageTemplatesUseCase: ManageTemplatesUseCase = mockk(relaxed = true)
     private val themeUseCase: ThemeUseCase = mockk(relaxed = true)
+    private val walkthroughUseCase: WalkthroughUseCase = mockk(relaxed = true)
     private val appearance = MutableStateFlow(Appearance.DARK)
 
     @Before
@@ -43,7 +45,7 @@ class SettingsViewModelTest {
         every { contextMenuOptionsRepository.getCurrentAppMode() } returns AppMode.SINGLE
         every { themeUseCase.appearance } returns appearance
         
-        viewModel = SettingsViewModel(settingsRepository, contextMenuOptionsRepository, manageTemplatesUseCase, themeUseCase)
+        viewModel = SettingsViewModel(settingsRepository, contextMenuOptionsRepository, manageTemplatesUseCase, themeUseCase, walkthroughUseCase)
     }
 
     @Test
@@ -96,6 +98,12 @@ class SettingsViewModelTest {
     fun testClearAllTemplates() = runTest {
         viewModel.clearAllTemplates()
         verify { manageTemplatesUseCase.clearAllTemplates() }
+    }
+
+    @Test
+    fun testResetWalkthroughs() {
+        viewModel.resetWalkthroughs()
+        verify { walkthroughUseCase.resetAll() }
     }
 
     @Test
