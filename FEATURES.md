@@ -23,6 +23,9 @@ Transform selected text with various formatting options. Supported transformatio
 * Word manipulation: Reverse words or reverse each character within words.
 * Cleaning: Remove white spaces, line breaks, or duplicate words and lines.
 * Decorative styles: Apply Unicode-based styles such as bold, italic, monospace, or script fonts.
+* Additions: Repeat the text, add a prefix/suffix, or prepend/append text to every line.
+
+The eye button switches between the original text and a preview of the result before it is applied or copied.
 
 ### Text Analysis
 Get comprehensive statistics and insights for any selected text. The analysis includes:
@@ -35,7 +38,7 @@ Get comprehensive statistics and insights for any selected text. The analysis in
 https://github.com/user-attachments/assets/25fdf3ac-a31d-4142-aed3-8bcebc3dafea
 
 ### Save Text
-Directly save the selected text for future reference. You can save the content as a standard text file on your device or send it to supported note-taking applications. This streamlines the process of capturing snippets of information from any application.
+Directly save the selected text for future reference as a standard text file on your device. This streamlines the process of capturing snippets of information from any application.
 
 https://github.com/user-attachments/assets/8eadb102-a2f0-4cc6-ab3d-ada103229f52
 
@@ -55,9 +58,9 @@ Specifically designed for numeric selections, this feature provides detailed mat
 https://github.com/user-attachments/assets/e5f537d5-d59d-4401-afc7-0ae3bf610fe0
 
 ### Text Template
-Create and apply custom templates where the selected text acts as a dynamic parameter. You can define templates for frequent tasks, such as generating search URLs or formatted messages. Templates support automatic URL encoding for safe parameter insertion when the output is intended for web use.
+Create and apply custom templates where the selected text acts as a dynamic parameter. You can define templates for frequent tasks, such as generating search URLs or formatted messages. Templates support automatic URL encoding for safe parameter insertion when the output is intended for web use. When applying a template, each one shows a preview of its output for the selected text.
 
 https://github.com/user-attachments/assets/28f3e7bb-d42e-4330-b375-17b481b0d736
 
 ### Text Actions
-Identify and act upon specific entities found within the selected text. The system automatically detects data types like email addresses, phone numbers, physical addresses, and flight numbers, offering relevant actions such as sending an email, dialing a number, opening maps, or tracking a flight status.
+Identify and act upon specific entities found within the selected text. The system automatically detects data types like email addresses, phone numbers, physical addresses, and flight numbers, offering relevant actions such as sending an email, dialing a number, opening maps, or tracking a flight status. A preview of the text being acted on is shown alongside the actions.

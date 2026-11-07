@@ -13,25 +13,32 @@ height="80">](https://f-droid.org/packages/com.corphish.quicktools)
 - Text unsaved numbers in WhatsApp
 - Evaluate mathematical expressions inline
 - Transform text
-- Text count
+- Text analysis
 - Save text to a file
 - Find & Replace in text
+- Number analysis
+- Text templates
+- Text actions
 
 For detailed description of each feature and their demo, please check the [features page](FEATURES.md).
 
 ### App usage
-The above features are provided as context menu options on selected text. Text Tools also lets the user choose how he/she wants the context menu to appear. In other words, users have total control on what appears in the context menu.
+The above features are provided as context menu options on selected text. Text Tools also lets users choose how they want the context menu to appear. In other words, users have total control on what appears in the context menu.
 
 - Users can choose between "Multiple options" and "Single option".
 - "Multiple options" will present all the options at once in the context menu.
 - "Single option" will present a single option (as "Text Tools") which will then reveal all the options.
 - Every option works on both editable and non-editable text. Results can always be copied, and they can be applied back to the source only when it is editable.
-- In all cases, users can choose which options they would want to see in the context. If a certain feature is not useful to an user, he/she can deselect it in the app and that option will not appear in the context menu (for "Multiple options") or in the dialog that presents the supported options (in case of "Single option").
+- In all cases, users can choose which options they would want to see in the context. If a certain feature is not useful to a user, they can deselect it in the app and that option will not appear in the context menu (for "Multiple options") or in the dialog that presents the supported options (in case of "Single option").
+- Every tool can be tried from within the app using "Simulate" on the main screen.
+- Most screens show short guided tips the first time they are opened. The tips can be shown again from Settings.
+- The app can follow the system's light/dark setting or use a fixed one. It gets a fresh color scheme every time it is opened, which can also be shuffled from Settings.
+- All screens adapt to portrait and landscape; in landscape, most tools show the content on the left and the controls on the right.
 
 ### Development methods
 - Developed in Jetpack compose using the latest libraries.
-- Use Material design for UI, with color scheme derived using Material You.
-- Follows MVVM architecture using ViewModels with StateFlows wherever possible.
+- Uses the [Tabotabo UI](https://github.com/tabotabodev/ui) design system: Montserrat type, outlined cards and a single-hue color scheme.
+- Follows MVVM with clean architecture (View → ViewModel → UseCase → Repository), using ViewModels with StateFlows wherever possible.
 - Uses Dependency Injection provided by the Hilt library.
 
 ### Installation warning
