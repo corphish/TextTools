@@ -41,6 +41,7 @@ import com.corphish.quicktools.data.TextCountResult
 import com.corphish.quicktools.data.WalkthroughTargets
 import com.corphish.quicktools.data.Walkthroughs
 import com.corphish.quicktools.ui.common.AppScreenHeader
+import com.corphish.quicktools.ui.common.AppScreenScaffold
 import com.corphish.quicktools.ui.common.ButtonIcon
 import com.corphish.quicktools.ui.common.CardTextField
 import com.corphish.quicktools.ui.common.PieChart
@@ -53,7 +54,7 @@ import com.corphish.quicktools.ui.theme.AppTheme
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.viewmodels.TextCountViewModel
 import com.tabotabo.ui.button.IconAction
-import com.tabotabo.ui.layout.ScreenScaffold
+import com.tabotabo.ui.layout.LocalScreenLayoutInfo
 import com.tabotabo.ui.surface.Tag
 import com.tabotabo.ui.theme.TabotaboTheme
 import com.tabotabo.ui.typography.body
@@ -94,9 +95,12 @@ private val ChartSize = 150.dp
 internal const val CONTENT_TYPE_SECTION_LABEL = "section_label"
 
 /**
- * Text count screen: the input followed by statistics, charts, word frequency and advanced
- * findings, all in one scrolling list. The input and the statistics, both on screen when it
- * opens, are targets of [Walkthroughs.TEXT_ANALYSIS].
+ * Text count screen: the input, statistics, charts, word frequency and advanced findings.
+ * - Portrait: the input followed by the analysis, all in one scrolling list.
+ * - Landscape: the analysis list on the left; the header and the input at the bottom of the
+ *   right pane (see [AppScreenScaffold]).
+ * The input and the statistics, both on screen when it opens, are targets of
+ * [Walkthroughs.TEXT_ANALYSIS].
  *
  * @param text Initial text to analyse.
  * @param onBack Called when the user leaves the screen.
@@ -125,21 +129,30 @@ fun TextCount(
         }
     }
 
-    ScreenScaffold(
-        header = { AppScreenHeader(id = R.string.title_activity_text_count, onBack = onBack) }
+    val input: @Composable () -> Unit = {
+        InputSection(
+            text = inputText,
+            onValueChange = { viewModel.setTextAndProcess(it) },
+            modifier = Modifier.walkthroughTarget(WalkthroughTargets.TEXT_ANALYSIS_INPUT),
+        )
+    }
+
+    AppScreenScaffold(
+        header = { AppScreenHeader(id = R.string.title_activity_text_count, onBack = onBack) },
+        // The scaffold reports the orientation to its slots: the input sits in the right pane
+        // in landscape, and at the top of the list in portrait
+        actions = { if (LocalScreenLayoutInfo.current.isLandscape) input() },
+        landscapePaneArrangement = Arrangement.Bottom,
     ) {
+        val isLandscape = LocalScreenLayoutInfo.current.isLandscape
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .testTag("stats_list"),
             verticalArrangement = Arrangement.spacedBy(TabotaboTheme.dimensions.spacing.m)
         ) {
-            item(contentType = "input") {
-                InputSection(
-                    text = inputText,
-                    onValueChange = { viewModel.setTextAndProcess(it) },
-                    modifier = Modifier.walkthroughTarget(WalkthroughTargets.TEXT_ANALYSIS_INPUT),
-                )
+            if (!isLandscape) {
+                item(contentType = "input") { input() }
             }
             statsContent(countResult, onCopy)
         }
