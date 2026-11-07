@@ -13,8 +13,8 @@ android {
         applicationId = "com.corphish.quicktools"
         minSdk = 29
         targetSdk = 37
-        versionCode = 37
-        versionName = "2.2.7"
+        versionCode = 38
+        versionName = "3.0.0"
 
         testInstrumentationRunner = "com.corphish.quicktools.HiltTestRunner"
     }

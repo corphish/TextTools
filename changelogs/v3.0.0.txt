@@ -1,0 +1,13 @@
+- All new design, built on the Tabotabo UI design system:
+  - Montserrat type throughout, with titles that emphasise their key word.
+  - Outlined cards and buttons that glow to highlight what is selected or active.
+  - A single-hue color scheme, freshly generated each launch. Tools opened from text selection get their own.
+  - Redesigned main screen: tools are shown as tiles. Tap one for its details (templates open via Manage templates), or use the edit button to turn tools on or off.
+  - Redesigned dialogs, onboarding and settings.
+- Landscape layouts for every screen. In landscape, most tools show the content on the left and the controls on the right.
+- Guided tips explain each screen the first time it is opened. They can be shown again from Settings.
+- Colors no longer follow the wallpaper: shuffle them from Settings instead.
+- About and open source info moved to Settings.
+- Transform: the eye button switches between the original and preview. Edit with preview off.
+- Text Templates: previews of each template, and a short explainer on how templates work in landscape.
+- Library updates.

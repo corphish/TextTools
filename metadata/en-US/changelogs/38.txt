@@ -1,0 +1,8 @@
+- All new design: Montserrat type, glowing outlined cards, a fresh color scheme each launch.
+- Landscape layouts for every screen, and guided tips on first use.
+- Colors no longer follow the wallpaper; shuffle them in Settings.
+- Main screen: tap a tool for details. Templates open via Manage templates.
+- About moved to Settings.
+- Transform: eye button toggles original and preview.
+- Text Templates: previews of each template.
+- Library updates.
