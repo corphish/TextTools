@@ -26,8 +26,9 @@ class WalkthroughTest {
 
     @Test
     fun testAppWalkthroughs_HaveUniqueKeys() {
-        val keys = listOf(Walkthroughs.MAIN).map { it.key }
+        val keys = Walkthroughs.ALL.map { it.key }
         assertEquals(keys.size, keys.toSet().size)
-        assertTrue(Walkthroughs.MAIN.autoStart)
+        assertTrue(Walkthroughs.ALL.contains(Walkthroughs.MAIN))
+        assertTrue(Walkthroughs.ALL.contains(Walkthroughs.SIMULATION))
     }
 }
