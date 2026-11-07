@@ -305,6 +305,12 @@
     <string name="walkthrough_main_simulate_body">Paste any text here to try the tools without leaving the app.</string>
     <string name="walkthrough_main_settings_title">Make it yours</string>
     <string name="walkthrough_main_settings_body">Change the appearance, how menu options appear, and other settings.</string>
+    <string name="walkthrough_simulation_input_title">Add your text</string>
+    <string name="walkthrough_simulation_input_body">Type or paste any text you want to try the tools on.</string>
+    <string name="walkthrough_simulation_run_title">Run the tools</string>
+    <string name="walkthrough_simulation_run_body">Opens the text selection tools for this text. Any text a tool produces is copied to the clipboard.</string>
+    <string name="walkthrough_simulation_info_title">More details</string>
+    <string name="walkthrough_simulation_info_body">Tap here anytime to learn more about simulation.</string>
     <string name="walkthrough_reset_title">Tips</string>
     <string name="walkthrough_reset_desc">Show the guided tips of each screen again.</string>
     <string name="walkthrough_reset">Show tips again</string>

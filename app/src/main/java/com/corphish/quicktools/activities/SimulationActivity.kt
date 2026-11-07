@@ -23,12 +23,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.corphish.quicktools.R
 import com.corphish.quicktools.data.Constants
+import com.corphish.quicktools.data.WalkthroughTargets
+import com.corphish.quicktools.data.Walkthroughs
 import com.corphish.quicktools.ui.common.AppScreenHeader
 import com.corphish.quicktools.ui.common.ButtonIcon
 import com.corphish.quicktools.ui.common.CardTextField
 import com.corphish.quicktools.ui.common.CompactLandscapeLayout
 import com.corphish.quicktools.ui.common.FocusedLastWord
 import com.corphish.quicktools.ui.common.SectionLabel
+import com.corphish.quicktools.ui.common.walkthrough.WalkthroughHost
+import com.corphish.quicktools.ui.common.walkthrough.walkthroughTarget
 import com.corphish.quicktools.ui.theme.AppTheme
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.viewmodels.ThemeViewModel
@@ -51,21 +55,23 @@ class SimulationActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AppTheme {
-                Simulation(
-                    onBack = { finish() },
-                    onSimulate = {
-                        val intent = Intent(Intent.ACTION_PROCESS_TEXT).apply {
-                            type = "text/plain"
-                            setPackage(packageName)
-                            putExtra(Intent.EXTRA_PROCESS_TEXT, it)
-                            putExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, false)
-                            putExtra(Constants.INTENT_FORCE_COPY, true)
-                            putExtra(Constants.INTENT_HUE, themeViewModel.hue.value)
-                        }
+                WalkthroughHost(walkthroughs = listOf(Walkthroughs.SIMULATION)) {
+                    Simulation(
+                        onBack = { finish() },
+                        onSimulate = {
+                            val intent = Intent(Intent.ACTION_PROCESS_TEXT).apply {
+                                type = "text/plain"
+                                setPackage(packageName)
+                                putExtra(Intent.EXTRA_PROCESS_TEXT, it)
+                                putExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, false)
+                                putExtra(Constants.INTENT_FORCE_COPY, true)
+                                putExtra(Constants.INTENT_HUE, themeViewModel.hue.value)
+                            }
 
-                        startActivity(intent)
-                    }
-                )
+                            startActivity(intent)
+                        }
+                    )
+                }
             }
         }
     }
@@ -74,7 +80,8 @@ class SimulationActivity : ComponentActivity() {
 /**
  * Simulation screen: text typed here is sent to the app's text selection tools, for apps where
  * the Text Tools menu entries do not show up. In landscape the header and the Simulate button
- * share one row so the input gets the rest of the screen.
+ * share one row so the input gets the rest of the screen. The input, the Simulate button and
+ * the info action are targets of [Walkthroughs.SIMULATION].
  *
  * @param onBack Called when the user leaves the screen.
  * @param onSimulate Called with the text to simulate a selection with.
@@ -105,7 +112,9 @@ fun Simulation(onBack: () -> Unit = {}, onSimulate: (String) -> Unit = {}) {
                 IconAction(
                     onClick = { showInfoDialog = true },
                     contentDescription = stringResource(R.string.info),
-                    modifier = Modifier.testTag("info_button")
+                    modifier = Modifier
+                        .testTag("info_button")
+                        .walkthroughTarget(WalkthroughTargets.SIMULATION_INFO)
                 ) {
                     ButtonIcon(R.drawable.ic_info)
                 }
@@ -116,7 +125,9 @@ fun Simulation(onBack: () -> Unit = {}, onSimulate: (String) -> Unit = {}) {
         PrimaryButton(
             text = simulateTitle,
             onClick = { onSimulate(inputText) },
-            modifier = Modifier.testTag("simulate_button"),
+            modifier = Modifier
+                .testTag("simulate_button")
+                .walkthroughTarget(WalkthroughTargets.SIMULATION_RUN),
             leadingIcon = { ButtonIcon(R.drawable.ic_simulate) },
         )
     }
@@ -173,7 +184,9 @@ fun SimulationInputSection(
         CardTextField(
             value = text,
             onValueChange = onValueChange,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .walkthroughTarget(WalkthroughTargets.SIMULATION_INPUT),
             textFieldModifier = Modifier
                 .fillMaxSize()
                 .testTag("simulation_input"),
