@@ -45,7 +45,6 @@ import com.corphish.quicktools.ui.common.FocusedLastWord
 import com.corphish.quicktools.ui.theme.AppTheme
 import com.corphish.quicktools.ui.theme.QuickToolsTheme
 import com.corphish.quicktools.viewmodels.OnBoardingViewModel
-import com.tabotabo.ui.button.ActionStack
 import com.tabotabo.ui.button.IconAction
 import com.tabotabo.ui.button.PrimaryButton
 import com.tabotabo.ui.layout.LocalScreenLayoutInfo
@@ -140,7 +139,8 @@ fun OnBoarding(
  * Welcome page.
  * - Portrait: logo, app name, short description and the Next button stacked at the bottom,
  *   left aligned.
- * - Landscape: logo centred on the left; name, description and Next button on the right.
+ * - Landscape: logo centred on the left; name, description and Next button centred on the
+ *   right, matching the mode selection page.
  *
  * @param onNextPressed Called when the user continues.
  */
@@ -155,14 +155,12 @@ fun InitialPage(
             }
         },
         actions = {
-            ActionStack {
-                PrimaryButton(
-                    text = stringResource(R.string.next),
-                    onClick = onNextPressed,
-                    trailingIcon = { ButtonIcon(R.drawable.ic_arrow_right) },
-                )
-            }
-        }
+            PrimaryButton(
+                text = stringResource(R.string.next),
+                onClick = onNextPressed,
+                trailingIcon = { ButtonIcon(R.drawable.ic_arrow_right) },
+            )
+        },
     ) {
         if (LocalScreenLayoutInfo.current.isLandscape) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -213,8 +211,8 @@ private fun AppLogo() {
  * Context menu mode selection: back arrow, title, description and one card per mode (the
  * selected one glowing with a check), with a Done button.
  * - Portrait: everything stacked at the bottom, left aligned, scrolling when it doesn't fit.
- * - Landscape: the mode cards in a scrollable left column; back arrow, title, description and
- *   the button on the right.
+ * - Landscape: the logo on the left, as on the welcome page; back arrow, title, description,
+ *   the mode cards and the button centred in the right pane, which holds every choice.
  *
  * @param onBack Called when the user goes back to the welcome page.
  * @param onModeSelected Called when the user picks a mode.
@@ -228,55 +226,65 @@ fun ModeSelectionScreen(
 ) {
     var selectedMode by rememberSaveable { mutableStateOf(AppMode.SINGLE) }
     val spacing = TabotaboTheme.dimensions.spacing
+    val onSelect: (AppMode) -> Unit = { mode ->
+        selectedMode = mode
+        onModeSelected(mode)
+    }
 
     ScreenScaffold(
         header = {
             if (LocalScreenLayoutInfo.current.isLandscape) {
-                ModeSelectionIntro(onBack)
+                Column(verticalArrangement = Arrangement.spacedBy(spacing.m)) {
+                    ModeSelectionIntro(onBack, modifier = Modifier.padding(bottom = spacing.s))
+                    ModeCards(selectedMode, onSelect)
+                }
             }
         },
         actions = {
-            ActionStack {
-                PrimaryButton(
-                    text = stringResource(R.string.done),
-                    onClick = onFinish,
-                    leadingIcon = { ButtonIcon(R.drawable.ic_done) },
-                )
+            PrimaryButton(
+                text = stringResource(R.string.done),
+                onClick = onFinish,
+                leadingIcon = { ButtonIcon(R.drawable.ic_done) },
+            )
+        },
+    ) {
+        if (LocalScreenLayoutInfo.current.isLandscape) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                AppLogo()
+            }
+        } else {
+            BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState())
+                        // At least the visible height, so short content can still sit at the bottom
+                        .heightIn(min = maxHeight)
+                        .padding(vertical = spacing.l),
+                    verticalArrangement = Arrangement.spacedBy(spacing.m, Alignment.Bottom),
+                ) {
+                    ModeSelectionIntro(onBack, modifier = Modifier.padding(bottom = spacing.s))
+                    ModeCards(selectedMode, onSelect)
+                }
             }
         }
+    }
+}
+
+/**
+ * One selectable [ModeCard] per context menu mode, as a single-choice group.
+ *
+ * @param selectedMode Mode currently selected.
+ * @param onSelect Called with the mode the user taps.
+ */
+@Composable
+private fun ModeCards(selectedMode: AppMode, onSelect: (AppMode) -> Unit) {
+    Column(
+        modifier = Modifier.selectableGroup(),
+        verticalArrangement = Arrangement.spacedBy(TabotaboTheme.dimensions.spacing.m),
     ) {
-        val isLandscape = LocalScreenLayoutInfo.current.isLandscape
-
-        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-                    // At least the visible height, so short content can still sit at the bottom
-                    // (portrait) or in the middle (landscape)
-                    .heightIn(min = maxHeight)
-                    .padding(vertical = spacing.l)
-                    .selectableGroup(),
-                verticalArrangement = Arrangement.spacedBy(
-                    spacing.m,
-                    if (isLandscape) Alignment.CenterVertically else Alignment.Bottom
-                ),
-            ) {
-                if (!isLandscape) {
-                    ModeSelectionIntro(onBack, modifier = Modifier.padding(bottom = spacing.s))
-                }
-
-                AppMode.entries.forEach { mode ->
-                    ModeCard(
-                        mode = mode,
-                        isSelected = selectedMode == mode,
-                        onClick = {
-                            selectedMode = mode
-                            onModeSelected(mode)
-                        }
-                    )
-                }
-            }
+        AppMode.entries.forEach { mode ->
+            ModeCard(mode = mode, isSelected = selectedMode == mode, onClick = { onSelect(mode) })
         }
     }
 }
